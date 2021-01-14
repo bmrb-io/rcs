@@ -3,6 +3,19 @@ from residues import Residue
 from proteins import Protein
 
 def make_proteins_from_file(filename):
+    '''
+    Build proteins complete with amide and aromatic residues and chemical 
+    shifts for amide and aromatic ring protons.
+
+    Keyword arguments:
+    filename -- path to file containing chemical shift data
+    Returns:
+    proteins_dict -- dict of Protein objects organize by PDB ID and BMRB ID;
+        Proteins contain residues_dict but NoneType restraints_dict
+    exceptions_map_entries -- dict of exceptions raised; organized by PDB ID
+        and BMRB ID
+    '''
+
     exceptions_map_entries = {}
     proteins_dict = {}
     with open(filename) as infile:
@@ -35,6 +48,17 @@ def make_proteins_from_file(filename):
     return proteins_dict, exceptions_map_entries
 
 def add_residues(line, residues_dict, exceptions_map):
+    """
+    Add residues from a line of the data file to residues_dict if not already
+    in it; otherwise update atoms_dict of the residues.
+
+    Keyword arguments:
+    line -- a line from the data file
+    residues_dict -- dict containing Residues for a PDB entry organized by 
+        residue index
+    exceptions_map -- dict containing exceptions generated when trying to make
+        residues; organized by residue index
+    """
     res_amide, res_aroma_list = make_residues(line)
     if res_amide.res_index in residues_dict:
         residues_dict[res_amide.res_index].atoms_dict.update(
@@ -52,6 +76,15 @@ def add_residues(line, residues_dict, exceptions_map):
     return residues_dict, exceptions_map
 
 def make_residues(line):
+    """
+    Make one amide and multiple aromatic residues from line of ring data file.
+
+    Keyword arguments:
+    line -- a line from the data file
+    Returns:
+    res_amide -- Residue object containing the amide proton
+    res_aroma_list -- list of Residue objects containing aromatic ring protons
+    """
     res_amide = make_res_amide(line)
     res_aroma_list = []
     for i in range(5):
@@ -61,6 +94,15 @@ def make_residues(line):
     return res_amide, res_aroma_list
 
 def make_res_amide(line):
+    """
+    Make a residue containing the amide atom from a line of ring data file.
+    
+    Keyword arguments:
+    line -- a line from the data file
+    i -- index of the ring in the line
+    Returns:
+    res_amide -- Residue object
+    """
     res_index = line[2]
     res_label = line[3]
     cs_sigma = float(line[5])
@@ -70,6 +112,16 @@ def make_res_amide(line):
     return res_amide
 
 def make_res_aroma(line, i):
+    """
+    Make an aromatic residue from a line of Kumaran's ring data file.
+
+    Keyword arguments:
+    line -- a line from the data file
+    i -- index of the ring in the line
+    Returns:
+    'Not enough rings' -- if data for this ring is empty
+    res -- Residue object
+    """
     num = 30 #the periodicity of aromatics in file
     start_index = 8 + num * i
     end_index = 8 + num + num * i
@@ -87,6 +139,15 @@ def make_res_aroma(line, i):
 
 
 def make_atoms_aroma(ring_data):
+    """
+    Make a list of aromatic ring protons from Kumaran's ring data file.
+
+    Keyword arguments:
+    ring_data -- a slice of a line from the data file corresponding to the 
+        particular ring
+    Returns
+    atoms_list -- list of Atom objects for all aromatic ring protons
+    """
     atoms_file_dict = {
         "PHE": {20: 'HD1', 22: 'HD2', 24: 'HE1', 26: 'HE2', 28: 'HZ'},
         "TYR": {20: 'HD1', 22: 'HD2', 24: 'HE1', 26: 'HE2', 28: 'HH'},

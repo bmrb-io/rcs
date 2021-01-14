@@ -97,7 +97,8 @@ def check_amide(atom_1, atom_2):
 
 def check_aromatic(atom):
     """
-    Check if an atom is an aromatic ring proton. 
+    Check if an atom is an aromatic ring proton.
+
     Keyword arguments:
     atom -- the Atom object to be checked
     Returns:
@@ -119,6 +120,20 @@ def check_aromatic(atom):
     return bool_aroma, atom_aroma
 
 def make_restraint(restraint_entry):
+    """
+    Read line from restraint file and build restraint if it is amide-aromatic.
+
+    Keyword arguments:
+    restraint_entry -- str of a line of restraint data in the restraint file
+    Returns:
+    'No amide atom or atoms in same residue' -- self-explanatory exception
+    'No aromatic ring proton' -- if one atom is amide but other is not aromatic
+        ring proton
+    restraint -- Restraint object with an amide atom and an aromatic ring 
+        proton
+    restraint_id -- restraint ID as found in restraint file
+    member_id -- member ID as found in restraint file
+    """
 
     restraint_id = restraint_entry[0]
     member_id = restraint_entry[1]
@@ -154,6 +169,17 @@ def make_restraint(restraint_entry):
     return restraint, restraint_id, member_id
 
 def make_restraints_dict(pdb_id):
+    """
+    Create dictionary of all restraints for a PDB entry.
+
+    Keyword arguments:
+    pdb_id -- string of PDB ID for entry
+    Returns
+    restraints_dict -- dict of all restraints for entry by restraint_id and 
+        member_id
+    exceptions_map -- dict (by restraint_id) of exceptions raised by
+        make_restraint()
+    """
     restraints_dict = {}
     exceptions_map = {}
     restraint_loops_list = get_star_restraints(pdb_id)
@@ -183,7 +209,19 @@ def make_restraints_dict(pdb_id):
     return restraints_dict, exceptions_map
 
 
-def add_restraints(proteins_dict): #PRUNING GETS DONE HERE
+def add_restraints(proteins_dict): 
+    """
+    Add restraints_dict to all possible proteins in proteins_dict; call Protein
+    methods to correlate atoms in restraints with atoms from BMRB; prune 
+    various bad restraints.
+
+    Keyword arguments:
+    proteins_dict -- dict of all proteins by pdb_id and bmrb_id
+    Reutrns
+    proteins_dict -- now with restraints added to those possible
+    exceptions_map_entry -- dict (by pdb_id and bmrb_id) of exceptions raised
+        when building proteins and their restraints_dicts
+    """
     exceptions_map_entries = {}
     for pdb_id in proteins_dict:
         print(pdb_id)
