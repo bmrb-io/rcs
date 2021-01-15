@@ -40,6 +40,9 @@ class RingCurrentEffect(object):
             self.get_pdb(pdbid)
         if not os.path.isfile(str_file):
             self.get_bmrb(bmrbid)
+
+
+
         pdb_auth = self.get_coordinates(cif_file,use_auth_tag=True) # creates the dictionary using original seq no
         pdb_orig = self.get_coordinates(cif_file,use_auth_tag=False) # creates the dictionary using author seq no ####
         auth_keys = [i for i in pdb_auth[0][1].keys() if i[3]=='H']
@@ -76,7 +79,6 @@ class RingCurrentEffect(object):
             ar=None
             tag_match = None
         self.find_amide_ring_distance(pdb, ar, cs, pdbid, bmrbid, tag_match)
-
 
 
 
