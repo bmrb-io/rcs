@@ -208,46 +208,35 @@ def make_restraints_dict(pdb_id):
     
     return restraints_dict, exceptions_map
 
-
-def add_restraints(proteins_dict): 
+def add_restraints(protein):
     """
-    Add restraints_dict to all possible proteins in proteins_dict; call Protein
-    methods to correlate atoms in restraints with atoms from BMRB; prune 
-    various bad restraints.
+    Add restraints dict to protein.
 
     Keyword arguments:
-    proteins_dict -- dict of all proteins by pdb_id and bmrb_id
-    Reutrns
-    proteins_dict -- now with restraints added to those possible
-    exceptions_map_entry -- dict (by pdb_id and bmrb_id) of exceptions raised
-        when building proteins and their restraints_dicts
+    protein -- Protein object with amide and aromatic ring protons included.
+    Returns:
+    restraints_dict -- dictionary of Restraint objects organized by restraint
+        ID and member ID
+    'No restraint file' -- if no file can be found from RCSB
+    'Bad restraint file' -- if file downloaded cannot be parsed by pynmrstar
+    'No restraints in file' -- if there are no Gen_dist_constrain loops in file
+    'Unacceptable restraint loop type' -- if an unexpected distance constraint
+        subtype is found
+    'Misaligned restraint indices' -- if the residues have different indices in
+        PDB file and restraint file
+    
     """
-    exceptions_map_entries = {}
-    for pdb_id in proteins_dict:
-        print(pdb_id)
-        for bmrb_id in proteins_dict[pdb_id]:
-            protein = proteins_dict[pdb_id][bmrb_id]
-            restraints_dict, exceptions_map_restraints = make_restraints_dict(
-                pdb_id
-            )
-            if not isinstance(restraints_dict, dict):
-                if pdb_id not in exceptions_map_entries:
-                    exceptions_map_entries[pdb_id] = {}
-                exceptions_map_entries[pdb_id][bmrb_id] = restraints_dict
-            else:
-                protein.restraints_dict = restraints_dict
-                protein.assign_atoms_symmetrically()
-                protein.prune_bad_ambiguities()
-                protein.prune_missed_restraints()
-                if protein.check_restraint_alignment():
-                    protein.exceptions_map_restraints = exceptions_map_restraints
-                    proteins_dict[pdb_id][bmrb_id] = protein
-                else:
-                    if pdb_id not in exceptions_map_entries:
-                        exceptions_map_entries[pdb_id] = {}
-                    exceptions_map_entries[pdb_id][bmrb_id] = (
-                        "Misaligned restraint indices"
-                    )
-
-    return proteins_dict, exceptions_map_entries
+    pdb_id = protein.pdb_id
+    restraints_dict, exceptions_map_restraints = make_restraints_dict(pdb_id)
+    if not isinstance(restraints_dict, dict):
+        #returns exception thrown by make_restraints_dict()
+        return restraints_dict 
+    else:
+        protein.restraints_dict = restraints_dict
+        protein.assign_atoms_symmetrically()
+        protein.prune_missed_restraints()
+        if protein.check_restraint_alignment():
+            protein.exceptions_map_restraints = exceptions_map_restraints
+        else:
+            return "Misaligned restraint indices"
 
