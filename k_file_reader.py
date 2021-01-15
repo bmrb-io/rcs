@@ -2,9 +2,9 @@ from atoms import Atom
 from residues import Residue
 from proteins import Protein
 
-def make_proteins_from_file(filename):
+def make_protein_from_file(filename):
     '''
-    Build proteins complete with amide and aromatic residues and chemical 
+    Build protein complete with amide and aromatic residues and chemical 
     shifts for amide and aromatic ring protons.
 
     Keyword arguments:
@@ -16,36 +16,25 @@ def make_proteins_from_file(filename):
         and BMRB ID
     '''
 
-    exceptions_map_entries = {}
-    proteins_dict = {}
     with open(filename) as infile:
-        lines = infile.readlines()[157:] #should be 157:
-        for line in lines:
-            line = line.split(',')
-            if line[6] == '1' and line[7] == '1':
-                pdb_id = line[0]
-                bmrb_id = line[1]
-                if pdb_id not in proteins_dict:
-                    proteins_dict[pdb_id] = {}
-                if bmrb_id not in proteins_dict[pdb_id]:
-                    proteins_dict[pdb_id][bmrb_id] = Protein(pdb_id, bmrb_id)
-                protein = proteins_dict[pdb_id][bmrb_id]
+        lines = infile.readlines()
+        pdb_id = lines[0][0]
+        bmrb_id = lines[0][1]
+        protein = Protein(pdb_id, bmrb_id)
+        if lines[0][6] == '1' and lines[7] == '1':
+            for line in lines:
                 protein.residues_dict, protein.exceptions_map_residues = (
                     add_residues(
                         line, protein.residues_dict, 
                         protein.exceptions_map_residues
                     )
                 )
-                proteins_dict[pdb_id][bmrb_id] = protein
-            else:
-                pdb_id = line[0]
-                bmrb_id = line[1]
-                if pdb_id not in exceptions_map_entries:
-                    exceptions_map_entries[pdb_id] = {}
-                exceptions_map_entries[pdb_id][bmrb_id] = (
-                    "Too many entities/assemblies"
-                )
-    return proteins_dict, exceptions_map_entries
+
+
+        else:
+            return "Too many entities/assemblies"
+
+    return protein
 
 def add_residues(line, residues_dict, exceptions_map):
     """

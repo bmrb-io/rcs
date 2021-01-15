@@ -1,5 +1,4 @@
-import plotly
-from mmcif.io.PdbxReader import PdbxReader
+from pdbecif.mmcif_io import CifFileReader
 from math import sqrt, acos
 import numpy
 import operator
@@ -43,8 +42,8 @@ class RingCurrentEffect(object):
 
 
 
-        pdb_auth = self.get_coordinates(cif_file,use_auth_tag=True) # creates the dictionary using original seq no
-        pdb_orig = self.get_coordinates(cif_file,use_auth_tag=False) # creates the dictionary using author seq no ####
+        pdb_auth = self.get_coordinates(cif_file, pdbid, use_auth_tag=True) # creates the dictionary using original seq no
+        pdb_orig = self.get_coordinates(cif_file, pdbid, use_auth_tag=False) # creates the dictionary using author seq no ####
         auth_keys = [i for i in pdb_auth[0][1].keys() if i[3]=='H']
         orig_keys = [i for i in pdb_orig[0][1].keys() if i[3]=='H']
         cs = self.get_chemical_shifts(str_file) # creates the seq using original seq no
@@ -134,58 +133,52 @@ class RingCurrentEffect(object):
 
 
     @staticmethod
-    def get_coordinates(cif_file, use_auth_tag=True):
+    def get_coordinates(cif_file, pdbid, use_auth_tag=True):
         """
         Extract coordinate information from cif file as a dictionary
         {model_id : {(seq_id,chain_id,res_id,atom_id) : array[x,y,x],...},...}
         :param cif_file: Input coordinate file
         :return: dictionary
         """
-        cif_data = []
-        ifh = open(cif_file, 'r')
-        pRd = PdbxReader(ifh)
-        pRd.read(cif_data)
-        ifh.close()
-        c0 = cif_data[0]
-        atom_site = c0.getObj('atom_site')
-        max_models = int(atom_site.getValue('pdbx_PDB_model_num', -1))
-        col_names = atom_site.getAttributeList()
-        model_id = col_names.index('pdbx_PDB_model_num')
-        x_id = col_names.index('Cartn_x')
-        y_id = col_names.index('Cartn_y')
-        z_id = col_names.index('Cartn_z')
-        atom_id = col_names.index('label_atom_id')
-        comp_id = col_names.index('label_comp_id')
-        asym_id = col_names.index('label_asym_id')
-        entity_id = col_names.index('label_entity_id')
-        seq_id = col_names.index('label_seq_id')
-        icode_id = col_names.index('pdbx_PDB_ins_code')
-        alt_id = col_names.index('label_alt_id')
-        aut_seq_id = col_names.index('auth_seq_id')
-        aut_asym_id = col_names.index('auth_asym_id')
-        aut_atom_id = col_names.index('auth_atom_id')
-        aut_comp_id = col_names.index('auth_comp_id')
+        cfr = CifFileReader()
+        cif_obj = cfr.read(cif_file, output='cif_wrapper')
+        cif_data = cif_obj[pdbid]
+        atom_sites = cif_data._atom_site
+        max_models = int(atom_sites['pdbx_PDB_model_num'][-1])
         pdb_models = {}
         atom_ids = {}
-        for model in range(1, max_models + 1):
-            pdb = {}
-            aid = {}
-            for dat in atom_site.getRowList():
-                if int(dat[model_id]) == model:
-                    if use_auth_tag:
-                        aid[(dat[aut_seq_id], dat[aut_asym_id], dat[aut_comp_id], dat[aut_atom_id])] = \
-                            (dat[entity_id], dat[asym_id], dat[comp_id], dat[seq_id], dat[aut_seq_id],
-                             dat[alt_id], dat[icode_id], dat[aut_asym_id])
-                        pdb[(dat[aut_seq_id], dat[aut_asym_id], dat[aut_comp_id], dat[aut_atom_id])] = \
-                            numpy.array([float(dat[x_id]), float(dat[y_id]), float(dat[z_id])])
-                    else:
-                        aid[(dat[seq_id], dat[asym_id], dat[comp_id], dat[atom_id])] = \
-                            (dat[entity_id], dat[asym_id], dat[comp_id], dat[seq_id], dat[aut_seq_id],
-                             dat[alt_id], dat[icode_id], dat[aut_asym_id])
-                        pdb[(dat[seq_id], dat[asym_id], dat[comp_id], dat[atom_id])] = \
-                            numpy.array([float(dat[x_id]), float(dat[y_id]), float(dat[z_id])])
-            pdb_models[model] = pdb
-            atom_ids[model] = aid
+        for i in range(max_models):
+            pdb_models[i+1] = {}
+            atom_ids[i+1] = {}
+        for atom_site in list(atom_sites):
+            model_id = int(atom_site['pdbx_PDB_model_num'])
+            aut_seq_id = atom_site['auth_seq_id']
+            aut_asym_id = atom_site['auth_asym_id']
+            aut_comp_id = atom_site['auth_comp_id']
+            aut_atom_id = atom_site['auth_atom_id']
+            entity_id = atom_site['label_entity_id']
+            asym_id = atom_site['label_asym_id']
+            seq_id = atom_site['label_seq_id']
+            comp_id = atom_site['label_comp_id']
+            atom_id = atom_site['label_atom_id']
+            alt_id = atom_site['label_alt_id']
+            icode_id = atom_site['pdbx_PDB_ins_code']
+            posn_x = atom_site['Cartn_x']
+            posn_y = atom_site['Cartn_y']
+            posn_z = atom_site['Cartn_z']
+            posn = numpy.array([float(posn_x), float(posn_y), float(posn_z)])
+            if use_auth_tag:
+                key = (aut_seq_id, aut_asym_id, aut_comp_id, aut_atom_id)
+            else:
+                key = (seq_id, asym_id, comp_id, atom_id)
+            val_atom = (
+                entity_id, asym_id, comp_id, seq_id, aut_seq_id, alt_id,
+                icode_id, aut_asym_id
+            )
+            val_pdb = (posn)
+            atom_ids[model_id][key] = val_atom
+            pdb_models[model_id][key] = val_pdb
+
         return pdb_models, atom_ids
 
     @staticmethod
@@ -357,3 +350,4 @@ if __name__ == "__main__":
     # bmrbid = '17245'
     # pdbid = '2L4N'
     p=RingCurrentEffect(pdbid,bmrbid)
+
