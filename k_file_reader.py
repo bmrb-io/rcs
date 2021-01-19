@@ -18,11 +18,13 @@ def make_protein_from_file(filename):
 
     with open(filename) as infile:
         lines = infile.readlines()
-        pdb_id = lines[0][0]
-        bmrb_id = lines[0][1]
+        line0 = lines[0].split(',')
+        pdb_id = line0[0]
+        bmrb_id = line0[1]
         protein = Protein(pdb_id, bmrb_id)
-        if lines[0][6] == '1' and lines[7] == '1':
+        if line0[6] == '1' and line0[7] == '1':
             for line in lines:
+                line = line.split(',')
                 protein.residues_dict, protein.exceptions_map_residues = (
                     add_residues(
                         line, protein.residues_dict, 
@@ -32,6 +34,8 @@ def make_protein_from_file(filename):
 
 
         else:
+            print(lines[0])
+            print(lines[0][6], lines[0][7])
             return "Too many entities/assemblies"
 
     return protein

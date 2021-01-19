@@ -11,7 +11,7 @@ def get_file(pdb_id):
     file_name = str(pdb_id).lower() + "_mr.str"
     url = "https://files.rcsb.org/download/"
     url += file_name
-    cmd = 'wget ' + url + ' -O ./noe_rcsb_strs/' + file_name
+    cmd = 'wget ' + url + ' -O ./data/NOE/' + file_name
     os.system(cmd)
 
 def get_star_restraints(pdb_id):
@@ -30,10 +30,11 @@ def get_star_restraints(pdb_id):
     restraint_loops_list -- list of restraint loops from restraint file
     """
     filename = f"{pdb_id.lower()}_mr.str"
-    filepath = os.path.join('noe_rcsb_strs', filename)
+    filepath = os.path.join('data', 'NOE', filename)
     if not os.path.isfile(filepath):
         get_file(pdb_id)
     try:
+        print(filepath)
         entry = pynmrstar.Entry.from_file(filepath)
     except AttributeError:
         return "No restraint file"
@@ -237,6 +238,7 @@ def add_restraints(protein):
         protein.prune_missed_restraints()
         if protein.check_restraint_alignment():
             protein.exceptions_map_restraints = exceptions_map_restraints
+            return protein
         else:
             return "Misaligned restraint indices"
 

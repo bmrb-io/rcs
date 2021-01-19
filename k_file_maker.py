@@ -18,7 +18,8 @@ class RingCurrentEffect(object):
 
 
     def __init__(self,pdbid,bmrbid):
-        self.calculate_ring_current_effects(pdbid,bmrbid)
+        pass
+
 
     def calculate_ring_current_effects(self,pdbid,bmrbid):
         '''
@@ -26,7 +27,7 @@ class RingCurrentEffect(object):
         :param pdbid: matching pdb id example 2L4N
         :param bmrbid: matching bmrb id example 17245
         '''
-        print ('Calculating aromatic ring and amide proton interaction in {} {}'.format(pdbid,bmrbid))
+        #print ('Calculating aromatic ring and amide proton interaction in {} {}'.format(pdbid,bmrbid))
         if not os.path.isdir('./data'):
             os.system('mkdir ./data')
         if not os.path.isdir('./data/PDB'):
@@ -77,7 +78,8 @@ class RingCurrentEffect(object):
         else:
             ar=None
             tag_match = None
-        self.find_amide_ring_distance(pdb, ar, cs, pdbid, bmrbid, tag_match)
+        fout = self.find_amide_ring_distance(pdb, ar, cs, pdbid, bmrbid, tag_match)
+        return fout
 
 
 
@@ -332,6 +334,7 @@ class RingCurrentEffect(object):
                             outdat='{}\n'.format(outdat)
                             fo.write(outdat)
         fo.close()
+        return fout
     @staticmethod
     def get_pdb(pdb_id):
         cmd = 'wget https://files.rcsb.org/download/{}.cif -O ./data/PDB/{}.cif'.format(pdb_id,pdb_id)
@@ -343,11 +346,11 @@ class RingCurrentEffect(object):
         os.system(cmd)
 
 
-
+'''
 if __name__ == "__main__":
     bmrbid = sys.argv[1]
     pdbid = sys.argv[2]
     # bmrbid = '17245'
     # pdbid = '2L4N'
     p=RingCurrentEffect(pdbid,bmrbid)
-
+'''
