@@ -14,13 +14,12 @@ class RingCurrentEffect(object):
         'PHE': ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ'],
         'TYR': ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ'],
         'TRP': ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2'],
-        'HIS': ['CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HD1', 'HD2', 'HE1', 'HE2', 'xx', 'yy']
+        'HIS': ['CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HD1', 'HD2', 'HE1', 'HE2', 'xx', 'yy']  # if needed un comment
     }
 
 
     def __init__(self,pdbid,bmrbid):
         pass
-
 
     def calculate_ring_current_effects(self,pdbid,bmrbid):
         '''
@@ -28,7 +27,6 @@ class RingCurrentEffect(object):
         :param pdbid: matching pdb id example 2L4N
         :param bmrbid: matching bmrb id example 17245
         '''
-        #print ('Calculating aromatic ring and amide proton interaction in {} {}'.format(pdbid,bmrbid))
         if not os.path.isdir('./data'):
             os.system('mkdir ./data')
         if not os.path.isdir('./data/PDB'):
@@ -41,11 +39,8 @@ class RingCurrentEffect(object):
             self.get_pdb(pdbid)
         if not os.path.isfile(str_file):
             self.get_bmrb(bmrbid)
-
-
-
         pdb_auth = self.get_coordinates(cif_file, pdbid, use_auth_tag=True) # creates the dictionary using original seq no
-        pdb_orig = self.get_coordinates(cif_file, pdbid, use_auth_tag=False) # creates the dictionary using author seq no ####
+        pdb_orig = self.get_coordinates(cif_file, pdbid, use_auth_tag=False) # creates the dictionary using author seq no
         auth_keys = [i for i in pdb_auth[0][1].keys() if i[3]=='H']
         orig_keys = [i for i in pdb_orig[0][1].keys() if i[3]=='H']
         cs = self.get_chemical_shifts(str_file) # creates the seq using original seq no
@@ -84,7 +79,6 @@ class RingCurrentEffect(object):
 
 
 
-
     @staticmethod
     def get_distance(c1, c2):
         """
@@ -101,7 +95,7 @@ class RingCurrentEffect(object):
             'PHE': ['CG','CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ'],
             'TYR': ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HD1', 'HD2', 'HE1', 'HE2', 'HH'],
             'TRP': ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HE3', 'HZ2', 'HZ3', 'HH2', 'HE1'],
-            'HIS': ['CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HD1', 'HD2', 'HE1', 'HE2', 'xx', 'yy']
+            'HIS': ['CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HD1', 'HD2', 'HE1', 'HE2', 'xx', 'yy']  # if needed un comment
         }
         str_data = pynmrstar.Entry.from_file(str_file)
         csdata = str_data.get_loops_by_category('Atom_chem_shift')
@@ -201,7 +195,6 @@ class RingCurrentEffect(object):
 
     @staticmethod
     def get_centroid(p):
-        #print (len(p),p)
         x= [i[0] for i in p]
         y= [i[1] for i in p]
         z= [i[2] for i in p]
@@ -209,6 +202,7 @@ class RingCurrentEffect(object):
         return numpy.array(c)
 
     def find_angle(self,p,c,cn):
+        self.find_angle2(p,c,cn)
         pc = self.get_centroid(p)
         v1=p[1]-pc
         v2=p[2]-pc
@@ -227,6 +221,32 @@ class RingCurrentEffect(object):
         ang_deg2 = (180 / numpy.pi) * ang2
         return ang_deg,ang_deg2
 
+    def find_angle2(self,p,c,cn):
+        ang_deg=[]
+        ang_deg2=[]
+        pc = self.get_centroid(p)
+        for i in range(len(p)):
+            for j in range(len(p)):
+                if i!=j:
+                    v1=pc-p[i]
+                    v2=p[j]-p[i]
+                    nv=numpy.cross(v1,v2)
+                    nv2 = numpy.cross(v2,v1)
+                    cv=c-p[i]
+                    cv2=c-cn
+                    nnv=nv/numpy.linalg.norm(nv)
+                    ncv=cv/numpy.linalg.norm(cv)
+
+                    ncv2 = cv2 / numpy.linalg.norm(cv2)
+                    dp = abs(numpy.dot(nnv,ncv))
+                    dp2 = abs(numpy.dot(nnv, ncv2))
+                    ang = numpy.arccos(dp)
+                    ang2 = numpy.arccos(dp2)
+                    ang_deg.append((180/numpy.pi)*ang)
+                    ang_deg2.append((180 / numpy.pi) * ang2)
+
+        return ang_deg,ang_deg2
+
     def find_mean_distance(self,ph,pc):
         d = []
         for d1 in pc:
@@ -237,7 +257,7 @@ class RingCurrentEffect(object):
     def find_aromatic_residues(self,pdb):
         rl = []
         for a in pdb[1].keys():
-            if a[2] in ['PHE','TRP','TYR', 'HIS']:
+            if a[2] in ['PHE','TRP','TYR','HIS']:
                 rl.append((a[0],a[1],a[2]))
         return list(set(rl))
 
@@ -248,7 +268,7 @@ class RingCurrentEffect(object):
             'PHE': ['CG','CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ'],
             'TYR': ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HD1', 'HD2', 'HE1', 'HE2', 'HH'],
             'TRP': ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HE3', 'HZ2', 'HZ3', 'HH2', 'HE1'],
-            'HIS' :['CG','ND1','CD2','CE1','NE2','HD1','HD2','HE1','HE2','xx','yy']
+           'HIS' :['CG','ND1','CD2','CE1','NE2','HD1','HD2','HE1','HE2','xx','yy'] #if needed un comment
         }
         amide_chemical_shift,aromatic_chemical_shift,entity_size,assembly_size = cs2
         if not os.path.isdir('./output'):
@@ -285,8 +305,11 @@ class RingCurrentEffect(object):
                                 p = []
                                 patom=[]
                                 for atom in aromatic_atoms[ar]:
-                                    patom.append(atom)
-                                    p.append(pdb[m][atom])
+                                    try:
+                                        patom.append(atom)
+                                        p.append(pdb[m][atom])
+                                    except KeyError:
+                                        pass
                                 c = self.get_centroid(p)
                                 d = self.get_distance(pdb[m][a],c)
                                 mean_d,std_d = self.find_mean_distance(pdb[m][a],p)
@@ -352,7 +375,7 @@ class RingCurrentEffect(object):
 if __name__ == "__main__":
     bmrbid = sys.argv[1]
     pdbid = sys.argv[2]
-    # bmrbid = '17245'
-    # pdbid = '2L4N'
+    # bmrbid = '11086'
+    # pdbid = '1WYO'
     p=RingCurrentEffect(pdbid,bmrbid)
 '''
