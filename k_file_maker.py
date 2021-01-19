@@ -13,7 +13,8 @@ class RingCurrentEffect(object):
     atoms = {
         'PHE': ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ'],
         'TYR': ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ'],
-        'TRP': ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2']
+        'TRP': ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2'],
+        'HIS': ['CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HD1', 'HD2', 'HE1', 'HE2', 'xx', 'yy']
     }
 
 
@@ -99,7 +100,8 @@ class RingCurrentEffect(object):
         atoms_cs = {
             'PHE': ['CG','CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ'],
             'TYR': ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HD1', 'HD2', 'HE1', 'HE2', 'HH'],
-            'TRP': ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HE3', 'HZ2', 'HZ3', 'HH2', 'HE1']
+            'TRP': ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HE3', 'HZ2', 'HZ3', 'HH2', 'HE1'],
+            'HIS': ['CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HD1', 'HD2', 'HE1', 'HE2', 'xx', 'yy']
         }
         str_data = pynmrstar.Entry.from_file(str_file)
         csdata = str_data.get_loops_by_category('Atom_chem_shift')
@@ -235,7 +237,7 @@ class RingCurrentEffect(object):
     def find_aromatic_residues(self,pdb):
         rl = []
         for a in pdb[1].keys():
-            if a[2] in ['PHE','TRP','TYR']:
+            if a[2] in ['PHE','TRP','TYR', 'HIS']:
                 rl.append((a[0],a[1],a[2]))
         return list(set(rl))
 
@@ -245,8 +247,8 @@ class RingCurrentEffect(object):
         atoms_cs = {
             'PHE': ['CG','CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ'],
             'TYR': ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HD1', 'HD2', 'HE1', 'HE2', 'HH'],
-            'TRP': ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HE3', 'HZ2', 'HZ3', 'HH2', 'HE1']
-           # 'HIS' :['CG','CD2','ND1','CE1','NE2','HD1','HD2','HE1','HE2'] #if needed un comment
+            'TRP': ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HE3', 'HZ2', 'HZ3', 'HH2', 'HE1'],
+            'HIS' :['CG','ND1','CD2','CE1','NE2','HD1','HD2','HE1','HE2','xx','yy']
         }
         amide_chemical_shift,aromatic_chemical_shift,entity_size,assembly_size = cs2
         if not os.path.isdir('./output'):
