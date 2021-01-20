@@ -17,6 +17,7 @@ def make_protein_from_file(filename):
     '''
 
     with open(filename) as infile:
+        print(filename)
         lines = infile.readlines()
         line0 = lines[0].split(',')
         pdb_id = line0[0]

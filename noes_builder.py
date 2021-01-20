@@ -34,7 +34,6 @@ def get_star_restraints(pdb_id):
     if not os.path.isfile(filepath):
         get_file(pdb_id)
     try:
-        print(filepath)
         entry = pynmrstar.Entry.from_file(filepath)
     except AttributeError:
         return "No restraint file"

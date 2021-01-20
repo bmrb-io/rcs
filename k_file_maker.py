@@ -357,6 +357,7 @@ class RingCurrentEffect(object):
                                     odat='.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.'
                                 outdat='{},{}'.format(outdat,odat)
                             outdat='{}\n'.format(outdat)
+
                             fo.write(outdat)
         fo.close()
         return fout

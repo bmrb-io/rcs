@@ -1,7 +1,7 @@
-#from k_file_maker import *
-from RingCurrentEffects import *
+from k_file_maker import *
 from k_file_reader import *
 from noes_builder import *
+from ids_map import *
 
 def build_protein(pdb_id, bmrb_id):
     """
@@ -19,7 +19,16 @@ def build_protein(pdb_id, bmrb_id):
     k_file_path = ring_current_object.calculate_ring_current_effects(
         pdb_id, bmrb_id
     )
-    protein = make_protein_from_file(k_file_path)
-    if isinstance(protein, Protein):
-        protein = add_restraints(protein)
-    return protein
+    if "NO_" in k_file_path or 'NONE' in k_file_path:
+        print(pdb_id, bmrb_id, " DIDN'T WORK")
+    else:
+        protein = make_protein_from_file(k_file_path)
+        if isinstance(protein, Protein):
+            protein = add_restraints(protein)
+        else:
+            print(pdb_id, bmrb_id, protein)
+
+def build_all_proteins(map_filename):
+    id_map = IDs_map(map_filename)
+    for bmrb_id, pdb_id in id_map.ids_list[:100]:
+        build_protein(pdb_id, bmrb_id)
