@@ -17,8 +17,9 @@ def make_protein_from_file(filename):
     '''
 
     with open(filename) as infile:
-        print(filename)
         lines = infile.readlines()
+        if len(lines) == 1:
+            return lines[0][10:]
         line0 = lines[0].split(',')
         pdb_id = line0[0]
         bmrb_id = line0[1]
@@ -35,8 +36,6 @@ def make_protein_from_file(filename):
 
 
         else:
-            print(lines[0])
-            print(lines[0][6], lines[0][7])
             return "Too many entities/assemblies"
 
     return protein

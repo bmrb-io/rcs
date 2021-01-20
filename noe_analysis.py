@@ -228,6 +228,8 @@ pairs_dict_entries = results_c(proteins_dict, pairs_dict_entries)
 conf_tiers = results_d(pairs_dict_entries, outlier_sigma)
 
 
+protein = proteins_dict['2MYH'][]
+
 '''
 for shift_class in conf_tiers:
     print(shift_class + ":")
