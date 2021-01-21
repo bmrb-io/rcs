@@ -42,10 +42,11 @@ def get_star_restraints(pdb_id):
     restraint_loops_list = entry.get_loops_by_category("Gen_dist_constraint")
     if len(restraint_loops_list) == 0:
         return "No restraints in file"
-    if check_noe_loops(entry):
+    loops_check = check_noe_loops(entry)
+    if loops_check == 'All clear.':
         return restraint_loops_list
     else:
-        return 'Unexpected restraint loop subtype'
+        return loops_check
 
 def check_noe_loops(entry):
     """
@@ -60,7 +61,7 @@ def check_noe_loops(entry):
     """
     info_loop = entry.get_loops_by_category("Constraint_file")[0]
     info_list = info_loop.get_tag(
-        ["Constraint_type", "Constraint_subtype"]
+        ["Constraint_type", "Constraint_subtype", "Constraint_number"]
     )
     num_noe_loops = 0
     good_subtypes = [
@@ -69,9 +70,12 @@ def check_noe_loops(entry):
     for info in info_list:
         if info[0] == 'distance':
             subtype = info[1]
+            if int(info[2]) > 5000:
+                print("WHOA NELLIE")
+                return "Too many restraints."
             if subtype not in good_subtypes:
-                return False
-    return True
+                return "Unexpected restraint loop subtype"
+    return "All clear."
 
 def check_amide(atom_1, atom_2):
     """

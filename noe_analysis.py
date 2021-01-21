@@ -221,11 +221,20 @@ print(num_duplicates)
 proteins_dict = results_b1(proteins_dict, exceptions_map_entries)
 #make_proportions_plot(proteins_dict, 10, -5.5, 5.5)
 pairs_dict_entries = results_b2(proteins_dict)
-make_res_prop_plot(proteins_dict, pairs_dict_entries, 10, -5.5, 5.5)
+#make_res_prop_plot(proteins_dict, pairs_dict_entries, 10, -5.5, 5.5)
 pairs_dict_entries = results_c(proteins_dict, pairs_dict_entries)
 
 #make_res_bar_plot(pairs_dict_entries, 10, -5.5, 5.5)
 conf_tiers = results_d(pairs_dict_entries, outlier_sigma)
+
+exception_stats = {}
+for pdb_id in exceptions_map_entries:
+    for bmrb_id in exceptions_map_entries[pdb_id]:
+        reason = exceptions_map_entries[pdb_id][bmrb_id]
+        if reason not in exception_stats:
+            exception_stats[reason] = 0
+        exception_stats[reason] += 1
+print(exception_stats)
 
 
 '''
