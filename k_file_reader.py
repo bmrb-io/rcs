@@ -36,6 +36,9 @@ def make_proteins_from_file(filename):
                         protein.exceptions_map_residues
                     )
                 )
+                protein.pair_geometries = add_pair_geometries(
+                    line, protein.pair_geometries
+                )
                 proteins_dict[pdb_id][bmrb_id] = protein
             else:
                 pdb_id = line[0]
@@ -170,4 +173,14 @@ def make_atoms_aroma(ring_data):
         atom = Atom(res_index, res_label, atom_label, cs_sigma)
         atoms_list.append(atom)
     return atoms_list
+
+def add_pair_geometries(line, pair_geometries):
+    num = 30 #periodicity of rings in file
+    res_index_amide = line[2]
+    for i in range(5):
+        res_index_aroma = line[8 + num * i]
+        distance = line[10 + num * i]
+        pair_geometries[res_index_amide][res_index_aroma] = distance
+    return pair_geometries
+
 

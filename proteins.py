@@ -11,6 +11,7 @@ class Protein:
         self.exceptions_map_residues = {}
         self.restraints_dict = {}
         self.exceptions_map_restraints = {}
+        self.pair_geometries = {}
 
     def assign_atoms_symmetrically(self):
         exceptions_map = {}
@@ -115,6 +116,7 @@ class Protein:
                     dump_dict['restraints_dict'][restraint_id][member_id]
                 ) = restraint.dump()
         dump_dict['exceptions_map_restraints'] = self.exceptions_map_restraints
+        dump_dict['pair_geometries'] = self.pair_geometries
         return dump_dict
 
     @classmethod
@@ -135,13 +137,14 @@ class Protein:
                 )
                 restraints_dict[restraint_id][member_id] = restraint
         exceptions_map_restraints = dump_dict['exceptions_map_restraints']
-        
-        
+        pair_geometries = dump_dict['pair_geometries']
+
         protein = cls(pdb_id, bmrb_id)
         protein.residues_dict = residues_dict
         protein.exceptions_map_residues = exceptions_map_residues
         protein.restraints_dict = restraints_dict
         protein.exceptions_map_restraints = exceptions_map_restraints
+        protein.pair_geometries = pair_geometries
         protein.assign_atoms_symmetrically() #this pruning is likely redundant
         protein.prune_bad_ambiguities()
         protein.prune_missed_restraints()
