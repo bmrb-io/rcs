@@ -222,6 +222,7 @@ def add_restraints(protein):
     'No restraints in file' -- if there are no Gen_dist_constrain loops in file
     'Unacceptable restraint loop type' -- if an unexpected distance constraint
         subtype is found
+    'No pairs found' -- if no amide-aromatic restraints were found
     'Misaligned restraint indices' -- if the residues have different indices in
         PDB file and restraint file
     
@@ -234,7 +235,7 @@ def add_restraints(protein):
     else:
         protein.restraints_dict = restraints_dict
         if len(restraints_dict) == 0:
-            return "No pairs found."
+            return "No pairs found"
         protein.assign_atoms_symmetrically()
         protein.prune_bad_ambiguities()
         protein.prune_missed_restraints()

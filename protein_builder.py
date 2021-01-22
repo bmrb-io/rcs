@@ -7,6 +7,17 @@ import os
 import os.path
 
 def get_protein(pdb_id, bmrb_id, build_anyway=False):
+    """
+    Generate a Protein object for the input IDs. Build it from BMRB and PDB
+    entries if it hasn't already been built or if build_anyway=True.
+
+    Keyword arguments:
+    pdb_id -- str of the PDB ID for the entry
+    bmrb_id -- str of the BMRB ID for the entry
+    Returns:
+    protein -- Protein object if successful, an exception from build_protein()
+        otherwise
+    """
     filename = os.path.join("proteins", f"{pdb_id}_{bmrb_id}.json")
     if os.path.exists(filename):
         if build_anyway:
@@ -46,12 +57,14 @@ def build_protein(pdb_id, bmrb_id):
 
 
 def dump_protein(protein):
+    """Dump protein to file."""
     dump_dict = protein.dump()
     filename = os.path.join("proteins", f"{protein.pdb_id}_{protein.bmrb_id}.json")
     with open(filename, 'w') as dumpfile:
         json.dump(dump_dict, dumpfile)
 
 def load_protein(pdb_id, bmrb_id):
+    """Load protein from file."""
     filename = os.path.join("proteins", f"{pdb_id}_{bmrb_id}.json")
     with open(filename, 'r') as dumpfile:
         dump_dict = json.load(dumpfile)

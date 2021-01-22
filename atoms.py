@@ -1,4 +1,10 @@
 class Atom:
+    """
+    Contain necessary information about an individual atom.
+
+    Instance variables:
+    
+    """
 
     def __init__(
         self, res_index, res_label, atom_label, cs_sigma
