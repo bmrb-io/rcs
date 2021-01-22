@@ -32,6 +32,7 @@ def get_proteins_dict(entries_dict, build_anyway=False):
     return proteins_dict, exceptions_map
 
 def get_all_entries():
+    """Return a dict of all corresponding PDB and BMRB IDs."""
     url = "http://api.bmrb.io/v2/mappings/bmrb/pdb"
     r = requests.get(url).json()
     entries_dict = {}
