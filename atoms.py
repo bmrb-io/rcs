@@ -24,6 +24,5 @@ class Atom:
         res_label = dump_dict['res_label']
         atom_label = dump_dict['atom_label']
         cs_sigma = dump_dict['cs_sigma']
-        positions_dict = dump_dict['positions_dict']
         atom = cls(res_index, res_label, atom_label, cs_sigma)
         return atom

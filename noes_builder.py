@@ -234,6 +234,7 @@ def add_restraints(protein):
     else:
         protein.restraints_dict = restraints_dict
         protein.assign_atoms_symmetrically()
+        protein.prune_bad_ambiguities()
         protein.prune_missed_restraints()
         if protein.check_restraint_alignment():
             protein.exceptions_map_restraints = exceptions_map_restraints

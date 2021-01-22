@@ -1,7 +1,23 @@
 from k_file_maker import *
 from k_file_reader import *
 from noes_builder import *
-from ids_map import *
+
+import json
+import os
+import os.path
+
+def get_protein(pdb_id, bmrb_id, build_anyway=False):
+    filename = os.path.join("proteins", f"{pdb_id}_{bmrb_id}.json")
+    if os.path.exists(filename):
+        if build_anyway:
+            protein = build_protein(pdb_id, bmrb_id)
+        else:
+            protein = load_protein(pdb_id, bmrb_id)
+    else:
+        protein = build_protein(pdb_id, bmrb_id)
+    if isinstance(protein, Protein):
+        dump_protein(protein)
+    return protein
 
 def build_protein(pdb_id, bmrb_id):
     """
@@ -19,37 +35,25 @@ def build_protein(pdb_id, bmrb_id):
     k_file_path = ring_current_object.calculate_ring_current_effects(
         pdb_id, bmrb_id
     )
+    print("K FILE MADE!")
     protein = make_protein_from_file(k_file_path)
+    print("K FILE READ!")
     if isinstance(protein, Protein):
         protein = add_restraints(protein)
+        print("RESTRAINTS ADDED!")
     return protein
 
 
-def build_all_proteins(map_filename):
-    """
-    Create a Protein object for all viable entries, and return an exception 
-    otherwise. Add successful proteins to proteins_dict and exceptions to
-    exceptions_map.
 
-    Keyword arguments:
-    map_filename -- path to file containing map of bmrb_ids to pdb_ids
-    Returns:
-    proteins_dict -- dict of all successfully created proteins
-    exceptions_map -- dict of reasons for failure to create proteins
+def dump_protein(protein):
+    dump_dict = protein.dump()
+    filename = os.path.join("proteins", f"{protein.pdb_id}_{protein.bmrb_id}.json")
+    with open(filename, 'w') as dumpfile:
+        json.dump(dump_dict, dumpfile)
 
-    """
-    id_map = IDs_map(map_filename)
-    proteins_dict = {}
-    exceptions_map = {}
-    for bmrb_id, pdb_id in id_map.ids_list[:50]:
-        protein = build_protein(pdb_id, bmrb_id)
-        if isinstance(protein, Protein):
-            print("Success!", pdb_id, bmrb_id)
-            if pdb_id not in proteins_dict:
-                proteins_dict[pdb_id] = {}
-            proteins_dict[pdb_id][bmrb_id] = protein
-        else:
-            print("Failure!", protein, pdb_id, bmrb_id)
-            if pdb_id not in exceptions_map:
-                exceptions_map[pdb_id] = {}
-            exceptions_map[pdb_id][bmrb_id] = protein 
+def load_protein(pdb_id, bmrb_id):
+    filename = os.path.join("proteins", f"{pdb_id}_{bmrb_id}.json")
+    with open(filename, 'r') as dumpfile:
+        dump_dict = json.load(dumpfile)
+    protein = Protein.load(dump_dict)
+    return protein
