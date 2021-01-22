@@ -6,6 +6,8 @@ from noe_tiers import *
 
 def make_pairs_dict(restraints_dict):
     pairs_dict = {}
+    if len(restraints_dict) == 0:
+        return "No amide-aromatic restraints."
     for restraint_id in restraints_dict:
         if len(restraints_dict[restraint_id]) == 1:
             tag = 'defi'
