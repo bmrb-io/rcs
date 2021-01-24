@@ -11,6 +11,7 @@ class Protein:
         self.exceptions_map_residues = {}
         self.restraints_dict = {}
         self.exceptions_map_restraints = {}
+        self.pairs_dict = {}
 
     def assign_atoms_symmetrically(self):
         exceptions_map = {}
@@ -94,8 +95,23 @@ class Protein:
                 if res_amide.res_label != atom_amide.res_label:
                     return False
         return True
-            
 
+
+    def make_pairs_dict(self):
+        for restraint_id in self.restraints_dict:
+            if len(self.restraints_dict[restraint_id]) == 1:
+                tag = 'defi'
+            elif len(self.restraints_dict[restraint_id]) > 1:
+                tag = 'ambi'
+            for member_id in self.restraints_dict[restraint_id]:
+                restraint = self.restraints_dict[restraint_id][member_id]
+                atom_amide = restraint.atom_amide
+                atom_aroma = restraint.atom_aroma
+                if atom_amide not in self.pairs_dict:
+                    self.pairs_dict[atom_amide] = {}
+                if atom_aroma.res_index not in self.pairs_dict[atom_amide]:
+                    self.pairs_dict[atom_amide][atom_aroma.res_index] = []
+                self.pairs_dict[atom_amide][atom_aroma.res_index].append([atom_aroma, tag])
 
     def dump(self):
         dump_dict = {}
@@ -115,6 +131,7 @@ class Protein:
                     dump_dict['restraints_dict'][restraint_id][member_id]
                 ) = restraint.dump()
         dump_dict['exceptions_map_restraints'] = self.exceptions_map_restraints
+
         return dump_dict
 
     @classmethod
@@ -145,4 +162,5 @@ class Protein:
         protein.assign_atoms_symmetrically() #this pruning is likely redundant
         protein.prune_bad_ambiguities()
         protein.prune_missed_restraints()
+        pairs_dict = protein.make_pairs_dict()
         return protein

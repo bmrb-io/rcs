@@ -3,27 +3,6 @@ from restraint_pair_classification import *
 from noe_proportions_plotting import *
 from noe_tiers import *
 
-
-def make_pairs_dict(restraints_dict):
-    pairs_dict = {}
-    if len(restraints_dict) == 0:
-        return "No amide-aromatic restraints."
-    for restraint_id in restraints_dict:
-        if len(restraints_dict[restraint_id]) == 1:
-            tag = 'defi'
-        elif len(restraints_dict[restraint_id]) > 1:
-            tag = 'ambi'
-        for member_id in restraints_dict[restraint_id]:
-            restraint = restraints_dict[restraint_id][member_id]
-            atom_amide = restraint.atom_amide
-            atom_aroma = restraint.atom_aroma
-            if atom_amide not in pairs_dict:
-                pairs_dict[atom_amide] = {}
-            if atom_aroma.res_index not in pairs_dict[atom_amide]:
-                pairs_dict[atom_amide][atom_aroma.res_index] = []
-            pairs_dict[atom_amide][atom_aroma.res_index].append((atom_aroma, tag))
-    return pairs_dict
-
 def prune_ambi_undef_pairs(pairs_dict):
     pairs_dict_new = {}
     for atom_amide in pairs_dict:

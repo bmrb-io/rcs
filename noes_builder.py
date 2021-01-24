@@ -241,6 +241,7 @@ def add_restraints(protein):
         protein.prune_missed_restraints()
         if protein.check_restraint_alignment():
             protein.exceptions_map_restraints = exceptions_map_restraints
+            protein.make_pairs_dict()
             return protein
         else:
             return "Misaligned restraint indices"
