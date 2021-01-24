@@ -193,7 +193,22 @@ class Protein:
                     self.pairs_dict[atom_amide] = {}
                 if atom_aroma.res_index not in self.pairs_dict[atom_amide]:
                     self.pairs_dict[atom_amide][atom_aroma.res_index] = []
-                self.pairs_dict[atom_amide][atom_aroma.res_index].append([atom_aroma, tag])
+                self.pairs_dict[atom_amide][atom_aroma.res_index].append(
+                    (atom_aroma, tag)
+                )
+
+    def prune_ambi_undefined_pairs(self):
+        pairs_dict_new = {}
+        for atom_amide in self.pairs_dict:
+            pairs_dict_new[atom_amide] = {}
+            for res_index_aroma in self.pairs_dict[atom_amide]:
+                pairs_dict_new[atom_amide][res_index] = []
+                for atom_aroma, tag in self.pairs_dict[atom_amide][res_index_aroma]:
+                    if tag == 'defi':
+                        pairs_dict_new[atom_amide][res_index_aroma].append(
+                            (atom_aroma, tag)
+                        )
+        self.pairs_dict = pairs_dict_new
 
     def dump(self):
         """

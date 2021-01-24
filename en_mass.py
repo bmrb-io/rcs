@@ -1,4 +1,3 @@
-from ids_map import *
 from protein_builder import *
 from proteins import *
 import requests
@@ -36,16 +35,11 @@ def get_all_entries():
     url = "http://api.bmrb.io/v2/mappings/bmrb/pdb"
     r = requests.get(url).json()
     entries_dict = {}
-    i = 0
     for ids_dict in r:
-        i += 1
-        if i <= 10:
-            bmrb_id = ids_dict['bmrb_id']
-            pdb_ids = ids_dict['pdb_ids']
-            for pdb_id in pdb_ids:
-                if pdb_id not in entries_dict:
-                    entries_dict[pdb_id] = []
-                entries_dict[pdb_id].append(bmrb_id)
-        else:
-            break
+        bmrb_id = ids_dict['bmrb_id']
+        pdb_ids = ids_dict['pdb_ids']
+        for pdb_id in pdb_ids:
+            if pdb_id not in entries_dict:
+                entries_dict[pdb_id] = []
+            entries_dict[pdb_id].append(bmrb_id)
     return entries_dict
