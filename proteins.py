@@ -3,8 +3,52 @@ from restraints import Restraint
 from atoms import Atom
 
 class Protein:
+    """
+    Contain information about a protein entry in BMRB/PDB including 
+    restraints and atoms. Also include methods for pruning bad restraints, etc.
+
+    Instance variables:
+    pdb_id -- the ID of the entry in PDB
+    bmrb_id -- the ID of the entry in BMRB
+    residues_dict -- dict containing Residue objects organized by res_index
+    exceptions_map_residues -- dict of exceptions raised when creating 
+        resiudes in k_file_reader
+    restraints_dict -- dict containing Restraint objects organized by
+        restraint_id and member_id
+    exceptions_map_restraints -- dict of exceptions raised when creating
+        restraints_dict
+    pairs_dict -- dict of amide atoms and the aromatic ring protons to which
+        they have a restraint
+
+    Methods:
+    __init__() -- construct an empty Protein object with only the IDs
+    assign_atoms_symmetrically() -- for every restraint, assign the original 
+        Atoms (with shifts)
+    correlate_atoms() -- find original atoms in a Residue in residues_dict to
+        replace atoms in Restraint
+    prune_bad_ambiguities() -- remove from restraints_dict restraints that 
+        have ambiguities to atoms from different residues
+    prune_missed_restraints() -- go through exceptions_map_restraints and 
+        remove any restraints still in restraints_dict
+    check_restraint_alignment() -- check if the res_labels of atoms in 
+        restraints_dict match those in residues_dict
+    make_pairs_dict() -- make pairs_dict from restraints_dict
+    dump() -- Create a json serializable dict containing all info in the
+        Protein
+    load() -- Reconstruct Protein object from a json serializable dict
+
+
+    """
     
     def __init__ (self, pdb_id, bmrb_id):
+        """
+        Construct the empty Protein object with only the IDs.
+
+        Keyword arguments:
+        pdb_id -- the ID of the entry in PDB
+        bmrb_id -- the ID of the entry in BMRB
+        """
+
         self.pdb_id = pdb_id
         self.bmrb_id = bmrb_id
         self.residues_dict = {}
@@ -14,6 +58,11 @@ class Protein:
         self.pairs_dict = {}
 
     def assign_atoms_symmetrically(self):
+        """
+        For every restraint, assign the original Atoms (with shifts) from 
+        those found in residues_dict. If not found, add an exception to 
+        exceptions_map_restraints.
+        """
         exceptions_map = {}
         for restraint_id in self.restraints_dict:
             for member_id in self.restraints_dict[restraint_id]:
@@ -43,6 +92,19 @@ class Protein:
             del self.restraints_dict[restraint_id]
 
     def correlate_atoms(self, atom):
+        """
+        Find corresponding Atom object in a Residue of residues_dict. If not
+        found, return an exception.
+
+        Keyword arguments:
+        atom -- the Atom object from a Restraint object to be correlated
+        Returns:
+        atom -- Atom object (with shift) from a Residue in residues_dict
+        'No such amide from k-file' -- if the residue was found, but no atom 
+            with that label
+        'No such residue from k-file' -- if the residue was not found in
+            residues_dict
+        """
         if atom.res_index in self.residues_dict:
             residue = self.residues_dict[atom.res_index]
             if atom.atom_label in residue.atoms_dict:
@@ -57,6 +119,10 @@ class Protein:
             return "No such residue from k-file"
 
     def prune_bad_ambiguities(self):
+        """
+        Remove from restraints_dict restraints that have ambiguities to atoms
+        from different residues.
+        """
         to_prune_list = []
         for restraint_id in self.restraints_dict:
             res_index_amide_set = set()
@@ -72,6 +138,10 @@ class Protein:
             del self.restraints_dict[restraint_id]
     
     def prune_missed_restraints(self):
+        """
+        Go through exceptions_map restraints. If any restraints in there are
+        still in restraints_dict, remove.
+        """
         for restraint_id in self.exceptions_map_restraints:
             if restraint_id in self.restraints_dict:
                 for member_id in self.restraints_dict[restraint_id]:
@@ -81,6 +151,14 @@ class Protein:
                 del self.restraints_dict[restraint_id]
     
     def check_restraint_alignment(self):
+        """
+        Check if the res_labels from atoms in Restraint objects of 
+        restraints_dict match those in residues_dict.
+
+        Returns:
+        True -- if the labels match
+        False -- if the labels do not match
+        """
         for restraint_id in self.restraints_dict:
             if restraint_id in self.exceptions_map_restraints:
                 print(self.exceptions_map_restraints[restraint_id])
@@ -98,6 +176,10 @@ class Protein:
 
 
     def make_pairs_dict(self):
+        """
+        Fill self.pairs_dict with amide atoms and the corresponding aromatic
+        ring protons to which they have NOEs.
+        """
         for restraint_id in self.restraints_dict:
             if len(self.restraints_dict[restraint_id]) == 1:
                 tag = 'defi'
@@ -114,6 +196,14 @@ class Protein:
                 self.pairs_dict[atom_amide][atom_aroma.res_index].append([atom_aroma, tag])
 
     def dump(self):
+        """
+        Create a json serializable dump_dict with all relevant info. Exclude 
+        pairs_dict which can be rebuilt quickly from restraints_dict.
+
+        Returns:
+        dump_dict -- dict that can be written to json and read to reconstruct
+            Protein object
+        """
         dump_dict = {}
         dump_dict['pdb_id'] = self.pdb_id
         dump_dict['bmrb_id'] = self.bmrb_id
@@ -136,6 +226,14 @@ class Protein:
 
     @classmethod
     def load(cls, dump_dict):
+        """
+        Reconstruct atom object from a json serializable dump_dict.
+        
+        Keyword arguments:
+        dump_dict -- dict read from json and read to reconstruct Atom object
+        Returns
+        protein -- reconstructed Atom object
+        """
         residues_dict = {}
         restraints_dict = {}
         pdb_id = dump_dict['pdb_id']

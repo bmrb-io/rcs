@@ -236,10 +236,10 @@ def add_restraints(protein):
         protein.restraints_dict = restraints_dict
         if len(restraints_dict) == 0:
             return "No pairs found"
-        protein.assign_atoms_symmetrically()
-        protein.prune_bad_ambiguities()
-        protein.prune_missed_restraints()
-        if protein.check_restraint_alignment():
+        if protein.check_restraint_alignment()
+            protein.assign_atoms_symmetrically()
+            protein.prune_bad_ambiguities()
+            protein.prune_missed_restraints()
             protein.exceptions_map_restraints = exceptions_map_restraints
             protein.make_pairs_dict()
             return protein
