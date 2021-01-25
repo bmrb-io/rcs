@@ -28,6 +28,10 @@ def get_protein(pdb_id, bmrb_id, build_anyway=False):
         protein = build_protein(pdb_id, bmrb_id)
     if isinstance(protein, Protein):
         dump_protein(protein)
+    else:
+        with open(filename, 'w') as dumpfile:
+            json.dump(protein, dumpfile)
+    print(protein)
     return protein
 
 def build_protein(pdb_id, bmrb_id):
@@ -46,12 +50,11 @@ def build_protein(pdb_id, bmrb_id):
     k_file_path = ring_current_object.calculate_ring_current_effects(
         pdb_id, bmrb_id
     )
-    print("K FILE MADE!")
     protein = make_protein_from_file(k_file_path)
-    print("K FILE READ!")
     if isinstance(protein, Protein):
         protein = add_restraints(protein)
-        print("RESTRAINTS ADDED!")
+    else:
+        print(protein)
     return protein
 
 
@@ -68,5 +71,8 @@ def load_protein(pdb_id, bmrb_id):
     filename = os.path.join("proteins", f"{pdb_id}_{bmrb_id}.json")
     with open(filename, 'r') as dumpfile:
         dump_dict = json.load(dumpfile)
-    protein = Protein.load(dump_dict)
-    return protein
+    if isinstance(dump_dict, str):
+        return dump_dict #an exception written to file
+    else:
+        protein = Protein.load(dump_dict)
+        return protein
