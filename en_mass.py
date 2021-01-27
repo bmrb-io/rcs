@@ -79,16 +79,16 @@ def get_proteins_dict_multi(entries_dict):
             child_conn.close()
 
     # Check if entries have completed by listening on the sockets
-    while len(to_process['combined']) > 0: ##WHERE DID THIS COME FROM
+    while len(to_process['combined']) > 0: ##WHERE DID THIS COME FROM #think to_process is entries_dict
         time.sleep(0.001)
         # Poll for processes ready to listen
         for process in processes:
-            if process[0].poll() ##WHAT IS THIS DOING
-                data = process[0].recv()
-                if data:
+            if process[0].poll() # if it has something to say, I think.
+                data = process[0].recv() ## results from above!
+                if data: #if data is not empty
                     if data != "ready":  ##WHEN WOULD THIS HAPPEN
                         add_to_loaded(data) ##WHERE DID THIS COME FROM
-                process[0].send(to_process['combined'].pop()) ##Come back when less sleepy
+                process[0].send(to_process['combined'].pop()) #sends pdb_id and bmrb_id I think
                 break #in case this was the last child, I think
 
     # Reap the children
