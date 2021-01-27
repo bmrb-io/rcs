@@ -204,11 +204,15 @@ dumpfile = 'protein_dump.json' #usually protein_dump.json
 
 outlier_sigma = 2
 proteins_dict, exceptions_map_entries = results_a(dumpfile)
-'''del_list = ['2K8V', '2KEN', '2KH9', '2KMP'] ###REMOVE ONE OF THE DUPLICATE PDB IDs
+del_list = ['2K8V', '2KEN', '2KH9', '2KMP', '1AXH'] ###REMOVE ONE OF THE DUPLICATE PDB IDs
 for pdb_id in del_list:
     bmrb_ids = list(proteins_dict[pdb_id].keys())
     bmrb_id = bmrb_ids[0]
     del proteins_dict[pdb_id][bmrb_id]
+    if len(proteins_dict[pdb_id]) > 1:
+        bmrb_ids = list(proteins_dict[pdb_id].keys())
+        bmrb_id = bmrb_ids[0]
+        del proteins_dict[pdb_id][bmrb_id]
 
 num_duplicates = 0
 for pdb_id in proteins_dict:
@@ -216,19 +220,19 @@ for pdb_id in proteins_dict:
         print("BABA BOOEY", pdb_id)
         num_duplicates += len(proteins_dict[pdb_id])
 print(num_duplicates)
-'''
+
 
 proteins_dict = results_b1(proteins_dict, exceptions_map_entries)
 #make_proportions_plot(proteins_dict, 10, -5.5, 5.5)
 pairs_dict_entries = results_b2(proteins_dict)
-make_res_prop_plot(proteins_dict, pairs_dict_entries, 10, -5.5, 5.5)
+#make_res_prop_plot(proteins_dict, pairs_dict_entries, 10, -5.5, 5.5)
 pairs_dict_entries = results_c(proteins_dict, pairs_dict_entries)
 
 #make_res_bar_plot(pairs_dict_entries, 10, -5.5, 5.5)
 conf_tiers = results_d(pairs_dict_entries, outlier_sigma)
 
 
-'''
+
 for shift_class in conf_tiers:
     print(shift_class + ":")
     for conf in conf_tiers[shift_class]:
@@ -245,4 +249,4 @@ for pdb_id in proteins_dict:
         print("BABA BOOEY", pdb_id)
         num_duplicates += len(proteins_dict[pdb_id])
 print(num_duplicates)
-'''
+
