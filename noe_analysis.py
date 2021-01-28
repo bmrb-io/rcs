@@ -204,6 +204,7 @@ dumpfile = 'protein_dump.json' #usually protein_dump.json
 
 outlier_sigma = 2
 proteins_dict, exceptions_map_entries = results_a(dumpfile)
+'''
 del_list = ['2K8V', '2KEN', '2KH9', '2KMP', '1AXH'] ###REMOVE ONE OF THE DUPLICATE PDB IDs
 for pdb_id in del_list:
     bmrb_ids = list(proteins_dict[pdb_id].keys())
@@ -213,7 +214,7 @@ for pdb_id in del_list:
         bmrb_ids = list(proteins_dict[pdb_id].keys())
         bmrb_id = bmrb_ids[0]
         del proteins_dict[pdb_id][bmrb_id]
-
+'''
 num_duplicates = 0
 for pdb_id in proteins_dict:
     if len(proteins_dict[pdb_id]) > 1:
@@ -250,3 +251,12 @@ for pdb_id in proteins_dict:
         num_duplicates += len(proteins_dict[pdb_id])
 print(num_duplicates)
 
+pairs_info_list = conf_tiers['downfield']['high']['HIS']
+for pair_info in pairs_info_list:
+    pdb_id = pair_info[0]
+    bmrb_id = pair_info[1]
+    atom_amide = pair_info[2]
+    atom_aroma = pair_info[3][0]
+    print(
+        pdb_id, bmrb_id, atom_amide.res_index, atom_amide.res_label, 
+        atom_aroma.res_index, atom_aroma.res_label)
