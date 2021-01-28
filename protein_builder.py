@@ -71,7 +71,8 @@ def load_protein(pdb_id, bmrb_id):
     with open(filename, 'r') as dumpfile:
         dump_dict = json.load(dumpfile)
     if isinstance(dump_dict, str):
-        return dump_dict #an exception written to file
+        exception = dump_dict.replace('\n', '') # have to get rid of newline
+        return exception #an exception written to file
     else:
         protein = Protein.load(dump_dict)
         return protein

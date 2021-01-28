@@ -34,16 +34,13 @@ class RingCurrentEffect(object):
         if not os.path.isdir('./data/BMRB'):
             os.system('mkdir ./data/BMRB')
         cif_file = './data/PDB/{}.cif'.format(pdbid)
-        str_file = './data/BMRB/{}.str'.format(bmrbid)
         if not os.path.isfile(cif_file):
             self.get_pdb(pdbid)
-        if not os.path.isfile(str_file):
-            self.get_bmrb(bmrbid)
         pdb_auth = self.get_coordinates(cif_file, pdbid, use_auth_tag=True) # creates the dictionary using original seq no
         pdb_orig = self.get_coordinates(cif_file, pdbid, use_auth_tag=False) # creates the dictionary using author seq no
         auth_keys = [i for i in pdb_auth[0][1].keys() if i[3]=='H']
         orig_keys = [i for i in pdb_orig[0][1].keys() if i[3]=='H']
-        cs = self.get_chemical_shifts(str_file) # creates the seq using original seq no
+        cs = self.get_chemical_shifts(bmrbid) # creates the seq using original seq no
         cs_keys = [i for i in cs[0].keys() if i[3]=='H']
         key_match_auth = [i for i in cs_keys if i in auth_keys]
         key_match_orig = [i for i in cs_keys if i in orig_keys]
@@ -90,14 +87,19 @@ class RingCurrentEffect(object):
         return numpy.linalg.norm(c1 - c2)
 
     @staticmethod
-    def get_chemical_shifts(str_file):
+    def get_chemical_shifts(bmrbid):
         atoms_cs = {
             'PHE': ['CG','CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ'],
             'TYR': ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HD1', 'HD2', 'HE1', 'HE2', 'HH'],
             'TRP': ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HE3', 'HZ2', 'HZ3', 'HH2', 'HE1'],
             'HIS': ['CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HD1', 'HD2', 'HE1', 'HE2', 'xx', 'yy']  # if needed un comment
         }
-        str_data = pynmrstar.Entry.from_file(str_file)
+        str_file = f'./data/BMRB/{bmrbid}.str'
+        if not os.path.isfile(str_file):
+            str_data = pynmrstar.Entry.from_database(bmrbid)
+            str_data.write_to_file(str_file)
+        else:
+            str_data = pynmrstar.Entry.from_file(str_file)
         csdata = str_data.get_loops_by_category('Atom_chem_shift')
         assembly_data = str_data.get_loops_by_category('Entity_assembly')
         entity = str_data.get_tag('_Entity_assembly.Entity_ID')

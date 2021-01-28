@@ -1,4 +1,4 @@
-from en_mass import *
+from en_masse import *
 from restraint_pair_classification import *
 from noe_proportions_plotting import *
 from noe_tiers import *
@@ -79,7 +79,7 @@ def results_b(proteins_dict):
     for pdb_id in proteins_dict:
         for bmrb_id in proteins_dict[pdb_id]:
             protein = proteins_dict[pdb_id][bmrb_id]
-            protein.prune_ambi_undef_pairs()
+            protein.prune_undefined_pairs()
             pairs_dict = protein.pairs_dict
             for atom_amide in pairs_dict:
                 for res_index_aroma in pairs_dict[atom_amide]:
@@ -125,7 +125,7 @@ def results_c(proteins_dict, outlier_sigma):
     for pdb_id in proteins_dict:
         for bmrb_id in proteins_dict[pdb_id]:
             protein = proteins_dict[pdb_id][bmrb_id]
-            protein.prune_ambi_undef_pairs()
+            protein.prune_undefined_pairs()
             pairs_dict = protein.pairs_dict
             for atom_amide in pairs_dict:
                 for res_index in pairs_dict[atom_amide]:
@@ -143,15 +143,15 @@ def results_c(proteins_dict, outlier_sigma):
                         )
 
 
-    print("D:")
+    print("C:")
     for shift_class in conf_tiers:
         print(f"  {shift_class}:")
         for conf_tier in conf_tiers[shift_class]:
             print(f"    {conf_tier}:")
             for res_label in conf_tiers[shift_class][conf_tier]:
-                num = conf_tiers[shift_class][conf_tier][res_label]
+                atoms_list = conf_tiers[shift_class][conf_tier][res_label]
+                num = len(atoms_list)
                 print(f"      {res_label}:  {num}")
-
 
 def print_result_stages(
     outlier_sigma, build_anyway=False
@@ -167,7 +167,7 @@ def print_result_stages(
         json build file is present in ./proteins
     """
     entries_dict = get_all_entries()
-    proteins_dict, exceptions_map_entries = get_proteins_dict(
+    proteins_dict, exceptions_map_entries = get_proteins_dict_multi(
         entries_dict, build_anyway
     )
     results_a(proteins_dict, exceptions_map_entries)

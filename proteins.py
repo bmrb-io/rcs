@@ -33,6 +33,7 @@ class Protein:
     check_restraint_alignment() -- check if the res_labels of atoms in 
         restraints_dict match those in residues_dict
     make_pairs_dict() -- make pairs_dict from restraints_dict
+    prune_undefined_pairs() -- remove undefined restraints from pairs_dict
     dump() -- Create a json serializable dict containing all info in the
         Protein
     load() -- Reconstruct Protein object from a json serializable dict
@@ -213,7 +214,7 @@ class Protein:
         for atom_amide in self.pairs_dict:
             pairs_dict_new[atom_amide] = {}
             for res_index_aroma in self.pairs_dict[atom_amide]:
-                pairs_dict_new[atom_amide][res_index] = []
+                pairs_dict_new[atom_amide][res_index_aroma] = []
                 for atom_aroma, tag in self.pairs_dict[atom_amide][res_index_aroma]:
                     if tag == 'defi':
                         pairs_dict_new[atom_amide][res_index_aroma].append(

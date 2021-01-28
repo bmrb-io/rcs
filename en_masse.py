@@ -114,7 +114,7 @@ def get_proteins_dict_multi(entries_dict, build_anyway=False):
                     exception = "BMRB entry deprecated."
                     child_conn.send([exception, pdb_id, bmrb_id])
                 except Exception as err:
-                    print(pdb_id, bmrb_id, err)
+                    #print(pdb_id, bmrb_id, err)
                     child_conn.send([err, pdb_id, bmrb_id])
         # We are the parent, don't need the child connection
         else:
@@ -163,15 +163,3 @@ def get_proteins_dict_multi(entries_dict, build_anyway=False):
 
     return proteins_dict, exceptions_map
 
-entries_dict = get_all_entries()
-proteins_dict, exceptions_map = get_proteins_dict_multi(entries_dict)
-reasons_dict = {}
-for pdb_id in exceptions_map:
-    for bmrb_id in exceptions_map[pdb_id]:
-        reason = exceptions_map[pdb_id][bmrb_id]
-        if reason not in reasons_dict:
-            reasons_dict[reason] = 0
-        reasons_dict[reason] += 1
-
-for reason in reasons_dict:
-    print(reason, reasons_dict[reason])
