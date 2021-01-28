@@ -203,7 +203,12 @@ class Protein:
                     (atom_aroma, tag)
                 )
 
-    def prune_ambi_undefined_pairs(self):
+    def prune_undefined_pairs(self):
+        """
+        Removes aromatic-atoms from pairs_dict that were ambiguously
+        restrained to their amide atom (i.e. there were multiple members) for
+        that restraint ID).
+        """
         pairs_dict_new = {}
         for atom_amide in self.pairs_dict:
             pairs_dict_new[atom_amide] = {}

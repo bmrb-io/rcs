@@ -1,6 +1,12 @@
 from protein_builder import *
 from proteins import *
 import requests
+import os
+from multiprocessing import Pipe, cpu_count
+from os import _exit as child_exit
+import time
+import traceback
+
 
 def get_proteins_dict(entries_dict, build_anyway=False):
     """
@@ -45,14 +51,38 @@ def get_all_entries():
     return entries_dict
 
 
-import os
-from multiprocessing import Pipe, cpu_count
-from os import _exit as child_exit
-import time
 
-os.nice(19)
+def make_entries_list(entries_dict):
+    """Break dict of pdb_ids and associated bmrb_ids into list of pairs."""
+    entries_list = []
+    for pdb_id in entries_dict:
+        for bmrb_id in entries_dict[pdb_id]:
+            entries_list.append([pdb_id, bmrb_id])
+    return entries_list
 
-def get_proteins_dict_multi(entries_dict):
+def add_to_proteins_dict(protein, proteins_dict):
+    """Add protein to proteins_dict."""
+    pdb_id = protein.pdb_id
+    bmrb_id = protein.bmrb_id
+    if pdb_id not in proteins_dict:
+        proteins_dict[pdb_id] = {}
+    proteins_dict[pdb_id][bmrb_id] = protein
+    return proteins_dict
+
+def add_to_exceptions_map(exception, pdb_id, bmrb_id, exceptions_map):
+    """Add exception to exceptions_map."""
+    if pdb_id not in exceptions_map:
+        exceptions_map[pdb_id] = {}
+    exceptions_map[pdb_id][bmrb_id] = exception
+    return exceptions_map
+
+def get_proteins_dict_multi(entries_dict, build_anyway=False):
+    """Get proteins_dict using multiprocessing to enhance performance."""
+    os.nice(19) # So that we don't take up too many resources
+    entries_list = make_entries_list(entries_dict)
+    proteins_dict = {}
+    exceptions_map = {}
+
     processes = []
     num_threads = cpu_count()
     for thread in range(0, num_threads):
@@ -62,7 +92,7 @@ def get_proteins_dict_multi(entries_dict):
         processes.append([parent_conn, child_conn])
         new_pid = os.fork()
         # Okay, we are the child
-        if new_pid == 0;
+        if new_pid == 0:
             child_conn.send("ready")
             while True:
                 parent_message = child_conn.recv()
@@ -71,25 +101,47 @@ def get_proteins_dict_multi(entries_dict):
                     parent_conn.close()
                     child_exit(0)
                 # Do work based on parent_message
-                result = get_protein(parent_message[0], parent_message[1])
-                # Tell our parent we are ready for the next job
-                child_conn.send(result)
+                pdb_id = parent_message[0]
+                bmrb_id = parent_message[1]
+                try:
+                    protein = get_protein(pdb_id, bmrb_id, build_anyway)
+                    # Tell our parent we are ready for the next job
+                    child_conn.send([protein, pdb_id, bmrb_id])
+                except KeyError:
+                    exception = "PDB ID not found in RCSB"
+                    child_conn.send([exception, pdb_id, bmrb_id])
+                except AttributeError as err:
+                    exception = "BMRB entry deprecated."
+                    child_conn.send([exception, pdb_id, bmrb_id])
+                except Exception as err:
+                    print(pdb_id, bmrb_id, err)
+                    child_conn.send([err, pdb_id, bmrb_id])
         # We are the parent, don't need the child connection
         else:
             child_conn.close()
 
     # Check if entries have completed by listening on the sockets
-    while len(to_process['combined']) > 0: ##WHERE DID THIS COME FROM #think to_process is entries_dict
+    while len(entries_list) > 0:
         time.sleep(0.001)
         # Poll for processes ready to listen
         for process in processes:
-            if process[0].poll() # if it has something to say, I think.
-                data = process[0].recv() ## results from above!
+            if process[0].poll(): # if it has something to say, I think.
+                data = process[0].recv() # results from above
                 if data: #if data is not empty
-                    if data != "ready":  ##WHEN WOULD THIS HAPPEN
-                        add_to_loaded(data) ##WHERE DID THIS COME FROM
-                process[0].send(to_process['combined'].pop()) #sends pdb_id and bmrb_id I think
-                break #in case this was the last child, I think
+                    if data != "ready":
+                        protein = data[0]
+                        pdb_id = data[1]
+                        bmrb_id = data[2]
+                        if isinstance(protein, Protein):
+                            proteins_dict = add_to_proteins_dict(
+                                protein, proteins_dict
+                            )
+                        else:
+                            exceptions_map = add_to_exceptions_map(
+                                protein, pdb_id, bmrb_id, exceptions_map
+                            )
+                process[0].send(entries_list.pop()) #sends pdb_id and bmrb_id I think
+                break # force to reevaluate len(entries_list)
 
     # Reap the children
     for thread in range(0, num_threads):
@@ -97,10 +149,29 @@ def get_proteins_dict_multi(entries_dict):
         data = processes[thread][0].recv()
         # Tell the child to shut down
         processes[thread][0].send("die")
-        res = os.wait() ##to let everything catch up?
+        res = os.wait() 
         if data:
-            add_to_loaded(data)
+            protein = data[0]
+            pdb_id = data[1]
+            bmrb_id = data[2]
+            if isinstance(protein, Protein):
+                proteins_dict = add_to_proteins_dict(protein, proteins_dict)
+            else:
+                exceptions_map = add_to_exceptions_map(
+                    protein, pdb_id, bmrb_id, exceptions_map
+                )
 
+    return proteins_dict, exceptions_map
 
+entries_dict = get_all_entries()
+proteins_dict, exceptions_map = get_proteins_dict_multi(entries_dict)
+reasons_dict = {}
+for pdb_id in exceptions_map:
+    for bmrb_id in exceptions_map[pdb_id]:
+        reason = exceptions_map[pdb_id][bmrb_id]
+        if reason not in reasons_dict:
+            reasons_dict[reason] = 0
+        reasons_dict[reason] += 1
 
-
+for reason in reasons_dict:
+    print(reason, reasons_dict[reason])

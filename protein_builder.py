@@ -31,7 +31,7 @@ def get_protein(pdb_id, bmrb_id, build_anyway=False):
     else:
         with open(filename, 'w') as dumpfile:
             json.dump(protein, dumpfile)
-    print(protein)
+    #print(pdb_id, bmrb_id, protein)
     return protein
 
 def build_protein(pdb_id, bmrb_id):
@@ -50,14 +50,13 @@ def build_protein(pdb_id, bmrb_id):
     k_file_path = ring_current_object.calculate_ring_current_effects(
         pdb_id, bmrb_id
     )
+    #print('K File Made!')
     protein = make_protein_from_file(k_file_path)
+    #print('K File Read!')
     if isinstance(protein, Protein):
         protein = add_restraints(protein)
-    else:
-        print(protein)
+        #print('Restraints Added!')
     return protein
-
-
 
 def dump_protein(protein):
     """Dump protein to file."""

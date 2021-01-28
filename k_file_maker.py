@@ -202,7 +202,7 @@ class RingCurrentEffect(object):
         return numpy.array(c)
 
     def find_angle(self,p,c,cn):
-        self.find_angle2(p,c,cn)
+        #self.find_angle2(p,c,cn)
         pc = self.get_centroid(p)
         v1=p[1]-pc
         v2=p[2]-pc

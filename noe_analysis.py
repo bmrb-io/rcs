@@ -4,6 +4,22 @@ from noe_proportions_plotting import *
 from noe_tiers import *
 
 def classify_shift(cs_sigma, outlier_sigma):
+    """
+    Classify the chemical shift depending on the number of standard deviations
+    that define an outlier.
+
+    Keyword arguments:
+    cs_sigma -- the Z-score of an atom
+    outlier_sigma -- the number of standard deviations from mean that make an
+        atom's chemical shift an outlier
+    Returns:
+    'upfield' -- if the shift is upfield by more than outlier_sigma standard 
+        deviations
+    'downfield' -- if the shift is downfield by more than outlier_sigma 
+        standard deviations
+    'non_outlier' -- if the shift is within outlier_sigma standard deviations
+        of the mean
+    """
     if cs_sigma <= -1 * outlier_sigma:
         return 'upfield'
     elif cs_sigma >= outlier_sigma:
@@ -12,6 +28,18 @@ def classify_shift(cs_sigma, outlier_sigma):
         return 'non_outlier'
 
 def results_a(proteins_dict, exceptions_map_entries):
+    """
+    The first stage of printing out the results. Prints
+    exceptions_map_entries in more readable format; prints the number of
+    entries that had restraints successfully added; prints the number of
+    amide-aromatic pairs with at least one NOE between them.
+
+    Keyword arguments:
+    proteins_dict -- dict organized by pdb_id and bmrb_id of all succesfully
+        created Protein instances
+    exceptions_map_entries -- dict organized by pdb_id and bmrb_id of all 
+        exceptions raised from failures to add restraints
+    """
     print("A:")
     exceptions_by_reason = {}
     for pdb_id in exceptions_map_entries:
@@ -38,6 +66,13 @@ def results_a(proteins_dict, exceptions_map_entries):
 
 def results_b(proteins_dict):
     """
+    The second stage of printing out the results. Prunes undefined pairs from
+    each protein.pairs_dict. Prints the number of amide-aromatic pairs with at
+    least one defined restraint between them.
+
+    Keyword arguments:
+    proteins_dict -- dict organized by pdb_id and bmrb_id of all successfully
+        created Protein instances
     """
     print("B:")
     num_pairs = 0
@@ -56,7 +91,17 @@ def results_b(proteins_dict):
     )
 
 def results_c(proteins_dict, outlier_sigma):
+    """
+    The third and final stage of printing out the results. Classifies all
+    amide-aromatic pairs with at least one defined restraint using 
+    get_confidence_tier(). Prints out results in readable format.
 
+    Keyword arguments:
+    proteins_dict -- dict organized by pdb_id and bmrb_id of all successfully
+        created Protein instances
+    outlier_sigma -- the number of standard deviations from mean that make an
+        atom's chemical shift an outlier
+    """
     conf_tiers = {
         'upfield': {
             'high': {'HIS': [], 'TRP': [], 'PHE': [], 'TYR': []},
@@ -111,6 +156,16 @@ def results_c(proteins_dict, outlier_sigma):
 def print_result_stages(
     outlier_sigma, build_anyway=False
     ):
+    """
+    Generates dict of all proteins with BMRB and PDB entries, analyzes 
+    restraint data, and prints out major results.
+
+    Keyword arguments:
+    outlier_sigma -- the number of standard deviations from mean that make an
+        atom's chemical shift an outlier
+    build_anyway -- default False; if True, proteins will be built even if a 
+        json build file is present in ./proteins
+    """
     entries_dict = get_all_entries()
     proteins_dict, exceptions_map_entries = get_proteins_dict(
         entries_dict, build_anyway
