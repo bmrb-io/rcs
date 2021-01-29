@@ -115,7 +115,7 @@ class Protein:
                 if atom.atom_label == 'H':
                     return "No such amide from k-file"
                 else:
-                    return "No such aromatic from k-file"
+                    return atom #could be a pseudoatom or 5-membered TRP ring atom
         else:
             return "No such residue from k-file"
 

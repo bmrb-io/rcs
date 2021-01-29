@@ -195,11 +195,13 @@ def print_result_stages(
         for bmrb_id in proteins_dict[pdb_id]:
             protein = proteins_dict[pdb_id][bmrb_id]
             exceptions_map = protein.exceptions_map_restraints
-            for res_index in exceptions_map:
-                reason = exceptions_map[res_index]
+            for restraint_id in exceptions_map:
+                reason = exceptions_map[restraint_id]
                 if reason not in reasons_dict:
                     reasons_dict[reason] = 0
                 reasons_dict[reason] += 1
+                if reason == 'No such aromatic from k-file':
+                    print(pdb_id, bmrb_id, restraint_id)
     print(reasons_dict)
 
 
