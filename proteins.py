@@ -161,8 +161,6 @@ class Protein:
         False -- if the labels do not match
         """
         for restraint_id in self.restraints_dict:
-            if restraint_id in self.exceptions_map_restraints:
-                print(self.exceptions_map_restraints[restraint_id])
             for member_id in self.restraints_dict[restraint_id]:
                 restraint = self.restraints_dict[restraint_id][member_id]
                 atom_aroma = restraint.atom_aroma
@@ -171,14 +169,18 @@ class Protein:
                     if res_aroma.res_label != atom_aroma.res_label:
                         return False
                 else:
-                    return False
+                    self.exceptions_map_residues[atom_aroma.res_index] = (
+                        "Aromatic res_index not found"
+                    )
                 atom_amide = restraint.atom_amide
                 if atom_amide.res_index in self.residues_dict:
                     res_amide = self.residues_dict[atom_amide.res_index]
                     if res_amide.res_label != atom_amide.res_label:
                         return False
                 else:
-                    return False
+                    self.exceptions_map_residues[atom_amide.res_index] = (
+                        "Amide res_index not found"
+                    )
         return True
 
 

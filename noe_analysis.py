@@ -153,6 +153,16 @@ def results_c(proteins_dict, outlier_sigma):
                 num = len(atoms_list)
                 print(f"      {res_label}:  {num}")
 
+    pairs_info_list = conf_tiers['downfield']['high']['HIS']
+    for pair_info in pairs_info_list:
+        pdb_id = pair_info[0]
+        bmrb_id = pair_info[1]
+        atom_amide = pair_info[2]
+        atom_aroma = pair_info[3][0]
+        print(
+            pdb_id, bmrb_id, atom_amide.res_index, atom_amide.res_label, 
+            atom_aroma.res_index, atom_aroma.res_label)
+
 def print_result_stages(
     outlier_sigma, build_anyway=False
     ):
