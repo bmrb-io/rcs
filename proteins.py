@@ -12,7 +12,7 @@ class Protein:
     bmrb_id -- the ID of the entry in BMRB
     residues_dict -- dict containing Residue objects organized by res_index
     exceptions_map_residues -- dict of exceptions raised when creating 
-        resiudes in k_file_reader
+        residues in k_file_reader
     restraints_dict -- dict containing Restraint objects organized by
         restraint_id and member_id
     exceptions_map_restraints -- dict of exceptions raised when creating
@@ -115,7 +115,7 @@ class Protein:
                 if atom.atom_label == 'H':
                     return "No such amide from k-file"
                 else:
-                    return atom
+                    return "No such aromatic from k-file"
         else:
             return "No such residue from k-file"
 

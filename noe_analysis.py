@@ -180,6 +180,29 @@ def print_result_stages(
     proteins_dict, exceptions_map_entries = get_proteins_dict_multi(
         entries_dict, build_anyway
     )
+    reasons_dict = {}
+    for pdb_id in proteins_dict:
+        for bmrb_id in proteins_dict[pdb_id]:
+            protein = proteins_dict[pdb_id][bmrb_id]
+            exceptions_map = protein.exceptions_map_residues
+            for res_index in exceptions_map:
+                reason = exceptions_map[res_index]
+                if reason not in reasons_dict:
+                    reasons_dict[reason] = 0
+                reasons_dict[reason] += 1
+    print(reasons_dict)
+    for pdb_id in proteins_dict:
+        for bmrb_id in proteins_dict[pdb_id]:
+            protein = proteins_dict[pdb_id][bmrb_id]
+            exceptions_map = protein.exceptions_map_restraints
+            for res_index in exceptions_map:
+                reason = exceptions_map[res_index]
+                if reason not in reasons_dict:
+                    reasons_dict[reason] = 0
+                reasons_dict[reason] += 1
+    print(reasons_dict)
+
+
     results_a(proteins_dict, exceptions_map_entries)
     results_b(proteins_dict)
     results_c(proteins_dict, outlier_sigma)
