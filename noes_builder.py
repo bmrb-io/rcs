@@ -42,10 +42,11 @@ def get_star_restraints(pdb_id):
     restraint_loops_list = entry.get_loops_by_category("Gen_dist_constraint")
     if len(restraint_loops_list) == 0:
         return "No restraints in file"
-    if check_noe_loops(entry):
+    loops_check = check_noe_loops(entry)
+    if loops_check == 'All clear':
         return restraint_loops_list
     else:
-        return 'Unexpected restraint loop subtype'
+        return loops_check
 
 def check_noe_loops(entry):
     """
@@ -60,7 +61,7 @@ def check_noe_loops(entry):
     """
     info_loop = entry.get_loops_by_category("Constraint_file")[0]
     info_list = info_loop.get_tag(
-        ["Constraint_type", "Constraint_subtype"]
+        ["Constraint_type", "Constraint_subtype", "Constraint_number"]
     )
     num_noe_loops = 0
     good_subtypes = [
@@ -69,9 +70,11 @@ def check_noe_loops(entry):
     for info in info_list:
         if info[0] == 'distance':
             subtype = info[1]
+            if int(info[2]) > 3500:
+                return "Too many restraints"
             if subtype not in good_subtypes:
-                return False
-    return True
+                return "Unexpected restraint_loop_subtype"
+    return "All clear"
 
 def check_amide(atom_1, atom_2):
     """
@@ -119,6 +122,21 @@ def check_aromatic(atom):
             atom_aroma = atom
     return bool_aroma, atom_aroma
 
+def check_dist(dist_val, dist_lower, dist_upper):
+    if dist_upper == '.':
+        if dist_val == '.':
+            return "Only lower bound reported"
+        else:
+            if float(dist_val) <= 5:
+                return "All clear"
+            else:
+                return "No upper, dist_val too high"
+    else:
+        if float(dist_upper) <= 6:
+            return "All clear"
+        else:
+            return "Upper too high"
+
 def make_restraint(restraint_entry):
     """
     Read line from restraint file and build restraint if it is amide-aromatic.
@@ -149,18 +167,24 @@ def make_restraint(restraint_entry):
     atom_label_2 = restraint_entry[8]
     atom_2 = Atom(res_index_2, res_label_2, atom_label_2, None)
 
+    dist_val = restraint_entry[9]
+    dist_lower = restraint_entry[10]
+    dist_upper = restraint_entry[11]
+
     bool_amide, atom_amide = check_amide(atom_1, atom_2)
     if bool_amide and atom_1.res_index != atom_2.res_index:
         if atom_1 == atom_amide:
             bool_aroma, atom_aroma = check_aromatic(atom_2)
         elif atom_2 == atom_amide:
             bool_aroma, atom_aroma = check_aromatic(atom_1)
-        else:
-            print(bool_amide, atom_amide)
         if bool_aroma:
-            restraint = Restraint(
-                atom_amide, atom_aroma
-            )
+            dist_check = check_dist(dist_val, dist_lower, dist_upper)
+            if dist_check == "All clear":
+                restraint = Restraint(
+                    atom_amide, atom_aroma
+                )
+            else:
+                return dist_check, restraint_id, member_id
         else:
             return "No aromatic ring proton", restraint_id, member_id
     else:

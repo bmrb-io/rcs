@@ -289,5 +289,5 @@ class Protein:
         protein.assign_atoms_symmetrically() #this pruning is likely redundant
         protein.prune_bad_ambiguities()
         protein.prune_missed_restraints()
-        pairs_dict = protein.make_pairs_dict()
+        protein.make_pairs_dict()
         return protein

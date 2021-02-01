@@ -1,19 +1,14 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import plotly.express as px
-import pandas as pd
+import plotly.graph_objects as go
 
 def make_binning_info(num_bins, cs_min, cs_max):
-
     bin_edges = list(np.linspace(cs_min, cs_max, num_bins))
     bin_midpoints = [
         (bin_edges[i] + bin_edges[i+1]) / 2 for i in range(len(bin_edges) - 1)
     ]
-    
     return bin_edges, bin_midpoints
 
 def bin_atoms(atoms_list, bin_edges, bin_midpoints):
-
     cs_list = []
     for atom in atoms_list:
         cs_sigma = float(atom.cs_sigma)
@@ -24,7 +19,6 @@ def bin_atoms(atoms_list, bin_edges, bin_midpoints):
     for bin_ind in inds:
         bin_ind = bin_ind - 1
         binned_list[bin_ind] += 1
-    
     return binned_list
 
 def sort_atoms_by_restraint(protein):
@@ -64,48 +58,50 @@ def make_proportions_plot(proteins_dict, num_bins, cs_min, cs_max):
                 proportions_list[i][1] += num_restraintless
                 proportions_list[i][0] += restraintful_binned_list[i]
 
-    binned_totals = [i[0] for i in proportions_list]
+    binned_totals = [i[0] + i[1] for i in proportions_list]
     proportions_list_new = [i[0] / (i[0] + i[1]) for i in proportions_list]
     proportions_list = proportions_list_new
-    
-    
-    data_dict = {
-        'proportion': [],
-        'z-score': []
-    }
-    
-    for i, prop in enumerate(proportions_list):
-        data_dict['proportion'].append(prop)
-        data_dict['z-score'].append(bin_midpoints[i])
-    print(data_dict)
-    df = pd.DataFrame(data_dict)
-    
-    fig = px.scatter(
-        df, x='z-score', y='proportion',
-        labels={
-            'proportion': 'Proportion',
-            'z-score': "Z(δ)"
-        },
-        title= "Proportion of Amide Hydrogens with NOE Restraint to Aromatic Ring Hydrogen"
+
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            mode='markers+text',
+            x=bin_midpoints,
+            y=proportions_list,
+            marker=dict(
+                color='LightSkyBlue',
+                size=20,
+                line=dict(
+                    color='MediumPurple',
+                    width=2
+                )
+            ),
+            text=[str(i) for i in binned_totals],
+            textposition='top center',
+            textfont_size=16,
+            textfont_family="Courier New, monospace",
+            showlegend=False
+        )
+    )
+    fig.update_layout(
+        title=(
+            'Proportion of Amide Hydrogens with NOE Restraint'
+            + '<br>'
+            + 'to Aromatic Ring Hydrogen'
+        ),
+        title_x=0.5,
+        xaxis_title='Z(δ)',
+        yaxis_title='Proportion',
+        font=dict(family="Courier New, monospace",size=16),
+        yaxis_range=[0,0.78]
     )
     fig.show(renderer="firefox")
-    '''
-    fig, ax = plt.subplots()
-    ax.set_title("Amide-Aromatic NOEs")
-    ax.set_xlabel("Secondary Shift (sigma)")
-    ax.set_ylabel("Proportion of Amides w/ NOE to Aromatic Proton")
-    ax.scatter(bin_midpoints, proportions_list)
-    ax.set_ylim((0, 0.85))
 
-    for i, bm in enumerate(bin_midpoints):
-        ax.annotate(str(binned_totals[i]), xy=(bm, proportions_list[i] + 0.04), fontweight='bold')
-    plt.show()
-    '''
 
 def make_res_prop_plot(
-    proteins_dict, pairs_dict_entries, num_bins, cs_min, cs_max
+    proteins_dict, num_bins, cs_min, cs_max
 ):
-    #first need to make restraintful_dict
     restraintful_dict = {
         'HIS': [],
         'TRP': [],
@@ -121,10 +117,10 @@ def make_res_prop_plot(
     num_quad = 0
     num_quin = 0
     num_pairs = 0
-    for pdb_id in pairs_dict_entries:
-        for bmrb_id in pairs_dict_entries[pdb_id]:
-            pairs_dict = pairs_dict_entries[pdb_id][bmrb_id]
+    for pdb_id in proteins_dict:
+        for bmrb_id in proteins_dict[pdb_id]:
             protein = proteins_dict[pdb_id][bmrb_id]
+            pairs_dict = protein.pairs_dict
             for atom_amide in pairs_dict:
                 restraintful_set.add(atom_amide)
                 if len(pairs_dict[atom_amide]) == 1:
@@ -176,109 +172,33 @@ def make_res_prop_plot(
         totals_list = totals_dict[res_label]
         for i, num in enumerate(totals_list):
             proportions_dict[res_label].append(num / binned_totals[i])
-
-    data_dict = {
-        'proportion': [],
-        'z-score': [],
-        'res_label': []
-    }
-    
+    fig = go.Figure()
     for res_label in proportions_dict:
         proportions_list = proportions_dict[res_label]
-        for i, prop in enumerate(proportions_list):
-            data_dict['proportion'].append(prop)
-            data_dict['z-score'].append(bin_midpoints[i])
-            data_dict['res_label'].append(res_label)
-    df = pd.DataFrame(data_dict)
-    fig = px.scatter(
-        df, x='z-score', y='proportion', color='res_label',
-        labels={
-            'proportion': 'Proportion',
-            'z-score': "Z(δ)"#<sub>s</sub>
-        },
-        title= "Proportion of Amides w/ NOE to Aromatic Ring by Ring Type"
-    )
-    fig.show(renderer="firefox")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def make_res_bar_plot(pairs_dict_entries, num_bins, cs_min, cs_max):
-
-    bin_edges, bin_midpoints = make_binning_info(num_bins, cs_min, cs_max)
-    proportions_list = [[0, 0] for i in bin_midpoints]
-    proportions_dict = {
-        "HIS": [0 for i in bin_midpoints],
-        "TRP": [0 for i in bin_midpoints],
-        "PHE": [0 for i in bin_midpoints],
-        "TYR": [0 for i in bin_midpoints],
-    }
-    for pdb_id in pairs_dict_entries:
-        for bmrb_id in pairs_dict_entries[pdb_id]:
-            pairs_dict = pairs_dict_entries[pdb_id][bmrb_id]
-            atoms_dict = {
-                "HIS": [],
-                "TRP": [],
-                "PHE": [],
-                "TYR": []
-            }
-            for atom_amide in pairs_dict:
-                for res_index in pairs_dict[atom_amide]:
-                    atoms_aroma = pairs_dict[atom_amide][res_index]
-                    if len(atoms_aroma) > 0:
-                        res_label = atoms_aroma[0][0].res_label
-                        atoms_dict[res_label].append(atom_amide)
-
-            for res_label in atoms_dict:
-                atoms_list = atoms_dict[res_label]
-                binned_list = bin_atoms(
-                    atoms_list, bin_edges, bin_midpoints
-                )
-                for i, num_atoms in enumerate(binned_list):
-                    proportions_dict[res_label][i] += num_atoms
-                    #proportions_dict[res_label][i][0] += restraintful_binned_list[i]
-    
-    #binned_totals = [i[0] for i in proportions_list] not bothering
-    totals = [0 for i in bin_midpoints]
-    for res_label in proportions_dict:
-        proportions_list = proportions_dict[res_label]
-        for i, num_atoms in enumerate(proportions_list):
-            totals[i] += num_atoms
-    
-    for res_label in proportions_dict:
-        proportions_list = proportions_dict[res_label]
-        for i, num_atoms in enumerate(proportions_list):
-            proportions_list[i] = num_atoms / totals[i]
-        proportions_dict[res_label] = proportions_list
-    data_dict = {
-        'proportion': [],
-        'z-score': [],
-        'res_label': []
-    }
-    
-    for res_label in proportions_dict:
-        proportions_list = proportions_dict[res_label]
-        for i, prop in enumerate(proportions_list):
-            data_dict['proportion'].append(prop)
-            data_dict['z-score'].append(bin_midpoints[i])
-            data_dict['res_label'].append(res_label)
-    df = pd.DataFrame(data_dict)
-    fig = px.bar(
-        df, x='z-score', y='proportion', color='res_label',
-        labels={
-            'proportion': 'Proportion',
-            'z-score': "Z(δ)"#<sub>s</sub>
-        },
-        title= "Relative Proportions of Restrained Amide-Aromatic Pairs (excluding Ambiguous Restraints)"
+        totals_list = totals_dict[res_label]
+        fig.add_trace(
+            go.Scatter(
+                mode='markers',
+                name=res_label,
+                x=bin_midpoints,
+                y=proportions_list,
+                marker=dict(
+                    size=20,
+                    line=dict(width=2)
+                ),
+                showlegend=True
+            )
+        )
+    fig.update_layout(
+        title=(
+            'Proportion of Amide Hydrogens with NOE Restraint'
+            + '<br>'
+            + 'to Aromatic Ring Hydrogen'
+        ),
+        title_x=0.5,
+        xaxis_title='Z(δ)',
+        yaxis_title='Proportion',
+        font=dict(family="Courier New, monospace",size=16),
+        yaxis_range=[0,0.35]
     )
     fig.show(renderer="firefox")

@@ -281,7 +281,7 @@ class RingCurrentEffect(object):
             fout = './output/{}_{}_NONE.dat'.format(pdbid, bmrbid) #seq mismatch case
         fo = open(fout, 'w')
         if tag_match is None:
-            fo.write('{},{} NO_MATCHING_ATOMS_FOUND\n'.format(pdbid, bmrbid))
+            fo.write('{},{} No matching atoms found'.format(pdbid, bmrbid))
         else:
             pdb = pdb2[0]
             aromatic_atoms = {}
@@ -290,9 +290,9 @@ class RingCurrentEffect(object):
                 for a1 in self.atoms[a[2]]:
                     aromatic_atoms[a].append((a[0], a[1], a[2], a1))
             if len(aromatic) == 0:
-                fo.write('{},{} NO_AROMATIC_RESIDUE_FOUND\n'.format(pdbid, bmrbid)) #Not deposited or DNA/RNA?
+                fo.write('{},{} No aromatic residues found'.format(pdbid, bmrbid)) #Not deposited or DNA/RNA?
             elif len(amide_chemical_shift)==0:
-                fo.write('{},{} NO_AMIDE_SHIFTS_REPORTED\n'.format(pdbid, bmrbid)) #DNA/RNA and other non-polypepdie
+                fo.write('{},{} No amide shifts reported'.format(pdbid, bmrbid)) #DNA/RNA and other non-polypepdie
             else:
                 for a in pdb[1].keys():
                     if a[3] == 'H':

@@ -19,7 +19,10 @@ def make_protein_from_file(filename):
     with open(filename) as infile:
         lines = infile.readlines()
         if len(lines) == 1:
-            return lines[0][10:]
+            exc_str = lines[0]
+            split_index = exc_str.find(' ')
+            exc_str = exc_str[split_index+1:]
+            return lines[0]
         line0 = lines[0].split(',')
         pdb_id = line0[0]
         bmrb_id = line0[1]

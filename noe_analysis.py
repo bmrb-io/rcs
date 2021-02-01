@@ -41,6 +41,13 @@ def results_a(proteins_dict, exceptions_map_entries):
         exceptions raised from failures to add restraints
     """
     print("A:")
+    expected_exceptions = [
+        'No matching atoms found', 'Too many entities/assemblies', 
+        'No restraints in file', 'PDB ID not found in RCSB', 'No pairs found',
+        'No restraint file', 'Too many restraints',
+        'Misaligned restraint indices', 'BMRB entry deprecated.',
+        'No aromatic residues found'
+    ]
     exceptions_by_reason = {}
     for pdb_id in exceptions_map_entries:
         for bmrb_id in exceptions_map_entries[pdb_id]:
@@ -48,6 +55,10 @@ def results_a(proteins_dict, exceptions_map_entries):
             if reason not in exceptions_by_reason:
                 exceptions_by_reason[reason] = 0
             exceptions_by_reason[reason] += 1
+            if reason not in expected_exceptions:
+                print(
+                    f"UNEXPECTED EXCEPTION IN {pdb_id}, {bmrb_id}: {reason}"
+                )
     for reason in exceptions_by_reason:
         num = exceptions_by_reason[reason]
         print("  ", reason, ":", num)
@@ -153,18 +164,8 @@ def results_c(proteins_dict, outlier_sigma):
                 num = len(atoms_list)
                 print(f"      {res_label}:  {num}")
 
-    pairs_info_list = conf_tiers['downfield']['high']['HIS']
-    for pair_info in pairs_info_list:
-        pdb_id = pair_info[0]
-        bmrb_id = pair_info[1]
-        atom_amide = pair_info[2]
-        atom_aroma = pair_info[3][0]
-        print(
-            pdb_id, bmrb_id, atom_amide.res_index, atom_amide.res_label, 
-            atom_aroma.res_index, atom_aroma.res_label)
-
 def print_result_stages(
-    outlier_sigma, build_anyway=False
+    outlier_sigma, build_anyway=False, make_plots=False
     ):
     """
     Generates dict of all proteins with BMRB and PDB entries, analyzes 
@@ -176,34 +177,14 @@ def print_result_stages(
     build_anyway -- default False; if True, proteins will be built even if a 
         json build file is present in ./proteins
     """
+
     entries_dict = get_all_entries()
     proteins_dict, exceptions_map_entries = get_proteins_dict_multi(
         entries_dict, build_anyway
     )
-    reasons_dict = {}
-    for pdb_id in proteins_dict:
-        for bmrb_id in proteins_dict[pdb_id]:
-            protein = proteins_dict[pdb_id][bmrb_id]
-            exceptions_map = protein.exceptions_map_residues
-            for res_index in exceptions_map:
-                reason = exceptions_map[res_index]
-                if reason not in reasons_dict:
-                    reasons_dict[reason] = 0
-                reasons_dict[reason] += 1
-    print(reasons_dict)
-    for pdb_id in proteins_dict:
-        for bmrb_id in proteins_dict[pdb_id]:
-            protein = proteins_dict[pdb_id][bmrb_id]
-            exceptions_map = protein.exceptions_map_restraints
-            for restraint_id in exceptions_map:
-                reason = exceptions_map[restraint_id]
-                if reason not in reasons_dict:
-                    reasons_dict[reason] = 0
-                reasons_dict[reason] += 1
-                if reason == 'No such aromatic from k-file':
-                    print(pdb_id, bmrb_id, restraint_id)
-    print(reasons_dict)
-
+    if make_plots:
+        make_proportions_plot(proteins_dict, 10, -5.5, 5.5)
+        make_res_prop_plot(proteins_dict, 10, -5.5, 5.5)
 
     results_a(proteins_dict, exceptions_map_entries)
     results_b(proteins_dict)
