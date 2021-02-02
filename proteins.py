@@ -37,8 +37,6 @@ class Protein:
     dump() -- Create a json serializable dict containing all info in the
         Protein
     load() -- Reconstruct Protein object from a json serializable dict
-
-
     """
     
     def __init__ (self, pdb_id, bmrb_id):
@@ -52,7 +50,7 @@ class Protein:
 
         self.pdb_id = pdb_id
         self.bmrb_id = bmrb_id
-        self.residues_dict = {}
+        self.residues_dict = {} # start with most of the instance variables empty dicts
         self.exceptions_map_residues = {}
         self.restraints_dict = {}
         self.exceptions_map_restraints = {}
@@ -68,11 +66,14 @@ class Protein:
         for restraint_id in self.restraints_dict:
             for member_id in self.restraints_dict[restraint_id]:
                 restraint = self.restraints_dict[restraint_id][member_id]
+                # try to find the atoms from the restraint in 
+                # self.residues_dict where there should be corresponding 
+                # atoms _with chemical shifts_
                 atom_amide_w_shift = self.correlate_atoms(restraint.atom_amide)
                 atom_aroma_w_shift = self.correlate_atoms(restraint.atom_aroma)
                 if isinstance(atom_amide_w_shift, Atom):
                     restraint.atom_amide = atom_amide_w_shift
-                else:
+                else: #probably there was no shift listed, get rid of this restraint
                     exceptions_map[restraint_id] = (
                         atom_amide_w_shift
                     )
@@ -89,7 +90,7 @@ class Protein:
                         atom_aroma_w_shift
                     )
 
-        for restraint_id in exceptions_map:
+        for restraint_id in exceptions_map: #delete the restraints that didn't work
             del self.restraints_dict[restraint_id]
 
     def correlate_atoms(self, atom):
@@ -128,13 +129,16 @@ class Protein:
         for restraint_id in self.restraints_dict:
             res_index_amide_set = set()
             res_index_aroma_set = set()
-            for member_id in self.restraints_dict[restraint_id]:
+            for member_id in self.restraints_dict[restraint_id]: #go through each ambiguity
                 restraint = self.restraints_dict[restraint_id][member_id]
                 res_index_amide_set.add(restraint.atom_amide.res_index)
                 res_index_aroma_set.add(restraint.atom_aroma.res_index)
             if len(res_index_amide_set) != 1 or len(res_index_aroma_set) != 1:
+                # if the restraint involves more than two res_indices, delete
                 to_prune_list.append(restraint_id)
-                self.exceptions_map_restraints[restraint_id] = "Too many residues"
+                self.exceptions_map_restraints[restraint_id] = (
+                    "Too many residues"
+                )
         for restraint_id in to_prune_list:
             del self.restraints_dict[restraint_id]
     
@@ -193,7 +197,7 @@ class Protein:
             if len(self.restraints_dict[restraint_id]) == 1:
                 tag = 'defi'
             elif len(self.restraints_dict[restraint_id]) > 1:
-                tag = 'ambi'
+                tag = 'ambi' # so that we can ignore these later if need be
             for member_id in self.restraints_dict[restraint_id]:
                 restraint = self.restraints_dict[restraint_id][member_id]
                 atom_amide = restraint.atom_amide
@@ -250,7 +254,7 @@ class Protein:
                     dump_dict['restraints_dict'][restraint_id][member_id]
                 ) = restraint.dump()
         dump_dict['exceptions_map_restraints'] = self.exceptions_map_restraints
-
+        # just rebuild pairs_dict when in load()
         return dump_dict
 
     @classmethod
@@ -289,5 +293,5 @@ class Protein:
         protein.assign_atoms_symmetrically() #this pruning is likely redundant
         protein.prune_bad_ambiguities()
         protein.prune_missed_restraints()
-        protein.make_pairs_dict()
+        protein.make_pairs_dict() #pairs_dict was not written to dump_dict
         return protein

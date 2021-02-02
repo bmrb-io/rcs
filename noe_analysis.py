@@ -1,5 +1,4 @@
 from en_masse import *
-from restraint_pair_classification import *
 from noe_proportions_plotting import *
 from noe_tiers import *
 
@@ -52,14 +51,14 @@ def results_a(proteins_dict, exceptions_map_entries):
     for pdb_id in exceptions_map_entries:
         for bmrb_id in exceptions_map_entries[pdb_id]:
             reason = exceptions_map_entries[pdb_id][bmrb_id]
-            if reason not in exceptions_by_reason:
+            if reason not in exceptions_by_reason: 
                 exceptions_by_reason[reason] = 0
-            exceptions_by_reason[reason] += 1
-            if reason not in expected_exceptions:
+            exceptions_by_reason[reason] += 1 # Add to counter of exceptions with this reason
+            if reason not in expected_exceptions: #if there was an unanticipated exception
                 print(
                     f"UNEXPECTED EXCEPTION IN {pdb_id}, {bmrb_id}: {reason}"
                 )
-    for reason in exceptions_by_reason:
+    for reason in exceptions_by_reason: 
         num = exceptions_by_reason[reason]
         print("  ", reason, ":", num)
     num_entries = 0
@@ -90,12 +89,12 @@ def results_b(proteins_dict):
     for pdb_id in proteins_dict:
         for bmrb_id in proteins_dict[pdb_id]:
             protein = proteins_dict[pdb_id][bmrb_id]
-            protein.prune_undefined_pairs()
+            protein.prune_undefined_pairs() # We don't want ambiguous pairs here. 
             pairs_dict = protein.pairs_dict
             for atom_amide in pairs_dict:
                 for res_index_aroma in pairs_dict[atom_amide]:
                     atoms_aroma = pairs_dict[atom_amide][res_index_aroma]
-                    if len(atoms_aroma) != 0:
+                    if len(atoms_aroma) != 0: # Some will be empty because they only had ambiguous restraints
                         num_pairs += 1
     print(
         "  ", "NUM AMIDE_AROMATIC PAIRS WITH A DEFINED RESTRAINT:    ", num_pairs
@@ -136,7 +135,7 @@ def results_c(proteins_dict, outlier_sigma):
     for pdb_id in proteins_dict:
         for bmrb_id in proteins_dict[pdb_id]:
             protein = proteins_dict[pdb_id][bmrb_id]
-            protein.prune_undefined_pairs()
+            protein.prune_undefined_pairs() # Don't want ambiguous restraints
             pairs_dict = protein.pairs_dict
             for atom_amide in pairs_dict:
                 for res_index in pairs_dict[atom_amide]:
@@ -183,8 +182,8 @@ def print_result_stages(
         entries_dict, build_anyway
     )
     if make_plots:
-        make_proportions_plot(proteins_dict, 10, -5.5, 5.5)
-        make_res_prop_plot(proteins_dict, 10, -5.5, 5.5)
+        make_proportions_plot(proteins_dict, 11, -5.5, 5.5)
+        make_res_prop_plot(proteins_dict, 11, -5.5, 5.5)
 
     results_a(proteins_dict, exceptions_map_entries)
     results_b(proteins_dict)

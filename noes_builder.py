@@ -2,17 +2,18 @@ from atoms import Atom
 from residues import Residue
 from restraints import Restraint
 from proteins import Protein
+from k_file_reader import *
 import os
 import pynmrstar
-from k_file_reader import *
+import requests
 
 def get_file(pdb_id):
     """Get restraint file from RCSB and save locally."""
-    file_name = str(pdb_id).lower() + "_mr.str"
-    url = "https://files.rcsb.org/download/"
-    url += file_name
-    cmd = 'wget ' + url + ' -O ./data/NOE/' + file_name
-    os.system(cmd)
+    filename = f"{pdb_id.lower()}_mr.str"
+    url = f"https://files.rcsb.org/download/{filename}"
+    with open(filename, 'wb') as outfile:
+        r = requests.get(url)
+        outfile.write(r.content)
 
 def get_star_restraints(pdb_id):
     """
@@ -41,7 +42,7 @@ def get_star_restraints(pdb_id):
         return "Bad restraint file"
     restraint_loops_list = entry.get_loops_by_category("Gen_dist_constraint")
     if len(restraint_loops_list) == 0:
-        return "No restraints in file"
+        return "No restraints in file" # Maybe should read 'No distance restraints in file'
     loops_check = check_noe_loops(entry)
     if loops_check == 'All clear':
         return restraint_loops_list
@@ -50,23 +51,25 @@ def get_star_restraints(pdb_id):
 
 def check_noe_loops(entry):
     """
-    Loop through Constraint_file loop in restraint file and check if only
-    expected restraint loop subtypes with type distance are in restraint file.
+    Loop through Constraint_file loop in restraint file and check if: only
+    expected restraint loop subtypes with type distance are in restraint file; 
+    no loops have more than 3500 restraints, which may indicate issues with 
+    the file.
 
     Keyword arguments:
     entry -- a pynmrstar entry
     Returns:
-    True -- if no unexpected subtypes found
-    False -- if any unexpected subtypes found
+    'All clear' -- if no unexpected subtypes found and loops are not too long
+    'Too many restraints' -- if any distance restraint loops are too long
+    'Undexpected restraint_loop_subtype' -- if any unexpected subtypes found
     """
     info_loop = entry.get_loops_by_category("Constraint_file")[0]
     info_list = info_loop.get_tag(
         ["Constraint_type", "Constraint_subtype", "Constraint_number"]
-    )
-    num_noe_loops = 0
+    ) 
     good_subtypes = [
         'NOE', 'general distance', 'hydrogen bond', 'disulfide bond', 'PRE'
-    ]
+    ] # the expected subtypes
     for info in info_list:
         if info[0] == 'distance':
             subtype = info[1]
@@ -123,19 +126,34 @@ def check_aromatic(atom):
     return bool_aroma, atom_aroma
 
 def check_dist(dist_val, dist_lower, dist_upper):
+    """
+    Check that distance values and bounds of restraint are acceptable.
+
+    Keyword arguments:
+    dist_val -- the distance reported for the restraint
+    dist_lower -- the lower bound of the distance
+    dist_upper -- the upper bound of the distance
+    Returns:
+    'Only lower bound reported' -- if dist_val and dist_upper are not included 
+        for the restraint
+    'No upper, dist_val too high' -- if no dist_upper, and dist_val is too high
+    'Upper too high' -- if dist_upper is too high, regardless of others
+    'All clear' -- if dist_upper is not too high or (if dist_upper is not 
+        reported) if dist_val is not too high
+    """
     if dist_upper == '.':
         if dist_val == '.':
-            return "Only lower bound reported"
+            return "Only lower bound reported" # This is indicative that something is wrong
         else:
             if float(dist_val) <= 5:
                 return "All clear"
             else:
-                return "No upper, dist_val too high"
+                return "No upper, dist_val too high" # I have not seen this triggered
     else:
         if float(dist_upper) <= 6:
             return "All clear"
         else:
-            return "Upper too high"
+            return "Upper too high" # Again, indicative that something is wrong, maybe not an NOE
 
 def make_restraint(restraint_entry):
     """
@@ -152,21 +170,21 @@ def make_restraint(restraint_entry):
     restraint_id -- restraint ID as found in restraint file
     member_id -- member ID as found in restraint file
     """
-
+    # info for cataloguing restraints
     restraint_id = restraint_entry[0]
     member_id = restraint_entry[1]
     logic_code = restraint_entry[2]
-
+    # info for the first atom
     res_index_1 = restraint_entry[3]
     res_label_1 = restraint_entry[4]
     atom_label_1 = restraint_entry[5]
     atom_1 = Atom(res_index_1, res_label_1, atom_label_1, None)  
-
+    # info for the second atom
     res_index_2 = restraint_entry[6]
     res_label_2 = restraint_entry[7]
     atom_label_2 = restraint_entry[8]
     atom_2 = Atom(res_index_2, res_label_2, atom_label_2, None)
-
+    #info for check_dist
     dist_val = restraint_entry[9]
     dist_lower = restraint_entry[10]
     dist_upper = restraint_entry[11]
@@ -207,7 +225,7 @@ def make_restraints_dict(pdb_id):
     restraints_dict = {}
     exceptions_map = {}
     restraint_loops_list = get_star_restraints(pdb_id)
-    if not isinstance(restraint_loops_list, list):
+    if not isinstance(restraint_loops_list, list): # exception triggered
         return restraint_loops_list, None
     for i, restraint_loop in enumerate(restraint_loops_list):
         restraints_list = restraint_loop.get_tag(
@@ -226,7 +244,7 @@ def make_restraints_dict(pdb_id):
                 if restraint_id not in restraints_dict:
                     restraints_dict[restraint_id] = {}
                 restraints_dict[restraint_id][member_id] = restraint
-            else:
+            else: # exception triggered
                 exceptions_map[restraint_id] = restraint
             
     
@@ -259,6 +277,7 @@ def add_restraints(protein):
     else:
         protein.restraints_dict = restraints_dict
         if len(restraints_dict) == 0:
+            # successfully built restraints_dict, but no acceptable amide-aromatic restraints
             return "No pairs found"
         if protein.check_restraint_alignment():
             protein.assign_atoms_symmetrically()

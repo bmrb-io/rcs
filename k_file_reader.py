@@ -15,19 +15,18 @@ def make_protein_from_file(filename):
     exceptions_map_entries -- dict of exceptions raised; organized by PDB ID
         and BMRB ID
     '''
-
     with open(filename) as infile:
         lines = infile.readlines()
-        if len(lines) == 1:
+        if len(lines) == 1: # A one-line exception was written to the file
             exc_str = lines[0]
             split_index = exc_str.find(' ')
-            exc_str = exc_str[split_index+1:]
-            return lines[0]
+            exc_str = exc_str[split_index+1:] # Getting rid of superfluous info
+            return exc_str
         line0 = lines[0].split(',')
         pdb_id = line0[0]
         bmrb_id = line0[1]
         protein = Protein(pdb_id, bmrb_id)
-        if line0[6] == '1' and line0[7] == '1':
+        if line0[6] == '1' and line0[7] == '1': # There's only 1 entity/assembly
             for line in lines:
                 line = line.split(',')
                 protein.residues_dict, protein.exceptions_map_residues = (
@@ -38,7 +37,7 @@ def make_protein_from_file(filename):
                 )
 
 
-        else:
+        else: #Return an exception
             return "Too many entities/assemblies"
 
     return protein
@@ -56,13 +55,13 @@ def add_residues(line, residues_dict, exceptions_map):
         residues; organized by residue index
     """
     res_amide, res_aroma_list = make_residues(line)
-    if res_amide.res_index in residues_dict:
+    if res_amide.res_index in residues_dict: # The Residue was already made
         residues_dict[res_amide.res_index].atoms_dict.update(
             res_amide.atoms_dict
         )
-    else:
+    else: # This is the first appearance of the Residue in the k-file
         residues_dict[res_amide.res_index] = res_amide
-    for res_aroma in res_aroma_list:
+    for res_aroma in res_aroma_list: # A line of the k-file includes 5 nearest rings
         if res_aroma.res_index in residues_dict:
             residues_dict[res_aroma.res_index].atoms_dict.update(
                 res_aroma.atoms_dict
@@ -83,7 +82,7 @@ def make_residues(line):
     """
     res_amide = make_res_amide(line)
     res_aroma_list = []
-    for i in range(5):
+    for i in range(5): # A line of the k-file includes 5 nearest rings
         res_aroma = make_res_aroma(line, i)
         if isinstance(res_aroma, Residue):
             res_aroma_list.append(make_res_aroma(line, i))
@@ -124,7 +123,7 @@ def make_res_aroma(line, i):
     ring_data = line[start_index:end_index]
     res_index = ring_data[0]
     res_label = ring_data[1]
-    if res_index == '.':
+    if res_index == '.': # A . gets put in for the last rings in k-file if <5 were found
         return "Not enough rings"
     atoms_list = make_atoms_aroma(ring_data)
     atoms_dict = {}
@@ -148,15 +147,13 @@ def make_atoms_aroma(ring_data):
         "PHE": {20: 'HD1', 22: 'HD2', 24: 'HE1', 26: 'HE2', 28: 'HZ'},
         "TYR": {20: 'HD1', 22: 'HD2', 24: 'HE1', 26: 'HE2', 28: 'HH'},
         "TRP": {20: 'HE3', 22: 'HZ2', 24: 'HZ3', 26: 'HH2', 28: 'HE1'}, 
-        "HIS": {20: 'HD2', 22: 'HE1', 24: 'HE2', 26: 'xx', 28: 'yy'}, #this is messed up, but works for now
-    }
+        "HIS": {20: 'HD2', 22: 'HE1', 24: 'HE2', 26: 'xx', 28: 'yy'},
+    } # xx and yy are pseudoatoms to maintain the formatting in the k-file
     res_index = ring_data[0]
     res_label = ring_data[1]
     atoms_list = []
-    for i in range(5):
+    for i in range(5): # Go through all 5 rings on the line. 
         cs_sigma_index = 20 + (2 * i)
-        #ambi_index = 29 + (2 * i)
-        ##ignoring ambiguity codes for now!
         cs_sigma = ring_data[cs_sigma_index]
         if cs_sigma == '.':
             cs_sigma = None

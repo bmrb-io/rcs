@@ -130,6 +130,19 @@ class RingCurrentEffect(object):
                         csh2[k][d[id4]]=(d[id5],d[id6])
         return csh,csh2,entity_size,assembly_size
 
+    @staticmethod
+    def solid_angle(a_deg,r):
+        s=1.4
+        A=((3.0*numpy.sqrt(3))/2.0)*s*s
+        a=(numpy.pi/180)*a_deg
+        r1=r*1e10
+        sa2=2*numpy.pi*(1.0-1.0/(numpy.sqrt(1+(A*numpy.cos(a)/(numpy.pi*r1**r1)))))
+        sa = 2 * numpy.pi * (1.0 - 1.0 / (numpy.sqrt(1 + ( numpy.cos(a) / (numpy.pi * r ** r)))))
+        #print (a_deg)
+        sa_deg=(180.0/numpy.pi)*sa
+        sa_deg2 = (180.0 / numpy.pi) * sa2
+        #print (a_deg,sa_deg,sa_deg2)
+        return sa_deg
 
 
     @staticmethod
@@ -175,10 +188,9 @@ class RingCurrentEffect(object):
                 entity_id, asym_id, comp_id, seq_id, aut_seq_id, alt_id,
                 icode_id, aut_asym_id
             )
-            val_pdb = (posn)
+            val_pdb = posn
             atom_ids[model_id][key] = val_atom
             pdb_models[model_id][key] = val_pdb
-
         return pdb_models, atom_ids
 
     @staticmethod
@@ -203,8 +215,7 @@ class RingCurrentEffect(object):
         c = [sum(x)/len(p),sum(y)/len(p),sum(z)/len(p)]
         return numpy.array(c)
 
-    def find_angle(self,p,c,cn):
-        #self.find_angle2(p,c,cn)
+    def find_angle(self,p,c,cn,d):
         pc = self.get_centroid(p)
         v1=p[1]-pc
         v2=p[2]-pc
@@ -221,33 +232,8 @@ class RingCurrentEffect(object):
         ang2 = numpy.arccos(dp2)
         ang_deg = (180/numpy.pi)*ang
         ang_deg2 = (180 / numpy.pi) * ang2
-        return ang_deg,ang_deg2
-
-    def find_angle2(self,p,c,cn):
-        ang_deg=[]
-        ang_deg2=[]
-        pc = self.get_centroid(p)
-        for i in range(len(p)):
-            for j in range(len(p)):
-                if i!=j:
-                    v1=pc-p[i]
-                    v2=p[j]-p[i]
-                    nv=numpy.cross(v1,v2)
-                    nv2 = numpy.cross(v2,v1)
-                    cv=c-p[i]
-                    cv2=c-cn
-                    nnv=nv/numpy.linalg.norm(nv)
-                    ncv=cv/numpy.linalg.norm(cv)
-
-                    ncv2 = cv2 / numpy.linalg.norm(cv2)
-                    dp = abs(numpy.dot(nnv,ncv))
-                    dp2 = abs(numpy.dot(nnv, ncv2))
-                    ang = numpy.arccos(dp)
-                    ang2 = numpy.arccos(dp2)
-                    ang_deg.append((180/numpy.pi)*ang)
-                    ang_deg2.append((180 / numpy.pi) * ang2)
-
-        return ang_deg,ang_deg2
+        s_ang=self.solid_angle(ang_deg,d*1e-10)
+        return ang_deg,s_ang
 
     def find_mean_distance(self,ph,pc):
         d = []
@@ -255,15 +241,12 @@ class RingCurrentEffect(object):
             d.append(numpy.linalg.norm(ph - d1))
         return mean(d), numpy.std(d)
 
-
     def find_aromatic_residues(self,pdb):
         rl = []
         for a in pdb[1].keys():
             if a[2] in ['PHE','TRP','TYR','HIS']:
                 rl.append((a[0],a[1],a[2]))
         return list(set(rl))
-
-
 
     def find_amide_ring_distance(self,pdb2,aromatic,cs2,pdbid,bmrbid,tag_match):
         atoms_cs = {
@@ -319,7 +302,7 @@ class RingCurrentEffect(object):
                                 sd.append(std_d)
                                 cd.append(d)
                                 an=(a[0],a[1],a[2],'N')
-                                angles = self.find_angle(p, pdb[m][a],pdb[m][an])
+                                angles = self.find_angle(p, pdb[m][a],pdb[m][an],d)
                                 ang.append(angles[0])
                                 ang2.append(angles[1])
                             ar_info.append([round(numpy.mean(cd),3),
@@ -359,7 +342,6 @@ class RingCurrentEffect(object):
                                     odat='.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.'
                                 outdat='{},{}'.format(outdat,odat)
                             outdat='{}\n'.format(outdat)
-
                             fo.write(outdat)
         fo.close()
         return fout

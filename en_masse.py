@@ -10,15 +10,16 @@ import traceback
 
 def get_proteins_dict(entries_dict, build_anyway=False):
     """
-    Create a Protein object for all viable entries, and return an exception 
+    Create a Protein instance for all viable entries, and return an exception 
     otherwise. Add successful proteins to proteins_dict and exceptions to
     exceptions_map.
 
     Keyword arguments:
     map_filename -- path to file containing map of bmrb_ids to pdb_ids
     Returns:
-    proteins_dict -- dict of all successfully created proteins
-    exceptions_map -- dict of reasons for failure to create proteins
+    proteins_dict -- dict organized by PDB and BMRB ID of all Protein
+        instances
+    exceptions_map -- dict organized by PDB and BMRB IDof all exceptions
     """
     proteins_dict = {}
     exceptions_map = {}
@@ -26,14 +27,14 @@ def get_proteins_dict(entries_dict, build_anyway=False):
         for bmrb_id in entries_dict[pdb_id]:
             print(pdb_id)
             protein = get_protein(pdb_id, bmrb_id, build_anyway)
-            if isinstance(protein, Protein):
+            if isinstance(protein, Protein): # We have a successful Protein
                 if pdb_id not in proteins_dict:
                     proteins_dict[pdb_id] = {}
-                proteins_dict[pdb_id][bmrb_id] = protein
-            else:
+                proteins_dict[pdb_id][bmrb_id] = protein # Add to dict
+            else: # We have an exception instead of a Protein
                 if pdb_id not in exceptions_map:
                     exceptions_map[pdb_id] = {}
-                exceptions_map[pdb_id][bmrb_id] = protein
+                exceptions_map[pdb_id][bmrb_id] = protein # Add to dict
     return proteins_dict, exceptions_map
 
 def get_all_entries():
