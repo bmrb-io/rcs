@@ -54,6 +54,7 @@ class Protein:
         self.exceptions_map_residues = {}
         self.restraints_dict = {}
         self.exceptions_map_restraints = {}
+        self.pair_geometries = {}
         self.pairs_dict = {}
 
     def assign_atoms_symmetrically(self):
@@ -187,6 +188,37 @@ class Protein:
                     )
         return True
 
+    def check_pair_geometries(self, cutoff=8):
+        """
+        Check if the mean distance (in PDB file) between any restrained 
+        amide-aromatic pairs is greater than the cutoff. If not, it will be 
+        disregarded in noes_builder.
+
+        Keyword arguments:
+        cutoff -- (optional, default=8) the maximum allowed distance between
+            a restrained pair
+        Returns:
+        geom_bool -- True if all pairs are within cutoff distance, False
+            otherwise
+        """
+        geom_bool = True
+        for atom_amide in self.pairs_dict:
+            geometries_amide = self.pair_geometies[atom_amide.res_index]
+            for res_index_aroma in self.pairs_dict[atom_amide]:
+                atoms_aroma = self.pairs_dict[atom_amide][res_index_aroma]
+                labels_aroma = [atom[0].atom_label for atom in atoms_aroma]
+                for atom_label in labels_aroma:
+                    if ( #otherwise, likely a pseudoatom or in 5-member TRP ring
+                        atom_label in 
+                        geometries_amide[res_index_aroma][atom_label]
+                    ):
+                        pair_dist = (
+                            self.geometries_amide[res_index_aroma][atom_label]
+                        )
+                        if pair_dist > cutoff:
+                            print("OH SH")
+                            geom_bool = False
+        return geom_bool
 
     def make_pairs_dict(self):
         """
@@ -254,6 +286,7 @@ class Protein:
                     dump_dict['restraints_dict'][restraint_id][member_id]
                 ) = restraint.dump()
         dump_dict['exceptions_map_restraints'] = self.exceptions_map_restraints
+        dump_dict['pair_geometries'] = self.pair_geometries
         # just rebuild pairs_dict when in load()
         return dump_dict
 
@@ -283,6 +316,7 @@ class Protein:
                 )
                 restraints_dict[restraint_id][member_id] = restraint
         exceptions_map_restraints = dump_dict['exceptions_map_restraints']
+        pair_geometries = dump_dict['pair_geometries']
         
         
         protein = cls(pdb_id, bmrb_id)
@@ -290,6 +324,7 @@ class Protein:
         protein.exceptions_map_residues = exceptions_map_residues
         protein.restraints_dict = restraints_dict
         protein.exceptions_map_restraints = exceptions_map_restraints
+        protein.pair_geometries = pair_geometries
         protein.assign_atoms_symmetrically() #this pruning is likely redundant
         protein.prune_bad_ambiguities()
         protein.prune_missed_restraints()

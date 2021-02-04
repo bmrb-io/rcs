@@ -280,12 +280,15 @@ def add_restraints(protein):
             # successfully built restraints_dict, but no acceptable amide-aromatic restraints
             return "No pairs found"
         if protein.check_restraint_alignment():
-            protein.assign_atoms_symmetrically()
-            protein.prune_bad_ambiguities()
-            protein.prune_missed_restraints()
-            protein.exceptions_map_restraints = exceptions_map_restraints
-            protein.make_pairs_dict()
-            return protein
+            if protein.check_pair_geometries():
+                protein.assign_atoms_symmetrically()
+                protein.prune_bad_ambiguities()
+                protein.prune_missed_restraints()
+                protein.exceptions_map_restraints = exceptions_map_restraints
+                protein.make_pairs_dict()
+                return protein
+            else:
+                return "Unacceptable distances between restrained pairs"
         else:
             return "Misaligned restraint indices"
 

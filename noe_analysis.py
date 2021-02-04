@@ -45,7 +45,8 @@ def results_a(proteins_dict, exceptions_map_entries):
         'No restraints in file', 'PDB ID not found in RCSB', 'No pairs found',
         'No restraint file', 'Too many restraints',
         'Misaligned restraint indices', 'BMRB entry deprecated.',
-        'No aromatic residues found'
+        'No aromatic residues found', 
+        'Unacceptable distances between restrained pairs',
     ]
     exceptions_by_reason = {}
     for pdb_id in exceptions_map_entries:

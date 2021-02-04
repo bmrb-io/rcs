@@ -35,12 +35,49 @@ def make_protein_from_file(filename):
                         protein.exceptions_map_residues
                     )
                 )
-
-
+                protein.pair_geometries = add_pair_geometries(
+                    line, protein.pair_geometries)
         else: #Return an exception
             return "Too many entities/assemblies"
 
     return protein
+
+def add_pair_geometries(line, pair_geometries):
+    """
+    Add distances between the amide and the aromatic ring protons listed on 
+    a line of the k-file to the pair_geometries.
+
+    Keyword arguments:
+    line -- list of the data values on a line of the k-file
+    pair_geometries -- dict organized by res_index of amide and aromatic, then
+        atom_label of aromatic ring proton; values are distance between atoms
+    Returns:
+    pair_geometries -- with the distance values for 5 nearest aromatic rings
+        and their protons to the amide proton on the line
+    """
+    atom_labels_in_file = {
+        "PHE": ['HD1', 'HD2', 'HE1', 'HE2', 'HZ'],
+        "TYR": ['HD1', 'HD2', 'HE1', 'HE2', 'HH'],
+        "TRP": ['HE3', 'HZ2', 'HZ3', 'HH2', 'HE1'],
+        "HIS": ['HD2', 'HE1', 'HE2', 'xx', 'yy']
+    } #order of the atoms in the file
+    num = 52
+    res_index_amide = line[2]
+    amide_geometries = {} # pair geometries for the amide on this line
+    for i in range(5):
+        start_index = 8 + num * i #to begin with the first ring proton 
+        res_index_aroma = line[start_index]
+        if res_index_aroma == ".":
+            break
+        amide_geometries[res_index_aroma] = {}
+        res_label_aroma = line[start_index+1]
+        for j in range(5):
+            dist_index = start_index + 34 + j * 4 #move to next proton's distance value
+            dist = float(line[dist_index])
+            atom_label_aroma = atom_labels_in_file[res_label_aroma][j]
+            amide_geometries[res_index_aroma][atom_label_aroma] = dist
+    pair_geometries[res_index_amide] = amide_geometries
+    return pair_geometries
 
 def add_residues(line, residues_dict, exceptions_map):
     """
@@ -117,7 +154,7 @@ def make_res_aroma(line, i):
     'Not enough rings' -- if data for this ring is empty
     res -- Residue object
     """
-    num = 30 #the periodicity of aromatics in file
+    num = 52 #the periodicity of aromatics in file
     start_index = 8 + num * i
     end_index = 8 + num + num * i
     ring_data = line[start_index:end_index]
@@ -140,7 +177,7 @@ def make_atoms_aroma(ring_data):
     Keyword arguments:
     ring_data -- a slice of a line from the data file corresponding to the 
         particular ring
-    Returns
+    Returns:
     atoms_list -- list of Atom objects for all aromatic ring protons
     """
     atoms_file_dict = {

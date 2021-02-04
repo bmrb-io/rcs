@@ -17,9 +17,45 @@ class RingCurrentEffect(object):
         'HIS': ['CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HD1', 'HD2', 'HE1', 'HE2', 'xx', 'yy']  # if needed un comment
     }
 
-
     def __init__(self,pdbid,bmrbid):
         pass
+
+    def cal_mean_distance(self,pdb,atm1,atm2):
+        d=[]
+        for m in pdb.keys():
+            try:
+                d.append(self.get_distance(pdb[m][atm1],pdb[m][atm2]))
+            except KeyError:
+                d.append(0.0)
+        return len(d),numpy.mean(d),numpy.std(d)
+
+    def cal_prop(self,bmrbid):
+        print ('Calculating aromatic ring and amide proton interaction in {} {}'.format(pdbid, bmrbid))
+        if not os.path.isdir('./data'):
+            os.system('mkdir ./data')
+        if not os.path.isdir('./data/BMRB'):
+            os.system('mkdir ./data/BMRB')
+        cif_file = './data/PDB/{}.cif'.format(pdbid)
+        str_file = './data/BMRB/{}.str'.format(bmrbid)
+        if not os.path.isfile(cif_file):
+            self.get_pdb(pdbid)
+        if not os.path.isfile(str_file):
+            self.get_bmrb(bmrbid)
+        n,sq,x=self.get_seq(str_file)
+        if not os.path.isdir('./output'):
+            os.system('mkdir ./output')
+        fout = './output/{}_{}.sq'.format(pdbid, bmrbid)
+        fo = open(fout, 'w')
+        fo.write("{},{},{},{},{},{},{},{},{}\n".format(bmrbid,pdbid,x[0],x[1],x[2],x[3],sum(x),n,",".join(sq)))
+        fo.close()
+
+    def get_seq(self,str_file):
+        str_data = pynmrstar.Entry.from_file(str_file)
+        sq_dat = str_data.get_tag('_Entity_comp_index.Comp_ID')
+        sqq_dat = str_data.get_tag('_Entity.Polymer_type')
+        n=len(sq_dat)
+
+        return n,sqq_dat,[sq_dat.count('HIS'),sq_dat.count('TYR'),sq_dat.count('PHE'),sq_dat.count('TRP')]
 
     def calculate_ring_current_effects(self,pdbid,bmrbid):
         '''
@@ -330,16 +366,19 @@ class RingCurrentEffect(object):
                                     close_atom_cs2 = []
                                     close_atom2=arr_info[kk][-1]
                                     for atm in atoms_cs[close_atom2[2]]:
+                                        d_info=self.cal_mean_distance(pdb, a, (arr_info[kk][-1][0],arr_info[kk][-1][1],arr_info[kk][-1][2],atm))
                                         try:
                                             close_atom_cs2.append(aromatic_chemical_shift[close_atom2][atm][0])
                                             close_atom_cs2.append(aromatic_chemical_shift[close_atom2][atm][1])
                                         except KeyError:
                                             close_atom_cs2.append(".")
                                             close_atom_cs2.append(".")
+                                        close_atom_cs2.append('{}'.format(round(d_info[1],3)))
+                                        close_atom_cs2.append('{}'.format(round(d_info[2], 3)))
                                     close_atom_cs_all2 = ",".join(close_atom_cs2)
                                     odat='{},{}'.format(odat,close_atom_cs_all2)
                                 except IndexError:
-                                    odat='.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.'
+                                    odat='.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.'
                                 outdat='{},{}'.format(outdat,odat)
                             outdat='{}\n'.format(outdat)
                             fo.write(outdat)
@@ -353,14 +392,3 @@ class RingCurrentEffect(object):
     @staticmethod
     def get_bmrb(bmrb_id):
         cmd = 'wget http://rest.bmrb.io/bmrb/{}/nmr-star3 -O ./data/BMRB/{}.str'.format(bmrb_id,bmrb_id)
-        os.system(cmd)
-
-
-'''
-if __name__ == "__main__":
-    bmrbid = sys.argv[1]
-    pdbid = sys.argv[2]
-    # bmrbid = '11086'
-    # pdbid = '1WYO'
-    p=RingCurrentEffect(pdbid,bmrbid)
-'''
