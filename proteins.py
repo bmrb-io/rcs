@@ -203,20 +203,19 @@ class Protein:
         """
         geom_bool = True
         for atom_amide in self.pairs_dict:
-            geometries_amide = self.pair_geometies[atom_amide.res_index]
+            geometries_amide = self.pair_geometries[atom_amide.res_index]
             for res_index_aroma in self.pairs_dict[atom_amide]:
                 atoms_aroma = self.pairs_dict[atom_amide][res_index_aroma]
                 labels_aroma = [atom[0].atom_label for atom in atoms_aroma]
                 for atom_label in labels_aroma:
                     if ( #otherwise, likely a pseudoatom or in 5-member TRP ring
                         atom_label in 
-                        geometries_amide[res_index_aroma][atom_label]
+                        geometries_amide[res_index_aroma]
                     ):
                         pair_dist = (
-                            self.geometries_amide[res_index_aroma][atom_label]
+                            geometries_amide[res_index_aroma][atom_label]
                         )
                         if pair_dist > cutoff:
-                            print("OH SH")
                             geom_bool = False
         return geom_bool
 
@@ -330,3 +329,5 @@ class Protein:
         protein.prune_missed_restraints()
         protein.make_pairs_dict() #pairs_dict was not written to dump_dict
         return protein
+
+

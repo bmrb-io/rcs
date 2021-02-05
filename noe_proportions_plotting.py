@@ -167,11 +167,6 @@ def make_res_prop_plot(
 
     restraintful_set = set()
     restraintless_set = set()
-    num_double = 0
-    num_triple = 0
-    num_quad = 0
-    num_quin = 0
-    num_pairs = 0
     for pdb_id in proteins_dict:
         for bmrb_id in proteins_dict[pdb_id]:
             protein = proteins_dict[pdb_id][bmrb_id]
@@ -180,14 +175,12 @@ def make_res_prop_plot(
                 restraintful_set.add(atom_amide)
                 if len(pairs_dict[atom_amide]) == 1:
                     for res_index in pairs_dict[atom_amide]: 
-                        num_pairs += 1
                         atoms_aroma = pairs_dict[atom_amide][res_index]
                         res_label = atoms_aroma[0][0].res_label # The res_label to assign the amide
                         restraintful_dict[res_label].append(atom_amide)
                 else: # The amide has restraints to ring protons from more than one residue
                     restraintful_dict['Multiple'].append(atom_amide)
                     for res_index in pairs_dict[atom_amide]:
-                        num_pairs += 1
                         atoms_aroma = pairs_dict[atom_amide][res_index]
                         res_label = atoms_aroma[0][0].res_label
         
@@ -197,9 +190,6 @@ def make_res_prop_plot(
                     atom_amide = residue.atoms_dict['H']
                     if atom_amide not in restraintful_set:
                         restraintless_set.add(atom_amide)
-                else:
-                    print("Fuck, that's not supposed to happen.")
-
 
     bin_edges, bin_midpoints = make_binning_info(num_bins, cs_min, cs_max)
     totals_dict = {

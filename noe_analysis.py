@@ -47,6 +47,7 @@ def results_a(proteins_dict, exceptions_map_entries):
         'Misaligned restraint indices', 'BMRB entry deprecated.',
         'No aromatic residues found', 
         'Unacceptable distances between restrained pairs',
+        'No restraint file or maybe bad restraint file!',
     ]
     exceptions_by_reason = {}
     for pdb_id in exceptions_map_entries:
@@ -59,6 +60,8 @@ def results_a(proteins_dict, exceptions_map_entries):
                 print(
                     f"UNEXPECTED EXCEPTION IN {pdb_id}, {bmrb_id}: {reason}"
                 )
+            if reason == 'No restraint file':
+                print(pdb_id, bmrb_id, "is super weird")
     for reason in exceptions_by_reason: 
         num = exceptions_by_reason[reason]
         print("  ", reason, ":", num)

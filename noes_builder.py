@@ -10,8 +10,9 @@ import requests
 def get_file(pdb_id):
     """Get restraint file from RCSB and save locally."""
     filename = f"{pdb_id.lower()}_mr.str"
+    filepath = os.path.join('data', 'NOE', filename)
     url = f"https://files.rcsb.org/download/{filename}"
-    with open(filename, 'wb') as outfile:
+    with open(filepath, 'wb') as outfile:
         r = requests.get(url)
         outfile.write(r.content)
 
@@ -37,9 +38,9 @@ def get_star_restraints(pdb_id):
     try:
         entry = pynmrstar.Entry.from_file(filepath)
     except AttributeError:
-        return "No restraint file"
-    except ValueError:
         return "Bad restraint file"
+    except pynmrstar.exceptions.ParsingError:
+        return "No restraint file"
     restraint_loops_list = entry.get_loops_by_category("Gen_dist_constraint")
     if len(restraint_loops_list) == 0:
         return "No restraints in file" # Maybe should read 'No distance restraints in file'
@@ -280,12 +281,12 @@ def add_restraints(protein):
             # successfully built restraints_dict, but no acceptable amide-aromatic restraints
             return "No pairs found"
         if protein.check_restraint_alignment():
+            protein.assign_atoms_symmetrically()
+            protein.prune_bad_ambiguities()
+            protein.prune_missed_restraints()
+            protein.exceptions_map_restraints = exceptions_map_restraints
+            protein.make_pairs_dict()
             if protein.check_pair_geometries():
-                protein.assign_atoms_symmetrically()
-                protein.prune_bad_ambiguities()
-                protein.prune_missed_restraints()
-                protein.exceptions_map_restraints = exceptions_map_restraints
-                protein.make_pairs_dict()
                 return protein
             else:
                 return "Unacceptable distances between restrained pairs"

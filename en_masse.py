@@ -86,6 +86,9 @@ def get_proteins_dict_multi(entries_dict, build_anyway=False):
 
     processes = []
     num_threads = cpu_count()
+
+    process_jobs_list = [None for _ in range(0,num_threads)]
+
     for thread in range(0, num_threads):
         # Set up the pipes
         parent_conn, child_conn = Pipe()
@@ -125,9 +128,19 @@ def get_proteins_dict_multi(entries_dict, build_anyway=False):
     while len(entries_list) > 0:
         time.sleep(0.001)
         # Poll for processes ready to listen
-        for process in processes:
+        for i, process in enumerate(processes):
             if process[0].poll(): # if it has something to say, I think.
-                data = process[0].recv() # results from above
+
+                try:
+                    data = process[0].recv() # results from above
+                except TypeError:
+                    for i in range(5):
+                        print("\n")
+                    print("WHOSE MANS IS THIS??")
+                    print(process_jobs_list[i])
+                    for i in range(5):
+                        print("\n")
+
                 if data: #if data is not empty
                     if data != "ready":
                         protein = data[0]
@@ -141,7 +154,9 @@ def get_proteins_dict_multi(entries_dict, build_anyway=False):
                             exceptions_map = add_to_exceptions_map(
                                 protein, pdb_id, bmrb_id, exceptions_map
                             )
-                process[0].send(entries_list.pop()) #sends pdb_id and bmrb_id I think
+                ids = entries_list.pop()
+                process_jobs_list[i] = ids
+                process[0].send(ids) #sends pdb_id and bmrb_id I think
                 break # force to reevaluate len(entries_list)
 
     # Reap the children
