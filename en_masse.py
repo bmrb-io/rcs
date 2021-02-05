@@ -39,7 +39,7 @@ def get_proteins_dict(entries_dict, build_anyway=False):
 
 def get_all_entries():
     """Return a dict of all corresponding PDB and BMRB IDs."""
-    url = "http://api.bmrb.io/v2/mappings/bmrb/pdb"
+    url = "http://api.bmrb.io/v2/mappings/bmrb/pdb?match_type=exact"
     r = requests.get(url).json()
     entries_dict = {}
     for ids_dict in r:
@@ -87,7 +87,6 @@ def get_proteins_dict_multi(entries_dict, build_anyway=False):
     processes = []
     num_threads = cpu_count()
 
-    process_jobs_list = [None for _ in range(0,num_threads)]
 
     for thread in range(0, num_threads):
         # Set up the pipes
@@ -130,17 +129,7 @@ def get_proteins_dict_multi(entries_dict, build_anyway=False):
         # Poll for processes ready to listen
         for i, process in enumerate(processes):
             if process[0].poll(): # if it has something to say, I think.
-
-                try:
-                    data = process[0].recv() # results from above
-                except TypeError:
-                    for i in range(5):
-                        print("\n")
-                    print("WHOSE MANS IS THIS??")
-                    print(process_jobs_list[i])
-                    for i in range(5):
-                        print("\n")
-
+                data = process[0].recv() # results from above
                 if data: #if data is not empty
                     if data != "ready":
                         protein = data[0]

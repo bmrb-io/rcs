@@ -60,8 +60,6 @@ def results_a(proteins_dict, exceptions_map_entries):
                 print(
                     f"UNEXPECTED EXCEPTION IN {pdb_id}, {bmrb_id}: {reason}"
                 )
-            if reason == 'No restraint file':
-                print(pdb_id, bmrb_id, "is super weird")
     for reason in exceptions_by_reason: 
         num = exceptions_by_reason[reason]
         print("  ", reason, ":", num)
