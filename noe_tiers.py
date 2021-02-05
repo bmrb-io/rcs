@@ -1,3 +1,8 @@
+"""
+This whole module is not the best, and I anticipate I will be able to remove
+it soon.
+"""
+
 from atoms import *
 
 def get_confidence_tier(atoms_aroma):

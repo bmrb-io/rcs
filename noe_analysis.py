@@ -1,44 +1,24 @@
-from data_read_write import *
-from restraint_pair_classification import *
+from en_masse import *
 from noe_proportions_plotting import *
 from noe_tiers import *
 
-
-def make_pairs_dict(restraints_dict):
-    pairs_dict = {}
-    for restraint_id in restraints_dict:
-        if len(restraints_dict[restraint_id]) == 1:
-            tag = 'defi'
-        elif len(restraints_dict[restraint_id]) > 1:
-            tag = 'ambi'
-        for member_id in restraints_dict[restraint_id]:
-            restraint = restraints_dict[restraint_id][member_id]
-            atom_amide = restraint.atom_amide
-            atom_aroma = restraint.atom_aroma
-            if atom_amide not in pairs_dict:
-                pairs_dict[atom_amide] = {}
-            if atom_aroma.res_index not in pairs_dict[atom_amide]:
-                pairs_dict[atom_amide][atom_aroma.res_index] = []
-            pairs_dict[atom_amide][atom_aroma.res_index].append((atom_aroma, tag))
-    return pairs_dict
-
-def prune_ambi_undef_pairs(pairs_dict):
-    pairs_dict_new = {}
-    for atom_amide in pairs_dict:
-        pairs_dict_new[atom_amide] = {}
-        for res_index in pairs_dict[atom_amide]:
-            pairs_dict_new[atom_amide][res_index] = []
-            for atom_aroma, tag in pairs_dict[atom_amide][res_index]:
-                if  not(
-                    tag == 'ambi'
-                ):
-                    pairs_dict_new[atom_amide][res_index].append(
-                        (atom_aroma, tag)
-                    )
-
-    return pairs_dict_new
-
 def classify_shift(cs_sigma, outlier_sigma):
+    """
+    Classify the chemical shift depending on the number of standard deviations
+    that define an outlier.
+
+    Keyword arguments:
+    cs_sigma -- the Z-score of an atom
+    outlier_sigma -- the number of standard deviations from mean that make an
+        atom's chemical shift an outlier
+    Returns:
+    'upfield' -- if the shift is upfield by more than outlier_sigma standard 
+        deviations
+    'downfield' -- if the shift is downfield by more than outlier_sigma 
+        standard deviations
+    'non_outlier' -- if the shift is within outlier_sigma standard deviations
+        of the mean
+    """
     if cs_sigma <= -1 * outlier_sigma:
         return 'upfield'
     elif cs_sigma >= outlier_sigma:
@@ -46,106 +26,96 @@ def classify_shift(cs_sigma, outlier_sigma):
     elif abs(cs_sigma) < outlier_sigma:
         return 'non_outlier'
 
-def results_a(dumpfile):
+def results_a(proteins_dict, exceptions_map_entries):
     """
-    Gets proteins_dict and exceptions_map_entries. Prints number of amide
-    protons and PDB/BMRB entries. 
-    """
-    proteins_dict, exceptions_map_entries = load_proteins(dumpfile)
-    num_entries = 0
-    num_amides = 0
-    for pdb_id in proteins_dict:
-        for bmrb_id in proteins_dict[pdb_id]:
-            num_entries += 1
-            protein = proteins_dict[pdb_id][bmrb_id]
-            for res_index in protein.residues_dict:
-                residue = protein.residues_dict[res_index]
-                if 'H' in residue.atoms_dict:
-                    num_amides += 1
-    print("A:")
-    print("  NUM ENTRIES:    ", num_entries)
-    print("  NUM AMIDES:    ", num_amides)
-    return proteins_dict, exceptions_map_entries
+    The first stage of printing out the results. Prints
+    exceptions_map_entries in more readable format; prints the number of
+    entries that had restraints successfully added; prints the number of
+    amide-aromatic pairs with at least one NOE between them.
 
-def results_b1(proteins_dict, exceptions_map_entries):
+    Keyword arguments:
+    proteins_dict -- dict organized by pdb_id and bmrb_id of all succesfully
+        created Protein instances
+    exceptions_map_entries -- dict organized by pdb_id and bmrb_id of all 
+        exceptions raised from failures to add restraints
     """
-    Prunes empty restraints (and prints the reason). Returns the pruned proteins_dict
-    """
-    pruned_dict = {}
+    print("A:")
+    expected_exceptions = [
+        'No matching atoms found', 'Too many entities/assemblies', 
+        'No restraints in file', 'PDB ID not found in RCSB', 'No pairs found',
+        'No restraint file', 'Too many restraints',
+        'Misaligned restraint indices', 'BMRB entry deprecated.',
+        'No aromatic residues found', 
+        'Unacceptable distances between restrained pairs',
+        'No restraint file or maybe bad restraint file!',
+    ]
+    exceptions_by_reason = {}
     for pdb_id in exceptions_map_entries:
         for bmrb_id in exceptions_map_entries[pdb_id]:
-            exception = exceptions_map_entries[pdb_id][bmrb_id]
-            if exception not in pruned_dict: ##WE Removed a del [pdb_id] here, hopefully it works
-                pruned_dict[exception] = 0
-            pruned_dict[exception] += 1
-
-    pruned_dict['No amide-aromatic restraints found'] = 0
-    to_del_list = []
-    for pdb_id in proteins_dict:
-        for bmrb_id in proteins_dict[pdb_id]:
-            protein = proteins_dict[pdb_id][bmrb_id]
-            if len(protein.restraints_dict) == 0:
-                pruned_dict['No amide-aromatic restraints found'] += 1
-                to_del_list.append(pdb_id)
-                proteins_dict[pdb_id]
-    to_del_list = list(set(to_del_list))
-    for pdb_id in to_del_list:
-        del proteins_dict[pdb_id]
-    print("B:")
-    print("  I:")
-    print("    " + str(pruned_dict))
-
-    return proteins_dict
-
-def results_b2(proteins_dict):
-    """
-    Takes pruned proteins dict for results_b1(). Creates pairs_dict_entries and
-    returns. Counts number of entries remaining, number of amide hydrogens,
-    and number of amide-aromatic pairs.
-    """
+            reason = exceptions_map_entries[pdb_id][bmrb_id]
+            if reason not in exceptions_by_reason: 
+                exceptions_by_reason[reason] = 0
+            exceptions_by_reason[reason] += 1 # Add to counter of exceptions with this reason
+            if reason not in expected_exceptions: #if there was an unanticipated exception
+                print(
+                    f"UNEXPECTED EXCEPTION IN {pdb_id}, {bmrb_id}: {reason}"
+                )
+            if reason == 'No restraint file':
+                print(pdb_id, bmrb_id, "is super weird")
+    for reason in exceptions_by_reason: 
+        num = exceptions_by_reason[reason]
+        print("  ", reason, ":", num)
     num_entries = 0
     num_pairs = 0
-    pairs_dict_entries = {}
     for pdb_id in proteins_dict:
-        pairs_dict_entries[pdb_id] = {}
         for bmrb_id in proteins_dict[pdb_id]:
             num_entries += 1
             protein = proteins_dict[pdb_id][bmrb_id]
-            restraints_dict = protein.restraints_dict
-            pairs_dict = make_pairs_dict(restraints_dict)
+            pairs_dict = protein.pairs_dict
             for atom_amide in pairs_dict:
-                for res_index in pairs_dict[atom_amide]:
+                for res_index_aroma in pairs_dict[atom_amide]:
                     num_pairs += 1
-            pairs_dict_entries[pdb_id][bmrb_id] = pairs_dict
-    
-    print("  II:")
-    print("    NUM ENTRIES:    ", num_entries)
-    print("    NUM PAIRS:    ", num_pairs)
-    return pairs_dict_entries
+    print("  ", "NUM ENTRIES WITH USABLE RESTRAINTS:    ", num_entries)
+    print("  ", "NUM AMIDE-AROMATIC PAIRS WITH A RESTRAINT:    ", num_pairs)
 
-def results_c(proteins_dict, pairs_dict_entries):
+def results_b(proteins_dict):
     """
-    Prunes ambiguous/undefined pairs from pairs_dict_entries and returns the
-    updated dictionary. Also prints the number pruned, and the reason.
+    The second stage of printing out the results. Prunes undefined pairs from
+    each protein.pairs_dict. Prints the number of amide-aromatic pairs with at
+    least one defined restraint between them.
+
+    Keyword arguments:
+    proteins_dict -- dict organized by pdb_id and bmrb_id of all successfully
+        created Protein instances
     """
+    print("B:")
     num_pairs = 0
-    for pdb_id in pairs_dict_entries:
-        for bmrb_id in pairs_dict_entries[pdb_id]:
-            pairs_dict = pairs_dict_entries[pdb_id][bmrb_id]
-            pairs_dict = prune_ambi_undef_pairs(pairs_dict)
+    for pdb_id in proteins_dict:
+        for bmrb_id in proteins_dict[pdb_id]:
+            protein = proteins_dict[pdb_id][bmrb_id]
+            protein.prune_undefined_pairs() # We don't want ambiguous pairs here. 
+            pairs_dict = protein.pairs_dict
             for atom_amide in pairs_dict:
-                for res_index in pairs_dict[atom_amide]:
-                    atoms_aroma = pairs_dict[atom_amide][res_index]
-                    if len(atoms_aroma) != 0:
+                for res_index_aroma in pairs_dict[atom_amide]:
+                    atoms_aroma = pairs_dict[atom_amide][res_index_aroma]
+                    if len(atoms_aroma) != 0: # Some will be empty because they only had ambiguous restraints
                         num_pairs += 1
-            pairs_dict_entries[pdb_id][bmrb_id] = pairs_dict
-    print("C:")
-    print("  I:")
-    print("    NUM PAIRS DEF:    ", num_pairs)
-    return pairs_dict_entries
+    print(
+        "  ", "NUM AMIDE_AROMATIC PAIRS WITH A DEFINED RESTRAINT:    ", num_pairs
+    )
 
-def results_d(pairs_dict_entries, outlier_sigma):
+def results_c(proteins_dict, outlier_sigma):
+    """
+    The third and final stage of printing out the results. Classifies all
+    amide-aromatic pairs with at least one defined restraint using 
+    get_confidence_tier(). Prints out results in readable format.
 
+    Keyword arguments:
+    proteins_dict -- dict organized by pdb_id and bmrb_id of all successfully
+        created Protein instances
+    outlier_sigma -- the number of standard deviations from mean that make an
+        atom's chemical shift an outlier
+    """
     conf_tiers = {
         'upfield': {
             'high': {'HIS': [], 'TRP': [], 'PHE': [], 'TYR': []},
@@ -166,9 +136,11 @@ def results_d(pairs_dict_entries, outlier_sigma):
             'none': {'HIS': [], 'TRP': [], 'PHE': [], 'TYR': []}
         },
     }
-    for pdb_id in pairs_dict_entries:
-        for bmrb_id in pairs_dict_entries[pdb_id]:
-            pairs_dict = pairs_dict_entries[pdb_id][bmrb_id]
+    for pdb_id in proteins_dict:
+        for bmrb_id in proteins_dict[pdb_id]:
+            protein = proteins_dict[pdb_id][bmrb_id]
+            protein.prune_undefined_pairs() # Don't want ambiguous restraints
+            pairs_dict = protein.pairs_dict
             for atom_amide in pairs_dict:
                 for res_index in pairs_dict[atom_amide]:
                     atoms_aroma = pairs_dict[atom_amide][res_index]
@@ -185,78 +157,38 @@ def results_d(pairs_dict_entries, outlier_sigma):
                         )
 
 
-    print("D:")
-    return conf_tiers
+    print("C:")
+    for shift_class in conf_tiers:
+        print(f"  {shift_class}:")
+        for conf_tier in conf_tiers[shift_class]:
+            print(f"    {conf_tier}:")
+            for res_label in conf_tiers[shift_class][conf_tier]:
+                atoms_list = conf_tiers[shift_class][conf_tier][res_label]
+                num = len(atoms_list)
+                print(f"      {res_label}:  {num}")
 
+def print_result_stages(
+    outlier_sigma, build_anyway=False, make_plots=False
+    ):
+    """
+    Generates dict of all proteins with BMRB and PDB entries, analyzes 
+    restraint data, and prints out major results.
 
+    Keyword arguments:
+    outlier_sigma -- the number of standard deviations from mean that make an
+        atom's chemical shift an outlier
+    build_anyway -- default False; if True, proteins will be built even if a 
+        json build file is present in ./proteins
+    """
 
+    entries_dict = get_all_entries()
+    proteins_dict, exceptions_map_entries = get_proteins_dict_multi(
+        entries_dict, build_anyway
+    )
+    if make_plots:
+        make_proportions_plot(proteins_dict, 11, -5.5, 5.5)
+        make_res_prop_plot(proteins_dict, 11, -5.5, 5.5)
 
-
-
-    
-
-            
-
-#infile = 'bmrb_amide_vs_aromatic_data_his_incl.csv'
-#proteins_dict, exceptions_map_entries = build_proteins(infile)
-dumpfile = 'protein_dump.json' #usually protein_dump.json
-#dump_proteins(dumpfile, proteins_dict, exceptions_map_entries)
-
-outlier_sigma = 2
-proteins_dict, exceptions_map_entries = results_a(dumpfile)
-'''
-del_list = ['2K8V', '2KEN', '2KH9', '2KMP', '1AXH'] ###REMOVE ONE OF THE DUPLICATE PDB IDs
-for pdb_id in del_list:
-    bmrb_ids = list(proteins_dict[pdb_id].keys())
-    bmrb_id = bmrb_ids[0]
-    del proteins_dict[pdb_id][bmrb_id]
-    if len(proteins_dict[pdb_id]) > 1:
-        bmrb_ids = list(proteins_dict[pdb_id].keys())
-        bmrb_id = bmrb_ids[0]
-        del proteins_dict[pdb_id][bmrb_id]
-'''
-num_duplicates = 0
-for pdb_id in proteins_dict:
-    if len(proteins_dict[pdb_id]) > 1:
-        print("BABA BOOEY", pdb_id)
-        num_duplicates += len(proteins_dict[pdb_id])
-print(num_duplicates)
-
-
-proteins_dict = results_b1(proteins_dict, exceptions_map_entries)
-#make_proportions_plot(proteins_dict, 10, -5.5, 5.5)
-pairs_dict_entries = results_b2(proteins_dict)
-#make_res_prop_plot(proteins_dict, pairs_dict_entries, 10, -5.5, 5.5)
-pairs_dict_entries = results_c(proteins_dict, pairs_dict_entries)
-
-#make_res_bar_plot(pairs_dict_entries, 10, -5.5, 5.5)
-conf_tiers = results_d(pairs_dict_entries, outlier_sigma)
-
-
-
-for shift_class in conf_tiers:
-    print(shift_class + ":")
-    for conf in conf_tiers[shift_class]:
-        print("  " + conf)
-        for res_label in conf_tiers[shift_class][conf]:
-            print(
-                "    " + res_label + ":  " + 
-                str(len(conf_tiers[shift_class][conf][res_label]))
-            )
-
-num_duplicates = 0
-for pdb_id in proteins_dict:
-    if len(proteins_dict[pdb_id]) > 1:
-        print("BABA BOOEY", pdb_id)
-        num_duplicates += len(proteins_dict[pdb_id])
-print(num_duplicates)
-
-pairs_info_list = conf_tiers['downfield']['high']['HIS']
-for pair_info in pairs_info_list:
-    pdb_id = pair_info[0]
-    bmrb_id = pair_info[1]
-    atom_amide = pair_info[2]
-    atom_aroma = pair_info[3][0]
-    print(
-        pdb_id, bmrb_id, atom_amide.res_index, atom_amide.res_label, 
-        atom_aroma.res_index, atom_aroma.res_label)
+    results_a(proteins_dict, exceptions_map_entries)
+    results_b(proteins_dict)
+    results_c(proteins_dict, outlier_sigma)
