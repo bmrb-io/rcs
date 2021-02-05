@@ -1,0 +1,5 @@
+pdbecif==1.5
+numpy==1.20.0
+pynmrstar==3.0.9
+requests==2.25.1
+plotly==4.14.3
