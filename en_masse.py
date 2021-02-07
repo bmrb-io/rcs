@@ -144,7 +144,6 @@ def get_proteins_dict_multi(entries_dict, build_anyway=False):
                                 protein, pdb_id, bmrb_id, exceptions_map
                             )
                 ids = entries_list.pop()
-                process_jobs_list[i] = ids
                 process[0].send(ids) #sends pdb_id and bmrb_id I think
                 break # force to reevaluate len(entries_list)
 

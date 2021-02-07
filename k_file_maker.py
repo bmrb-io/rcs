@@ -3,11 +3,13 @@ from math import sqrt, acos
 import numpy
 import operator
 import pynmrstar
-from numpy import mean
 import os,sys
 import csv
 import os.path
 from operator import itemgetter
+
+
+import warnings
 
 class RingCurrentEffect(object):
     atoms = {
@@ -18,7 +20,10 @@ class RingCurrentEffect(object):
     }
 
     def __init__(self,pdbid,bmrbid):
-        pass
+        self.pdb_id = pdbid
+        self.bmrb_id = bmrbid
+        numpy.seterr(all='warn')
+        warnings.filterwarnings('error')
 
     def cal_mean_distance(self,pdb,atm1,atm2):
         d=[]
@@ -45,9 +50,8 @@ class RingCurrentEffect(object):
         if not os.path.isdir('./output'):
             os.system('mkdir ./output')
         fout = './output/{}_{}.sq'.format(pdbid, bmrbid)
-        fo = open(fout, 'w')
-        fo.write("{},{},{},{},{},{},{},{},{}\n".format(bmrbid,pdbid,x[0],x[1],x[2],x[3],sum(x),n,",".join(sq)))
-        fo.close()
+        with open(fout, 'w') as fo:
+            fo.write("{},{},{},{},{},{},{},{},{}\n".format(bmrbid,pdbid,x[0],x[1],x[2],x[3],sum(x),n,",".join(sq)))
 
     def get_seq(self,str_file):
         str_data = pynmrstar.Entry.from_file(str_file)
@@ -166,13 +170,16 @@ class RingCurrentEffect(object):
                         csh2[k][d[id4]]=(d[id5],d[id6])
         return csh,csh2,entity_size,assembly_size
 
-    @staticmethod
-    def solid_angle(a_deg,r):
+    def solid_angle(self, a_deg,r): #was a static method
         s=1.4
         A=((3.0*numpy.sqrt(3))/2.0)*s*s
         a=(numpy.pi/180)*a_deg
         r1=r*1e10
-        sa2=2*numpy.pi*(1.0-1.0/(numpy.sqrt(1+(A*numpy.cos(a)/(numpy.pi*r1**r1)))))
+        try:
+            sa2=2*numpy.pi*(1.0-1.0/(numpy.sqrt(1+(A*numpy.cos(a)/(numpy.pi*r1**r1)))))
+        except Warning as warn:
+            print(str(warn))
+            print(self.pdb_id, self.bmrb_id)
         sa = 2 * numpy.pi * (1.0 - 1.0 / (numpy.sqrt(1 + ( numpy.cos(a) / (numpy.pi * r ** r)))))
         #print (a_deg)
         sa_deg=(180.0/numpy.pi)*sa
@@ -275,7 +282,7 @@ class RingCurrentEffect(object):
         d = []
         for d1 in pc:
             d.append(numpy.linalg.norm(ph - d1))
-        return mean(d), numpy.std(d)
+        return numpy.mean(d), numpy.std(d)
 
     def find_aromatic_residues(self,pdb):
         rl = []
@@ -298,91 +305,90 @@ class RingCurrentEffect(object):
             fout = './output/{}_{}_{}.dat'.format(pdbid, bmrbid, tag_match)
         else:
             fout = './output/{}_{}_NONE.dat'.format(pdbid, bmrbid) #seq mismatch case
-        fo = open(fout, 'w')
-        if tag_match is None:
-            fo.write('{},{} No matching atoms found'.format(pdbid, bmrbid))
-        else:
-            pdb = pdb2[0]
-            aromatic_atoms = {}
-            for a in aromatic:
-                aromatic_atoms[a] = []
-                for a1 in self.atoms[a[2]]:
-                    aromatic_atoms[a].append((a[0], a[1], a[2], a1))
-            if len(aromatic) == 0:
-                fo.write('{},{} No aromatic residues found'.format(pdbid, bmrbid)) #Not deposited or DNA/RNA?
-            elif len(amide_chemical_shift)==0:
-                fo.write('{},{} No amide shifts reported'.format(pdbid, bmrbid)) #DNA/RNA and other non-polypepdie
+        with open(fout, 'w') as fo:
+            if tag_match is None:
+                fo.write('{},{} No matching atoms found'.format(pdbid, bmrbid))
             else:
-                for a in pdb[1].keys():
-                    if a[3] == 'H':
-                        ar_info=[]
-                        for ar in aromatic_atoms.keys():
-                            md=[]
-                            sd=[]
-                            cd = []
-                            ang = []
-                            ang2 = []
-                            for m in pdb.keys():
-                                p = []
-                                patom=[]
-                                for atom in aromatic_atoms[ar]:
-                                    try:
-                                        patom.append(atom)
-                                        p.append(pdb[m][atom])
-                                    except KeyError:
-                                        pass
-                                c = self.get_centroid(p)
-                                d = self.get_distance(pdb[m][a],c)
-                                mean_d,std_d = self.find_mean_distance(pdb[m][a],p)
-                                md.append(mean_d)
-                                sd.append(std_d)
-                                cd.append(d)
-                                an=(a[0],a[1],a[2],'N')
-                                angles = self.find_angle(p, pdb[m][a],pdb[m][an],d)
-                                ang.append(angles[0])
-                                ang2.append(angles[1])
-                            ar_info.append([round(numpy.mean(cd),3),
-                                         round(numpy.std(cd),3),
-                                         round(numpy.mean(ang),3),
-                                         round(numpy.std(ang),3),
-                                         round(numpy.mean(ang2), 3),
-                                         round(numpy.std(ang2), 3),ar])
-                        arr_info=sorted(ar_info, key=lambda x: x[0])
-                        m = {'ALA': 8.193, 'ARG': 8.242, 'ASN': 8.331, 'ASP': 8.300, 'CYS': 8.379, 'GLN': 8.216,
-                             'GLU': 8.330, 'GLY': 8.327,
-                             'HIS': 8.258, 'ILE': 8.263, 'LEU': 8.219, 'LYS': 8.175, 'MET': 8.258, 'PHE': 8.337,
-                             'SER': 8.277, 'THR': 8.235,
-                             'TRP': 8.270, 'TYR': 8.296, 'VAL': 8.273}
-                        if a in amide_chemical_shift.keys() and a[2] in m.keys():
-                            outdat='{},{},{},{},{},{},{},{}'.format(pdbid,bmrbid,a[0],a[2],amide_chemical_shift[a],self.get_sigma_value(a[2],float(amide_chemical_shift[a])),entity_size,
-                                                                                                        assembly_size)
-                            for kk in range(5):
-                                try:
-                                    odat='{},{},{},{},{},{},{},{}'.format(arr_info[kk][-1][0],arr_info[kk][-1][2],
-                                                                          arr_info[kk][0],arr_info[kk][1],
-                                                                          arr_info[kk][2],arr_info[kk][3],
-                                                                          arr_info[kk][4],arr_info[kk][5],
-                                                                          arr_info[kk][6])
-                                    close_atom_cs2 = []
-                                    close_atom2=arr_info[kk][-1]
-                                    for atm in atoms_cs[close_atom2[2]]:
-                                        d_info=self.cal_mean_distance(pdb, a, (arr_info[kk][-1][0],arr_info[kk][-1][1],arr_info[kk][-1][2],atm))
+                pdb = pdb2[0]
+                aromatic_atoms = {}
+                for a in aromatic:
+                    aromatic_atoms[a] = []
+                    for a1 in self.atoms[a[2]]:
+                        aromatic_atoms[a].append((a[0], a[1], a[2], a1))
+                if len(aromatic) == 0:
+                    fo.write('{},{} No aromatic residues found'.format(pdbid, bmrbid)) #Not deposited or DNA/RNA?
+                elif len(amide_chemical_shift)==0:
+                    fo.write('{},{} No amide shifts reported'.format(pdbid, bmrbid)) #DNA/RNA and other non-polypepdie
+                else:
+                    for a in pdb[1].keys():
+                        if a[3] == 'H':
+                            ar_info=[]
+                            for ar in aromatic_atoms.keys():
+                                md=[]
+                                sd=[]
+                                cd = []
+                                ang = []
+                                ang2 = []
+                                for m in pdb.keys():
+                                    p = []
+                                    patom=[]
+                                    for atom in aromatic_atoms[ar]:
                                         try:
-                                            close_atom_cs2.append(aromatic_chemical_shift[close_atom2][atm][0])
-                                            close_atom_cs2.append(aromatic_chemical_shift[close_atom2][atm][1])
+                                            patom.append(atom)
+                                            p.append(pdb[m][atom])
                                         except KeyError:
-                                            close_atom_cs2.append(".")
-                                            close_atom_cs2.append(".")
-                                        close_atom_cs2.append('{}'.format(round(d_info[1],3)))
-                                        close_atom_cs2.append('{}'.format(round(d_info[2], 3)))
-                                    close_atom_cs_all2 = ",".join(close_atom_cs2)
-                                    odat='{},{}'.format(odat,close_atom_cs_all2)
-                                except IndexError:
-                                    odat='.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.'
-                                outdat='{},{}'.format(outdat,odat)
-                            outdat='{}\n'.format(outdat)
-                            fo.write(outdat)
-        fo.close()
+                                            pass
+                                    c = self.get_centroid(p)
+                                    d = self.get_distance(pdb[m][a],c)
+                                    mean_d,std_d = self.find_mean_distance(pdb[m][a],p)
+                                    md.append(mean_d)
+                                    sd.append(std_d)
+                                    cd.append(d)
+                                    an=(a[0],a[1],a[2],'N')
+                                    angles = self.find_angle(p, pdb[m][a],pdb[m][an],d)
+                                    ang.append(angles[0])
+                                    ang2.append(angles[1])
+                                ar_info.append([round(numpy.mean(cd),3),
+                                            round(numpy.std(cd),3),
+                                            round(numpy.mean(ang),3),
+                                            round(numpy.std(ang),3),
+                                            round(numpy.mean(ang2), 3),
+                                            round(numpy.std(ang2), 3),ar])
+                            arr_info=sorted(ar_info, key=lambda x: x[0])
+                            m = {'ALA': 8.193, 'ARG': 8.242, 'ASN': 8.331, 'ASP': 8.300, 'CYS': 8.379, 'GLN': 8.216,
+                                'GLU': 8.330, 'GLY': 8.327,
+                                'HIS': 8.258, 'ILE': 8.263, 'LEU': 8.219, 'LYS': 8.175, 'MET': 8.258, 'PHE': 8.337,
+                                'SER': 8.277, 'THR': 8.235,
+                                'TRP': 8.270, 'TYR': 8.296, 'VAL': 8.273}
+                            if a in amide_chemical_shift.keys() and a[2] in m.keys():
+                                outdat='{},{},{},{},{},{},{},{}'.format(pdbid,bmrbid,a[0],a[2],amide_chemical_shift[a],self.get_sigma_value(a[2],float(amide_chemical_shift[a])),entity_size,
+                                                                                                            assembly_size)
+                                for kk in range(5):
+                                    try:
+                                        odat='{},{},{},{},{},{},{},{}'.format(arr_info[kk][-1][0],arr_info[kk][-1][2],
+                                                                            arr_info[kk][0],arr_info[kk][1],
+                                                                            arr_info[kk][2],arr_info[kk][3],
+                                                                            arr_info[kk][4],arr_info[kk][5],
+                                                                            arr_info[kk][6])
+                                        close_atom_cs2 = []
+                                        close_atom2=arr_info[kk][-1]
+                                        for atm in atoms_cs[close_atom2[2]]:
+                                            d_info=self.cal_mean_distance(pdb, a, (arr_info[kk][-1][0],arr_info[kk][-1][1],arr_info[kk][-1][2],atm))
+                                            try:
+                                                close_atom_cs2.append(aromatic_chemical_shift[close_atom2][atm][0])
+                                                close_atom_cs2.append(aromatic_chemical_shift[close_atom2][atm][1])
+                                            except KeyError:
+                                                close_atom_cs2.append(".")
+                                                close_atom_cs2.append(".")
+                                            close_atom_cs2.append('{}'.format(round(d_info[1],3)))
+                                            close_atom_cs2.append('{}'.format(round(d_info[2], 3)))
+                                        close_atom_cs_all2 = ",".join(close_atom_cs2)
+                                        odat='{},{}'.format(odat,close_atom_cs_all2)
+                                    except IndexError:
+                                        odat='.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.'
+                                    outdat='{},{}'.format(outdat,odat)
+                                outdat='{}\n'.format(outdat)
+                                fo.write(outdat)
         return fout
     @staticmethod
     def get_pdb(pdb_id):
