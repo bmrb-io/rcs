@@ -195,12 +195,12 @@ class RingCurrentEffect(object):
         cif_obj = cfr.read(cif_file, output='cif_wrapper')
         cif_data = cif_obj[pdbid]
         atom_sites = cif_data._atom_site
-        max_models = int(atom_sites['pdbx_PDB_model_num'][-1])
+        model_nums = set(atom_sites['pdbx_PDB_model_num'])
         pdb_models = {}
         atom_ids = {}
-        for i in range(max_models):
-            pdb_models[i+1] = {}
-            atom_ids[i+1] = {}
+        for i in model_nums:
+            pdb_models[int(i)] = {}
+            atom_ids[int(i)] = {}
         for atom_site in list(atom_sites):
             model_id = int(atom_site['pdbx_PDB_model_num'])
             aut_seq_id = atom_site['auth_seq_id']
