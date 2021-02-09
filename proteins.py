@@ -208,15 +208,19 @@ class Protein:
                 atoms_aroma = self.pairs_dict[atom_amide][res_index_aroma]
                 labels_aroma = [atom[0].atom_label for atom in atoms_aroma]
                 for atom_label in labels_aroma:
-                    if ( #otherwise, likely a pseudoatom or in 5-member TRP ring
-                        atom_label in 
-                        geometries_amide[res_index_aroma]
-                    ):
-                        pair_dist = (
-                            geometries_amide[res_index_aroma][atom_label]
-                        )
-                        if pair_dist > cutoff:
-                            geom_bool = False
+                    try:
+                        if ( #otherwise, likely a pseudoatom or in 5-member TRP ring
+                            atom_label in 
+                            geometries_amide[res_index_aroma]
+                        ):
+                            pair_dist = (
+                                geometries_amide[res_index_aroma][atom_label]
+                            )
+                            if pair_dist > cutoff:
+                                geom_bool = False
+                    except KeyError:
+                        print("HAD TO DO THIS FOR ", self.pdb_id, self.bmrb_id)
+                        print(atom_amide.res_index, res_index_aroma, atom_label)
         return geom_bool
 
     def make_pairs_dict(self):
