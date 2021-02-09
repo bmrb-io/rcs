@@ -1,14 +1,17 @@
 from protein_builder import *
-from proteins import *
+from proteins import Protein
 import requests
 import os
 from multiprocessing import Pipe, cpu_count
 from os import _exit as child_exit
 import time
 import traceback
+from typing import Dict, Tuple, List
 
 
-def get_proteins_dict(entries_dict, build_anyway=False):
+def get_proteins_dict(
+    entries_dict: Dict[str, str], build_anyway: bool = False
+) -> Tuple[Dict[str, Dict[str, Protein]], Dict[str, Dict[str, str]]]:
     """
     Create a Protein instance for all viable entries, and return an exception 
     otherwise. Add successful proteins to proteins_dict and exceptions to
@@ -25,7 +28,6 @@ def get_proteins_dict(entries_dict, build_anyway=False):
     exceptions_map = {}
     for pdb_id in entries_dict:
         for bmrb_id in entries_dict[pdb_id]:
-            print(pdb_id)
             protein = get_protein(pdb_id, bmrb_id, build_anyway)
             if isinstance(protein, Protein): # We have a successful Protein
                 if pdb_id not in proteins_dict:
@@ -37,7 +39,7 @@ def get_proteins_dict(entries_dict, build_anyway=False):
                 exceptions_map[pdb_id][bmrb_id] = protein # Add to dict
     return proteins_dict, exceptions_map
 
-def get_all_entries():
+def get_all_entries() -> Dict[str, str]:
     """Return a dict of all corresponding PDB and BMRB IDs."""
     url = "http://api.bmrb.io/v2/mappings/bmrb/pdb?match_type=exact"
     r = requests.get(url).json()
@@ -53,15 +55,17 @@ def get_all_entries():
 
 
 
-def make_entries_list(entries_dict):
+def make_entries_list(entries_dict: Dict[str, str]) -> List[Tuple[str, str]]:
     """Break dict of pdb_ids and associated bmrb_ids into list of pairs."""
     entries_list = []
     for pdb_id in entries_dict:
         for bmrb_id in entries_dict[pdb_id]:
-            entries_list.append([pdb_id, bmrb_id])
+            entries_list.append((pdb_id, bmrb_id))
     return entries_list
 
-def add_to_proteins_dict(protein, proteins_dict):
+def add_to_proteins_dict(
+    protein: Protein, proteins_dict: Dict[str, Dict[str, Protein]]
+) -> Dict[str, Dict[str, Protein]]:
     """Add protein to proteins_dict."""
     pdb_id = protein.pdb_id
     bmrb_id = protein.bmrb_id
@@ -70,14 +74,19 @@ def add_to_proteins_dict(protein, proteins_dict):
     proteins_dict[pdb_id][bmrb_id] = protein
     return proteins_dict
 
-def add_to_exceptions_map(exception, pdb_id, bmrb_id, exceptions_map):
+def add_to_exceptions_map(
+    exception: str, pdb_id: str, bmrb_id: str, 
+    exceptions_map: Dict[str, Dict[str, str]]
+) -> Dict[str, Dict[str, str]]:
     """Add exception to exceptions_map."""
     if pdb_id not in exceptions_map:
         exceptions_map[pdb_id] = {}
     exceptions_map[pdb_id][bmrb_id] = exception
     return exceptions_map
 
-def get_proteins_dict_multi(entries_dict, build_anyway=False):
+def get_proteins_dict_multi(
+    entries_dict: Dict[str, str], build_anyway: bool = False
+) -> Tuple[Dict[str, Dict[str, Protein]], Dict[str, Dict[str, str]]]:
     """Get proteins_dict using multiprocessing to enhance performance."""
     os.nice(19) # So that we don't take up too many resources
     entries_list = make_entries_list(entries_dict)
@@ -117,7 +126,6 @@ def get_proteins_dict_multi(entries_dict, build_anyway=False):
                     exception = "BMRB entry deprecated."
                     child_conn.send([exception, pdb_id, bmrb_id])
                 except Exception as err:
-                    #print(pdb_id, bmrb_id, err)
                     child_conn.send([err, pdb_id, bmrb_id])
         # We are the parent, don't need the child connection
         else:

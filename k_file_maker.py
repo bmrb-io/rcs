@@ -8,9 +8,6 @@ import csv
 import os.path
 from operator import itemgetter
 
-
-import warnings
-
 class RingCurrentEffect(object):
     atoms = {
         'PHE': ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ'],
@@ -22,8 +19,8 @@ class RingCurrentEffect(object):
     def __init__(self,pdbid,bmrbid):
         self.pdb_id = pdbid
         self.bmrb_id = bmrbid
-        numpy.seterr(all='warn')
-        warnings.filterwarnings('error')
+        #numpy.seterr(all='warn')
+        #warnings.filterwarnings('error')
 
     def cal_mean_distance(self,pdb,atm1,atm2):
         d=[]
@@ -126,18 +123,20 @@ class RingCurrentEffect(object):
         """
         return numpy.linalg.norm(c1 - c2)
 
-    @staticmethod
-    def get_chemical_shifts(bmrbid):
+    #@staticmethod
+    def get_chemical_shifts(self, bmrb_id):
         atoms_cs = {
             'PHE': ['CG','CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ'],
             'TYR': ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HD1', 'HD2', 'HE1', 'HE2', 'HH'],
             'TRP': ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HE3', 'HZ2', 'HZ3', 'HH2', 'HE1'],
             'HIS': ['CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HD1', 'HD2', 'HE1', 'HE2', 'xx', 'yy']  # if needed un comment
         }
-        str_file = f'./data/BMRB/{bmrbid}.str'
+        str_file = f'./data/BMRB/{bmrb_id}.str'
         if not os.path.isfile(str_file):
-            str_data = pynmrstar.Entry.from_database(bmrbid)
-            str_data.write_to_file(str_file)
+            #str_data = pynmrstar.Entry.from_database(bmrbid)
+            #str_data.write_to_file(str_file)
+            self.get_bmrb(bmrb_id)
+            str_data = pynmrstar.Entry.from_file(str_file)
         else:
             str_data = pynmrstar.Entry.from_file(str_file)
         csdata = str_data.get_loops_by_category('Atom_chem_shift')
@@ -175,11 +174,7 @@ class RingCurrentEffect(object):
         A=((3.0*numpy.sqrt(3))/2.0)*s*s
         a=(numpy.pi/180)*a_deg
         r1=r*1e10
-        try:
-            sa2=2*numpy.pi*(1.0-1.0/(numpy.sqrt(1+(A*numpy.cos(a)/(numpy.pi*r1**r1)))))
-        except Warning as warn:
-            print(str(warn))
-            print(self.pdb_id, self.bmrb_id)
+        sa2=2*numpy.pi*(1.0-1.0/(numpy.sqrt(1+(A*numpy.cos(a)/(numpy.pi*r1**r1)))))
         sa = 2 * numpy.pi * (1.0 - 1.0 / (numpy.sqrt(1 + ( numpy.cos(a) / (numpy.pi * r ** r)))))
         #print (a_deg)
         sa_deg=(180.0/numpy.pi)*sa
@@ -398,3 +393,4 @@ class RingCurrentEffect(object):
     @staticmethod
     def get_bmrb(bmrb_id):
         cmd = 'wget http://rest.bmrb.io/bmrb/{}/nmr-star3 -O ./data/BMRB/{}.str'.format(bmrb_id,bmrb_id)
+        os.system(cmd)

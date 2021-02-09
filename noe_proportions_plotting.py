@@ -1,7 +1,12 @@
 import numpy as np
+from atoms import Atom
+from proteins import Protein
 import plotly.graph_objects as go
+from typing import Union, List, Tuple, Dict
 
-def make_binning_info(num_bins, cs_min, cs_max):
+def make_binning_info(
+    num_bins: int, cs_min: Union[float, int], cs_max: Union[float, int]
+) -> Tuple[List[float], List[float]]:
     """
     Make lists of bin midpoints and bin edges, each in ascending order.
 
@@ -19,7 +24,9 @@ def make_binning_info(num_bins, cs_min, cs_max):
     ]
     return bin_edges, bin_midpoints
 
-def bin_atoms(atoms_list, bin_edges, bin_midpoints):
+def bin_atoms(
+    atoms_list: List[Atom], bin_edges: List[float], bin_midpoints: List[float]
+) -> List[int]:
     """
     Count number of atoms to be placed into each z-score bin.
 
@@ -43,7 +50,7 @@ def bin_atoms(atoms_list, bin_edges, bin_midpoints):
         binned_list[bin_ind] += 1
     return binned_list
 
-def sort_atoms_by_restraint(protein):
+def sort_atoms_by_restraint(protein: Protein) -> Tuple[List[Atom], List[Atom]]:
     """
     Separate Atoms in a Protein with a restraint to an aromatic ring proton 
     from those without.
@@ -72,7 +79,10 @@ def sort_atoms_by_restraint(protein):
     return restraintless_list, restraintful_list
 
 
-def make_proportions_plot(proteins_dict, num_bins, cs_min, cs_max):
+def make_proportions_plot(
+    proteins_dict: Dict[str, Dict[str, Protein]], num_bins: int, 
+    cs_min: Union[float, int], cs_max: Union[float, int]
+):
     """
     Generate a plot of the proportion of amides from proteins_dict that have
     at least one restraint to an aromatic-ring proton for varying values of 
@@ -144,7 +154,8 @@ def make_proportions_plot(proteins_dict, num_bins, cs_min, cs_max):
 
 
 def make_res_prop_plot(
-    proteins_dict, num_bins, cs_min, cs_max
+    proteins_dict: Dict[str, Dict[str, Protein]], num_bins: int, 
+    cs_min: Union[float, int], cs_max: Union[float, int]
 ):
     """
     Generate a plot of the proportion of amides from proteins_dict that have

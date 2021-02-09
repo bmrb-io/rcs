@@ -1,3 +1,5 @@
+from typing import Union, Dict
+
 class Atom:
     """
     Contain necessary information about an individual atom.
@@ -15,7 +17,8 @@ class Atom:
     """
 
     def __init__(
-        self, res_index, res_label, atom_label, cs_sigma
+        self, res_index: str, res_label: str, atom_label: str, 
+        cs_sigma: Union[float, None]
     ):
         """
         Construct the Atom object.
@@ -31,7 +34,7 @@ class Atom:
         self.atom_label = atom_label
         self.cs_sigma = cs_sigma
 
-    def dump(self):
+    def dump(self) -> Dict:
         """
         Create a json serializable dump_dict with all relevant info.
 

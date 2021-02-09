@@ -1,12 +1,13 @@
 from atoms import Atom
+from typing import Dict
 
 class Restraint:
     
-    def __init__(self, atom_amide, atom_aroma):
+    def __init__(self, atom_amide: Atom, atom_aroma: Atom):
         self.atom_amide = atom_amide
         self.atom_aroma = atom_aroma
 
-    def dump(self):
+    def dump(self) -> Dict:
 
         dump_dict = {}
         dump_dict['atom_amide'] = self.atom_amide.dump()

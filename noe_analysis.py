@@ -1,8 +1,9 @@
 from en_masse import *
 from noe_proportions_plotting import *
 from noe_tiers import *
+from typing import Union, Dict
 
-def classify_shift(cs_sigma, outlier_sigma):
+def classify_shift(cs_sigma: float, outlier_sigma: Union[int, float]) -> str:
     """
     Classify the chemical shift depending on the number of standard deviations
     that define an outlier.
@@ -26,7 +27,10 @@ def classify_shift(cs_sigma, outlier_sigma):
     elif abs(cs_sigma) < outlier_sigma:
         return 'non_outlier'
 
-def results_a(proteins_dict, exceptions_map_entries):
+def results_a(
+    proteins_dict: Dict[str, Dict[str, Protein]], 
+    exceptions_map_entries: Dict[str, Dict[str, str]]
+):
     """
     The first stage of printing out the results. Prints
     exceptions_map_entries in more readable format; prints the number of
@@ -60,6 +64,8 @@ def results_a(proteins_dict, exceptions_map_entries):
                 print(
                     f"UNEXPECTED EXCEPTION IN {pdb_id}, {bmrb_id}: {reason}"
                 )
+            if reason == "PDB ID not found in RCSB":
+                print(pdb_id, bmrb_id)
     for reason in exceptions_by_reason: 
         num = exceptions_by_reason[reason]
         print("  ", reason, ":", num)
@@ -76,7 +82,7 @@ def results_a(proteins_dict, exceptions_map_entries):
     print("  ", "NUM ENTRIES WITH USABLE RESTRAINTS:    ", num_entries)
     print("  ", "NUM AMIDE-AROMATIC PAIRS WITH A RESTRAINT:    ", num_pairs)
 
-def results_b(proteins_dict):
+def results_b(proteins_dict: Dict[str, Dict[str, Protein]]):
     """
     The second stage of printing out the results. Prunes undefined pairs from
     each protein.pairs_dict. Prints the number of amide-aromatic pairs with at
@@ -102,7 +108,10 @@ def results_b(proteins_dict):
         "  ", "NUM AMIDE_AROMATIC PAIRS WITH A DEFINED RESTRAINT:    ", num_pairs
     )
 
-def results_c(proteins_dict, outlier_sigma):
+def results_c(
+    proteins_dict: Dict[str, Dict[str, Protein]], 
+    outlier_sigma: Union[int, float]
+):
     """
     The third and final stage of printing out the results. Classifies all
     amide-aromatic pairs with at least one defined restraint using 
@@ -166,8 +175,9 @@ def results_c(proteins_dict, outlier_sigma):
                 print(f"      {res_label}:  {num}")
 
 def print_result_stages(
-    outlier_sigma, build_anyway=False, make_plots=False
-    ):
+    outlier_sigma: Union[int, float], build_anyway: bool = False, 
+    make_plots: bool = False
+):
     """
     Generates dict of all proteins with BMRB and PDB entries, analyzes 
     restraint data, and prints out major results.

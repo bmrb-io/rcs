@@ -39,7 +39,7 @@ class Protein:
     load() -- Reconstruct Protein object from a json serializable dict
     """
     
-    def __init__ (self, pdb_id, bmrb_id):
+    def __init__ (self, pdb_id: str, bmrb_id: str):
         """
         Construct the empty Protein object with only the IDs.
 
@@ -94,7 +94,7 @@ class Protein:
         for restraint_id in exceptions_map: #delete the restraints that didn't work
             del self.restraints_dict[restraint_id]
 
-    def correlate_atoms(self, atom):
+    def correlate_atoms(self, atom: Atom):
         """
         Find corresponding Atom object in a Residue of residues_dict. If not
         found, return an exception.

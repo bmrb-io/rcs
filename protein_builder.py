@@ -1,13 +1,16 @@
 from k_file_maker import *
 from k_file_reader import *
 from noes_builder import *
+from typing import Union, Dict, List, Tuple
 
 import json
 import os
 import os.path
 
-def get_protein(pdb_id, bmrb_id, build_anyway=False):
-    """
+def get_protein(
+    pdb_id: str, bmrb_id: str, build_anyway: bool = False
+) -> Union[Protein, str]:
+    """ 
     Generate a Protein object for the input IDs. Build it from BMRB and PDB
     entries if it hasn't already been built or if build_anyway=True.
 
@@ -33,7 +36,7 @@ def get_protein(pdb_id, bmrb_id, build_anyway=False):
             json.dump(protein, dumpfile) # even store exceptions locally
     return protein
 
-def build_protein(pdb_id, bmrb_id):
+def build_protein(pdb_id: str, bmrb_id: str) -> Union[Protein, str]:
     """
     Create a Protein object with amides, aromatic protons, chemical shifts,
     and NOE restraints if possible. Otherwise return an appropriate exception.
@@ -54,14 +57,14 @@ def build_protein(pdb_id, bmrb_id):
         protein = add_restraints(protein)
     return protein
 
-def dump_protein(protein):
+def dump_protein(protein: Protein):
     """Dump protein to file."""
     dump_dict = protein.dump()
     filename = os.path.join("proteins", f"{protein.pdb_id}_{protein.bmrb_id}.json")
     with open(filename, 'w') as dumpfile:
         json.dump(dump_dict, dumpfile)
 
-def load_protein(pdb_id, bmrb_id):
+def load_protein(pdb_id: str, bmrb_id: str) -> Union[Protein, str]:
     """Load protein from file."""
     filename = os.path.join("proteins", f"{pdb_id}_{bmrb_id}.json")
     with open(filename, 'r') as dumpfile:

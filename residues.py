@@ -1,4 +1,5 @@
 from atoms import Atom
+from typing import Dict
 class Residue:
     """
     Contain necessary information about a residue, most importantly atoms_dict.
@@ -13,7 +14,9 @@ class Residue:
     dump() -- Create a json serializable dict containing all info in the Residue
     load() -- Reconstruct Residue object from a json serializable dict
     """
-    def __init__(self, res_index, res_label, atoms_dict):
+    def __init__(
+        self, res_index: str, res_label: str, atoms_dict: Dict[str, Atom]
+    ):
         """
         Construct the Residue object.
 
@@ -26,7 +29,7 @@ class Residue:
         self.res_label = res_label
         self.atoms_dict = atoms_dict
     
-    def dump(self):
+    def dump(self) -> Dict:
         """
         Create a json serializable dump_dict with all relevant info.
 

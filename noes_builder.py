@@ -6,8 +6,9 @@ from k_file_reader import *
 import os
 import pynmrstar
 import requests
+from typing import Union, List, Tuple, Dict
 
-def get_file(pdb_id):
+def get_file(pdb_id: str):
     """Get restraint file from RCSB and save locally."""
     filename = f"{pdb_id.lower()}_mr.str"
     filepath = os.path.join('data', 'NOE', filename)
@@ -16,7 +17,7 @@ def get_file(pdb_id):
         r = requests.get(url)
         outfile.write(r.content)
 
-def get_star_restraints(pdb_id):
+def get_star_restraints(pdb_id: str) -> Union[List, str]: #find out type in List
     """
     Download restraint file if not available locally, and check for issues with
     the file.
@@ -37,8 +38,8 @@ def get_star_restraints(pdb_id):
         get_file(pdb_id)
     try:
         entry = pynmrstar.Entry.from_file(filepath)
-    except AttributeError:
-        return "Bad restraint file"
+    #except AttributeError:
+    #    return "Bad restraint file"
     except pynmrstar.exceptions.ParsingError:
         return "No restraint file"
     restraint_loops_list = entry.get_loops_by_category("Gen_dist_constraint")
@@ -50,7 +51,7 @@ def get_star_restraints(pdb_id):
     else:
         return loops_check
 
-def check_noe_loops(entry):
+def check_noe_loops(entry) -> str: #find out type of entry
     """
     Loop through Constraint_file loop in restraint file and check if: only
     expected restraint loop subtypes with type distance are in restraint file; 
@@ -80,7 +81,7 @@ def check_noe_loops(entry):
                 return "Unexpected restraint_loop_subtype"
     return "All clear"
 
-def check_amide(atom_1, atom_2):
+def check_amide(atom_1: Atom, atom_2: Atom) -> Tuple[bool, Union[Atom, None]]:
     """
     Check if either of atom_1 or atom_2 is an amide hydrogen; if so, return
     that atom.
@@ -102,7 +103,7 @@ def check_amide(atom_1, atom_2):
             atom_amide = atom
     return bool_amide, atom_amide
 
-def check_aromatic(atom):
+def check_aromatic(atom: Atom) -> Tuple[bool, Union[Atom, None]]:
     """
     Check if an atom is an aromatic ring proton.
 
@@ -126,7 +127,7 @@ def check_aromatic(atom):
             atom_aroma = atom
     return bool_aroma, atom_aroma
 
-def check_dist(dist_val, dist_lower, dist_upper):
+def check_dist(dist_val: str, dist_lower: str, dist_upper: str) -> str:
     """
     Check that distance values and bounds of restraint are acceptable.
 
@@ -156,7 +157,7 @@ def check_dist(dist_val, dist_lower, dist_upper):
         else:
             return "Upper too high" # Again, indicative that something is wrong, maybe not an NOE
 
-def make_restraint(restraint_entry):
+def make_restraint(restraint_entry) -> Tuple[Union[Restraint, str], str, str]: #find out type of restraint_entry
     """
     Read line from restraint file and build restraint if it is amide-aromatic.
 
@@ -211,7 +212,9 @@ def make_restraint(restraint_entry):
 
     return restraint, restraint_id, member_id
 
-def make_restraints_dict(pdb_id):
+def make_restraints_dict(
+    pdb_id: str
+) -> Tuple[Dict[str, Dict[str, Restraint]], Dict[str, Dict[str, str]]]:
     """
     Create dictionary of all restraints for a PDB entry.
 
@@ -247,11 +250,9 @@ def make_restraints_dict(pdb_id):
                 restraints_dict[restraint_id][member_id] = restraint
             else: # exception triggered
                 exceptions_map[restraint_id] = restraint
-            
-    
     return restraints_dict, exceptions_map
 
-def add_restraints(protein):
+def add_restraints(protein: Protein) -> Union[Protein, str]:
     """
     Add restraints dict to protein.
 

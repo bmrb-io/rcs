@@ -1,8 +1,9 @@
 from atoms import Atom
 from residues import Residue
 from proteins import Protein
+from typing import Union, Dict, Tuple, List
 
-def make_protein_from_file(filename):
+def make_protein_from_file(filename: str) -> Union[Protein, str]:
     '''
     Build protein complete with amide and aromatic residues and chemical 
     shifts for amide and aromatic ring protons.
@@ -29,11 +30,8 @@ def make_protein_from_file(filename):
         if line0[6] == '1' and line0[7] == '1': # There's only 1 entity/assembly
             for line in lines:
                 line = line.split(',')
-                protein.residues_dict, protein.exceptions_map_residues = (
-                    add_residues(
-                        line, protein.residues_dict, 
-                        protein.exceptions_map_residues
-                    )
+                protein.residues_dict = (
+                    add_residues(line, protein.residues_dict)
                 )
                 protein.pair_geometries = add_pair_geometries(
                     line, protein.pair_geometries)
@@ -42,7 +40,9 @@ def make_protein_from_file(filename):
 
     return protein
 
-def add_pair_geometries(line, pair_geometries):
+def add_pair_geometries(
+    line: List[str], pair_geometries: Dict[str, Dict[str, float]]
+) -> Dict[str, Dict[str, float]]:
     """
     Add distances between the amide and the aromatic ring protons listed on 
     a line of the k-file to the pair_geometries.
@@ -79,7 +79,9 @@ def add_pair_geometries(line, pair_geometries):
     pair_geometries[res_index_amide] = amide_geometries
     return pair_geometries
 
-def add_residues(line, residues_dict, exceptions_map):
+def add_residues(
+    line: List[str], residues_dict: Dict[str, Residue]
+) -> Dict[str, Residue]:
     """
     Add residues from a line of the data file to residues_dict if not already
     in it; otherwise update atoms_dict of the residues.
@@ -88,8 +90,6 @@ def add_residues(line, residues_dict, exceptions_map):
     line -- a line from the data file
     residues_dict -- dict containing Residues for a PDB entry organized by 
         residue index
-    exceptions_map -- dict containing exceptions generated when trying to make
-        residues; organized by residue index
     """
     res_amide, res_aroma_list = make_residues(line)
     if res_amide.res_index in residues_dict: # The Residue was already made
@@ -105,9 +105,9 @@ def add_residues(line, residues_dict, exceptions_map):
             )
         else:
             residues_dict[res_aroma.res_index] = res_aroma
-    return residues_dict, exceptions_map
+    return residues_dict
 
-def make_residues(line):
+def make_residues(line: List[str]) -> Tuple[Residue, List[Residue]]:
     """
     Make one amide and multiple aromatic residues from line of ring data file.
 
@@ -125,7 +125,7 @@ def make_residues(line):
             res_aroma_list.append(make_res_aroma(line, i))
     return res_amide, res_aroma_list
 
-def make_res_amide(line):
+def make_res_amide(line: List[str]) -> Residue:
     """
     Make a residue containing the amide atom from a line of ring data file.
     
@@ -143,7 +143,7 @@ def make_res_amide(line):
     res_amide = Residue(res_index, res_label, atoms_dict)
     return res_amide
 
-def make_res_aroma(line, i):
+def make_res_aroma(line: List[str], i: int) -> Union[Residue, str]:
     """
     Make an aromatic residue from a line of Kumaran's ring data file.
 
@@ -170,7 +170,7 @@ def make_res_aroma(line, i):
     return res
 
 
-def make_atoms_aroma(ring_data):
+def make_atoms_aroma(ring_data: List[str]) -> List[Atom]:
     """
     Make a list of aromatic ring protons from Kumaran's ring data file.
 
