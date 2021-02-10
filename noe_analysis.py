@@ -46,12 +46,11 @@ def results_a(
     print("A:")
     expected_exceptions = [
         'No matching atoms found', 'Too many entities/assemblies', 
-        'No restraints in file', 'PDB ID not found in RCSB', 'No pairs found',
-        'No restraint file', 'Too many restraints',
-        'Misaligned restraint indices', 'BMRB entry deprecated.',
+        'No restraints in file', 'Unreleased structure', 'No pairs found',
+        'No restraint file', 'Bad restraint file', 'Too many restraints',
+        'Misaligned restraint indices', 'BMRB entry only exists in NMR-STAR 2.0',
         'No aromatic residues found', 
         'Unacceptable distances between restrained pairs',
-        'No restraint file or maybe bad restraint file!',
     ]
     exceptions_by_reason = {}
     for pdb_id in exceptions_map_entries:
@@ -64,13 +63,12 @@ def results_a(
                 print(
                     f"UNEXPECTED EXCEPTION IN {pdb_id}, {bmrb_id}: {reason}"
                 )
-            if reason == "PDB ID not found in RCSB":
-                print(pdb_id, bmrb_id)
     for reason in exceptions_by_reason: 
         num = exceptions_by_reason[reason]
         print("  ", reason, ":", num)
     num_entries = 0
     num_pairs = 0
+    num_amides = 0
     for pdb_id in proteins_dict:
         for bmrb_id in proteins_dict[pdb_id]:
             num_entries += 1

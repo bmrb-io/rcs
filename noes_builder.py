@@ -38,8 +38,8 @@ def get_star_restraints(pdb_id: str) -> Union[List, str]: #find out type in List
         get_file(pdb_id)
     try:
         entry = pynmrstar.Entry.from_file(filepath)
-    #except AttributeError:
-    #    return "Bad restraint file"
+    except AttributeError as err:
+        return "Bad restraint file"
     except pynmrstar.exceptions.ParsingError:
         return "No restraint file"
     restraint_loops_list = entry.get_loops_by_category("Gen_dist_constraint")

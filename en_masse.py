@@ -119,13 +119,18 @@ def get_proteins_dict_multi(
                     protein = get_protein(pdb_id, bmrb_id, build_anyway)
                     # Tell our parent we are ready for the next job
                     child_conn.send([protein, pdb_id, bmrb_id])
-                except KeyError:
-                    exception = "PDB ID not found in RCSB"
-                    child_conn.send([exception, pdb_id, bmrb_id])
-                except AttributeError as err:
-                    exception = "BMRB entry deprecated."
-                    child_conn.send([exception, pdb_id, bmrb_id])
+                #except KeyError:
+                #    exception = "PDB ID not found in RCSB"
+                #    child_conn.send([exception, pdb_id, bmrb_id])
+                #except AttributeError as err:
+                #    exception = "BMRB entry deprecated"
+                #    child_conn.send([exception, pdb_id, bmrb_id])
                 except Exception as err:
+                    err = str(err)
+                    if "'NoneType' object has no attribute 'startswith'" in err:
+                        err = "BMRB entry only exists in NMR-STAR 2.0"
+                    elif pdb_id in err:
+                        err = "Unreleased structure"
                     child_conn.send([err, pdb_id, bmrb_id])
         # We are the parent, don't need the child connection
         else:
