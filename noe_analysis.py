@@ -192,9 +192,7 @@ def print_result_stages(
         entries_dict, build_anyway
     )
     if make_plots:
-        make_proportions_plot(proteins_dict, 11, -5.5, 5.5)
-        make_res_prop_plot(proteins_dict, 11, -5.5, 5.5)
-
+        make_all_plots(proteins_dict, 11, -5.5, 5.5)
     results_a(proteins_dict, exceptions_map_entries)
     results_b(proteins_dict)
     results_c(proteins_dict, outlier_sigma)

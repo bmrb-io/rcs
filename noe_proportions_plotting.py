@@ -2,6 +2,7 @@ import numpy as np
 from atoms import Atom
 from proteins import Protein
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 from typing import Union, List, Tuple, Dict
 
 def make_binning_info(
@@ -81,7 +82,7 @@ def sort_atoms_by_restraint(protein: Protein) -> Tuple[List[Atom], List[Atom]]:
 
 def make_proportions_plot(
     proteins_dict: Dict[str, Dict[str, Protein]], num_bins: int, 
-    cs_min: Union[float, int], cs_max: Union[float, int]
+    cs_min: Union[float, int], cs_max: Union[float, int], fig
 ):
     """
     Generate a plot of the proportion of amides from proteins_dict that have
@@ -116,46 +117,29 @@ def make_proportions_plot(
     proportions_list_new = [i[0] / (i[0] + i[1]) for i in proportions_list] #proportion with restraints
     proportions_list = proportions_list_new
 
-
-    fig = go.Figure()
     fig.add_trace(
         go.Scatter(
             mode='markers+text',
             x=bin_midpoints,
             y=proportions_list,
             marker=dict(
-                color='LightSkyBlue',
+                color='#7F7F7F',
                 size=20,
-                line=dict(
-                    color='MediumPurple',
-                    width=2
-                )
+                line=dict(width=2)
             ),
             text=[str(i) for i in binned_totals], # Write total for that bin above marker
             textposition='top center',
-            textfont_size=16,
+            textfont_size=22,
             textfont_family="Courier New, monospace",
-            showlegend=False
-        )
+            showlegend=False,
+        ), row=1, col=1
     )
-    fig.update_layout(
-        title=(
-            'Proportion of Amide Hydrogens with NOE Restraint'
-            + '<br>'
-            + 'to Aromatic Ring Hydrogen'
-        ),
-        title_x=0.5,
-        xaxis_title='Z(δ)',
-        yaxis_title='Proportion',
-        font=dict(family="Courier New, monospace",size=16),
-        yaxis_range=[0,0.78]
-    )
-    fig.show(renderer="firefox")
+    return fig
 
 
 def make_res_prop_plot(
     proteins_dict: Dict[str, Dict[str, Protein]], num_bins: int, 
-    cs_min: Union[float, int], cs_max: Union[float, int]
+    cs_min: Union[float, int], cs_max: Union[float, int], fig
 ):
     """
     Generate a plot of the proportion of amides from proteins_dict that have
@@ -230,7 +214,6 @@ def make_res_prop_plot(
         totals_list = totals_dict[res_label]
         for i, num in enumerate(totals_list):
             proportions_dict[res_label].append(num / binned_totals[i])
-    fig = go.Figure()
     for res_label in proportions_dict:
         proportions_list = proportions_dict[res_label]
         totals_list = totals_dict[res_label]
@@ -244,9 +227,22 @@ def make_res_prop_plot(
                     size=20,
                     line=dict(width=2)
                 ),
-                showlegend=True
-            )
+                showlegend=True,
+            ), row=2,col=1
         )
+    return fig
+
+def make_all_plots(proteins_dict: Dict[str, Dict[str, Protein]], num_bins: int, 
+    cs_min: Union[float, int], cs_max: Union[float, int]
+):
+    fig = make_subplots(
+        rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.1, 
+        subplot_titles=('<b>A<b>: Total', '<b>B<b>: By Residue')
+    )
+    fig = make_proportions_plot(proteins_dict, num_bins, cs_min, cs_max, fig)
+    fig = make_res_prop_plot(proteins_dict, num_bins, cs_min, cs_max, fig)
+    fig.update_yaxes(title_text='Proportion', row=1, col=1, range=[0, 0.8])
+    fig.update_yaxes(title_text='Proportion', row=2, col=1, range=[0, 0.25])
     fig.update_layout(
         title=(
             'Proportion of Amide Hydrogens with NOE Restraint'
@@ -254,9 +250,16 @@ def make_res_prop_plot(
             + 'to Aromatic Ring Hydrogen'
         ),
         title_x=0.5,
+        title_y=0.97,
         xaxis_title='Z(δ)',
-        yaxis_title='Proportion',
-        font=dict(family="Courier New, monospace",size=16),
-        yaxis_range=[0,0.35]
-    )
+        xaxis_anchor = 'y2',
+        font=dict(family="Courier New, monospace",size=24),
+        legend=dict(
+            y=0.225
+        )
+    ) #0.11, 0.6
+    fig.update_xaxes(title_standoff=35)
+    fig.layout.annotations[0].update(x=0.07, font=dict(family="Courier New, monospace",size=22))
+    fig.layout.annotations[1].update(x=0.11, font=dict(family="Courier New, monospace",size=22))
+    print(fig.layout)
     fig.show(renderer="firefox")
