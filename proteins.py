@@ -219,6 +219,7 @@ class Protein:
                             if pair_dist > cutoff:
                                 geom_bool = False
                     except KeyError:
+                        print(labels_aroma)
                         print("HAD TO DO THIS FOR ", self.pdb_id, self.bmrb_id)
                         print(atom_amide.res_index, res_index_aroma, atom_label)
         return geom_bool

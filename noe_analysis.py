@@ -193,6 +193,7 @@ def print_result_stages(
     )
     if make_plots:
         make_all_plots(proteins_dict, 11, -5.5, 5.5)
+        make_num_restraints_plot(proteins_dict, outlier_sigma)
     results_a(proteins_dict, exceptions_map_entries)
     results_b(proteins_dict)
     results_c(proteins_dict, outlier_sigma)

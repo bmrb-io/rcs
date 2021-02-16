@@ -136,6 +136,150 @@ def make_proportions_plot(
     )
     return fig
 
+def make_num_restraints_plot(
+    proteins_dict: Dict[str, Dict[str, Protein]], 
+    outlier_sigma: Union[int, float]
+):
+    num_restraints_dict = {
+        'Upfield': {'HIS': {}, 'TRP': {}, 'PHE': {}, 'TYR': {}},
+        'Downfield': {'HIS': {}, 'TRP': {}, 'PHE': {}, 'TYR': {}},
+        'Normal': {'HIS': {}, 'TRP': {}, 'PHE': {}, 'TYR': {}},
+    }
+    num_restraints_dict = {
+        'HIS': {
+            '1': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+            '2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+            '>2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+        },
+        'TRP': {
+            '1': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+            '2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+            '>2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+        },
+        'PHE': {
+            '1': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+            '2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+            '>2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+        },
+        'TYR': {
+            '1': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+            '2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+            '>2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+        },
+    }
+    num_redun = 0
+    redun_set = set()
+    for pdb_id in proteins_dict:
+        for bmrb_id in proteins_dict[pdb_id]:
+            protein = proteins_dict[pdb_id][bmrb_id]
+            protein.prune_undefined_pairs()
+            pairs_dict = protein.pairs_dict
+            for atom_amide in pairs_dict:
+                if atom_amide.cs_sigma >= outlier_sigma:
+                    shift_type = 'Downfield'
+                elif atom_amide.cs_sigma <= -1 * outlier_sigma:
+                    shift_type = 'Upfield'
+                else:
+                    shift_type = 'Normal'
+                if len(pairs_dict[atom_amide]) == 1:
+                    for res_index_aroma in pairs_dict[atom_amide]: #only one, but simpler this way
+                        atoms_aroma = pairs_dict[atom_amide][res_index_aroma]
+                        labels_aroma = [atom[0].atom_label for atom in atoms_aroma]
+                        num_restraints = len(set(labels_aroma))
+                        if num_restraints > 0:
+                            if num_restraints > 2:
+                                num_restraints = '>2'
+                            else:
+                                num_restraints = str(num_restraints)
+                            res_label_aroma = atoms_aroma[0][0].res_label
+                            num_restraints_dict[res_label_aroma][num_restraints][shift_type] += 1
+    totals_by_res = {
+        'HIS': {},
+        'TRP': {},
+        'PHE': {},
+        'TYR': {}
+    }
+    for res_label in num_restraints_dict:
+        nr_res = num_restraints_dict[res_label]
+        totals = {'Upfield': 0, 'Normal': 0, 'Downfield': 0}
+        for nr in nr_res:
+            for shift_type in nr_res[nr]:
+                num_atoms = nr_res[nr][shift_type]
+                totals[shift_type] += num_atoms
+        totals_by_res[res_label] = totals
+    nr_dict_normalized = {}
+    for res_label in num_restraints_dict:
+        nr_dict_normalized[res_label] = {}
+        for nr in num_restraints_dict[res_label]:
+            nr_dict_normalized[res_label][nr] = {}
+            for shift_type in num_restraints_dict[res_label][nr]:
+                num_atoms = num_restraints_dict[res_label][nr][shift_type]
+                total = totals_by_res[res_label][shift_type]
+                nr_dict_normalized[res_label][nr][shift_type] = num_atoms
+
+    fig = make_subplots(
+        rows=2, cols=2, 
+        subplot_titles=("<b>HIS<b>", "<b>TRP<b>", "<b>PHE<b>", "<b>TYR<b>"),
+        shared_yaxes=True, 
+    )
+    for i in range(4):
+        fig.layout.annotations[i].update(font=dict(family="Courier New, monospace",size=20))
+    i = 0
+    row_nums = [1, 1, 2, 2]
+    col_nums = [1, 2, 1, 2]
+    colors = ['rgb(102, 197, 204)', 'rgb(248, 156, 116)', 'rgb(220, 176, 242)']
+
+    fig.update_yaxes(row=1, col=1, type='log', title_text='Number of Pairs')
+    fig.update_yaxes(row=1, col=2, type='log')#range=[0, 1], type='log')
+    fig.update_yaxes(row=2, col=1, type='log', title_text='Number of Pairs')
+    fig.update_yaxes(row=2, col=2, type='log')#range=[0, 1], type='log')
+    
+
+    for res_label in nr_dict_normalized:
+        if i == 0:
+            legend_bool = True
+        else:
+            legend_bool = False
+        row_num = row_nums[i]
+        col_num = col_nums[i]
+        nr_dict = nr_dict_normalized[res_label]
+        j = 0
+        for num_restraints in nr_dict:
+            totals = list(num_restraints_dict[res_label][num_restraints].values())
+            restraints_by_shift = nr_dict[num_restraints]
+            fig.add_trace(
+                go.Bar(
+                    x=list(restraints_by_shift.keys()), 
+                    y=list(restraints_by_shift.values()),
+                    name=num_restraints,
+                    marker_color=colors[j],
+                    showlegend=legend_bool,
+                    text=totals,
+                    textposition='auto',
+                    textfont_size=18,
+                    textfont_family="Courier New, monospace",
+                ),
+                row=row_num, col=col_num
+            )
+            j+=1
+        i+=1
+
+    fig.update_layout(
+        title=(
+            'Restrained Amide-Aromatic Pairs by'
+            + '<br>'
+            + 'Number of Restraints'
+        ),
+        title_x=0.5,
+        title_y=0.97,
+        font=dict(family="Courier New, monospace",size=22),
+        legend_title="Number of" + "<br>" + "Restraints",
+    )
+    
+    fig.show(renderer="firefox")
+    
+
+
 
 def make_res_prop_plot(
     proteins_dict: Dict[str, Dict[str, Protein]], num_bins: int, 
@@ -257,9 +401,9 @@ def make_all_plots(proteins_dict: Dict[str, Dict[str, Protein]], num_bins: int,
         legend=dict(
             y=0.225
         )
-    ) #0.11, 0.6
+    )
     fig.update_xaxes(title_standoff=35)
     fig.layout.annotations[0].update(x=0.07, font=dict(family="Courier New, monospace",size=22))
     fig.layout.annotations[1].update(x=0.11, font=dict(family="Courier New, monospace",size=22))
-    print(fig.layout)
     fig.show(renderer="firefox")
+

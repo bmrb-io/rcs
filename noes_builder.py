@@ -278,13 +278,13 @@ def add_restraints(protein: Protein) -> Union[Protein, str]:
         return restraints_dict 
     else:
         protein.restraints_dict = restraints_dict
-        if len(restraints_dict) == 0:
-            # successfully built restraints_dict, but no acceptable amide-aromatic restraints
-            return "No pairs found"
         if protein.check_restraint_alignment():
             protein.assign_atoms_symmetrically()
             protein.prune_bad_ambiguities()
             protein.prune_missed_restraints()
+            if len(restraints_dict) == 0:
+                # successfully built restraints_dict, but no acceptable amide-aromatic restraints
+                return "No pairs found"
             protein.exceptions_map_restraints = exceptions_map_restraints
             protein.make_pairs_dict()
             if protein.check_pair_geometries():
