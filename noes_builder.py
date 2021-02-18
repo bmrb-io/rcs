@@ -180,12 +180,12 @@ def make_restraint(restraint_entry) -> Tuple[Union[Restraint, str], str, str]: #
     res_index_1 = restraint_entry[3]
     res_label_1 = restraint_entry[4]
     atom_label_1 = restraint_entry[5]
-    atom_1 = Atom(res_index_1, res_label_1, atom_label_1, None)  
+    atom_1 = Atom(res_index_1, res_label_1, atom_label_1, None, None)  
     # info for the second atom
     res_index_2 = restraint_entry[6]
     res_label_2 = restraint_entry[7]
     atom_label_2 = restraint_entry[8]
-    atom_2 = Atom(res_index_2, res_label_2, atom_label_2, None)
+    atom_2 = Atom(res_index_2, res_label_2, atom_label_2, None, None)
     #info for check_dist
     dist_val = restraint_entry[9]
     dist_lower = restraint_entry[10]

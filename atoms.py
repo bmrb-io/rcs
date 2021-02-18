@@ -18,7 +18,7 @@ class Atom:
 
     def __init__(
         self, res_index: str, res_label: str, atom_label: str, 
-        cs_sigma: Union[float, None]
+        cs_sigma: Union[float, None], cs_val: Union[float, None]
     ):
         """
         Construct the Atom object.
@@ -33,6 +33,7 @@ class Atom:
         self.res_label = res_label
         self.atom_label = atom_label
         self.cs_sigma = cs_sigma
+        self.cs_val = cs_val
 
     def dump(self) -> Dict:
         """
@@ -47,6 +48,7 @@ class Atom:
         dump_dict['res_label'] = self.res_label
         dump_dict['atom_label'] = self.atom_label
         dump_dict['cs_sigma'] = self.cs_sigma
+        dump_dict['cs_val'] = self.cs_val
         return dump_dict
     
     @classmethod
@@ -63,5 +65,6 @@ class Atom:
         res_label = dump_dict['res_label']
         atom_label = dump_dict['atom_label']
         cs_sigma = dump_dict['cs_sigma']
-        atom = cls(res_index, res_label, atom_label, cs_sigma)
+        cs_val = dump_dict['cs_val']
+        atom = cls(res_index, res_label, atom_label, cs_sigma, cs_val)
         return atom

@@ -137,8 +137,9 @@ def make_res_amide(line: List[str]) -> Residue:
     """
     res_index = line[2]
     res_label = line[3]
+    cs_val = float(line[4])
     cs_sigma = float(line[5])
-    atom = Atom(res_index, res_label, 'H', cs_sigma)
+    atom = Atom(res_index, res_label, 'H', cs_sigma, cs_val)
     atoms_dict = {atom.atom_label: atom}
     res_amide = Residue(res_index, res_label, atoms_dict)
     return res_amide
@@ -197,7 +198,7 @@ def make_atoms_aroma(ring_data: List[str]) -> List[Atom]:
         else:
             cs_sigma = float(cs_sigma)
         atom_label = atoms_file_dict[res_label][cs_sigma_index]
-        atom = Atom(res_index, res_label, atom_label, cs_sigma)
+        atom = Atom(res_index, res_label, atom_label, cs_sigma, None)
         atoms_list.append(atom)
     return atoms_list
 
