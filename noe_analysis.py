@@ -46,10 +46,10 @@ def results_a(
     print("A:")
     expected_exceptions = [
         'No matching atoms found', 'Too many entities/assemblies', 
-        'No restraints in file', 'Unreleased structure', 'No pairs found',
-        'No restraint file', 'Bad restraint file', 'Too many restraints',
+        'No distance restraints in file', 'Unreleased structure', 'No pairs found',
+        'No restraint file', 'Empty restraint file', 'Too many restraints',
         'Misaligned restraint indices', 'BMRB entry only exists in NMR-STAR 2.0',
-        'No aromatic residues found', 
+        'No aromatic residues found', 'Misformatted restraint file',
         'Unacceptable distances between restrained pairs',
     ]
     exceptions_by_reason = {}

@@ -386,7 +386,7 @@ def make_all_plots(proteins_dict: Dict[str, Dict[str, Protein]], num_bins: int,
     fig = make_proportions_plot(proteins_dict, num_bins, cs_min, cs_max, fig)
     fig = make_res_prop_plot(proteins_dict, num_bins, cs_min, cs_max, fig)
     fig.update_yaxes(title_text='Proportion', row=1, col=1, range=[0, 0.8])
-    fig.update_yaxes(title_text='Proportion', row=2, col=1, range=[0, 0.25])
+    fig.update_yaxes(title_text='Proportion', row=2, col=1, range=[0, 0.3])
     fig.update_layout(
         title=(
             'Proportion of Amide Hydrogens with NOE Restraint'

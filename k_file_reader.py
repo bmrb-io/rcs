@@ -19,10 +19,11 @@ def make_protein_from_file(filename: str) -> Union[Protein, str]:
     with open(filename) as infile:
         lines = infile.readlines()
         if len(lines) == 1: # A one-line exception was written to the file
-            exc_str = lines[0]
-            split_index = exc_str.find(' ')
-            exc_str = exc_str[split_index+1:] # Getting rid of superfluous info
-            return exc_str
+            if len(lines[0]) < 50: #otherwise, just one amide shift was found in the file
+                exc_str = lines[0]
+                split_index = exc_str.find(' ')
+                exc_str = exc_str[split_index+1:] # Getting rid of superfluous info
+                return exc_str
         line0 = lines[0].split(',')
         pdb_id = line0[0]
         bmrb_id = line0[1]

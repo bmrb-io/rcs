@@ -39,12 +39,14 @@ def get_star_restraints(pdb_id: str) -> Union[List, str]: #find out type in List
     try:
         entry = pynmrstar.Entry.from_file(filepath)
     except AttributeError as err:
-        return "Bad restraint file"
+        return "Empty restraint file"
     except pynmrstar.exceptions.ParsingError:
         return "No restraint file"
+    except ValueError:
+        return "Misformatted restraint file"
     restraint_loops_list = entry.get_loops_by_category("Gen_dist_constraint")
     if len(restraint_loops_list) == 0:
-        return "No restraints in file" # Maybe should read 'No distance restraints in file'
+        return "No distance restraints in file" 
     loops_check = check_noe_loops(entry)
     if loops_check == 'All clear':
         return restraint_loops_list

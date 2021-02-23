@@ -3,10 +3,12 @@ from math import sqrt, acos
 import numpy
 import operator
 import pynmrstar
+from numpy import mean
 import os,sys
 import csv
 import os.path
 from operator import itemgetter
+import requests
 
 class RingCurrentEffect(object):
     atoms = {
@@ -16,11 +18,12 @@ class RingCurrentEffect(object):
         'HIS': ['CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HD1', 'HD2', 'HE1', 'HE2', 'xx', 'yy']  # if needed un comment
     }
 
+
     def __init__(self,pdbid,bmrbid):
-        self.pdb_id = pdbid
-        self.bmrb_id = bmrbid
-        #numpy.seterr(all='warn')
-        #warnings.filterwarnings('error')
+        #self.cal_prop(bmrbid)
+        # self.calculate_ring_current_effects(pdbid,bmrbid)
+        #self.generate_job_files(1000)
+        pass
 
     def cal_mean_distance(self,pdb,atm1,atm2):
         d=[]
@@ -47,8 +50,9 @@ class RingCurrentEffect(object):
         if not os.path.isdir('./output'):
             os.system('mkdir ./output')
         fout = './output/{}_{}.sq'.format(pdbid, bmrbid)
-        with open(fout, 'w') as fo:
-            fo.write("{},{},{},{},{},{},{},{},{}\n".format(bmrbid,pdbid,x[0],x[1],x[2],x[3],sum(x),n,",".join(sq)))
+        fo = open(fout, 'w')
+        fo.write("{},{},{},{},{},{},{},{},{}\n".format(bmrbid,pdbid,x[0],x[1],x[2],x[3],sum(x),n,",".join(sq)))
+        fo.close()
 
     def get_seq(self,str_file):
         str_data = pynmrstar.Entry.from_file(str_file)
@@ -58,12 +62,16 @@ class RingCurrentEffect(object):
 
         return n,sqq_dat,[sq_dat.count('HIS'),sq_dat.count('TYR'),sq_dat.count('PHE'),sq_dat.count('TRP')]
 
+
+
+
     def calculate_ring_current_effects(self,pdbid,bmrbid):
         '''
         Extract the information about amide chemical shift and the nearby aromatic ring geometry and chemical shifts and write out csv file
         :param pdbid: matching pdb id example 2L4N
         :param bmrbid: matching bmrb id example 17245
         '''
+        #print ('Calculating aromatic ring and amide proton interaction in {} {}'.format(pdbid,bmrbid))
         if not os.path.isdir('./data'):
             os.system('mkdir ./data')
         if not os.path.isdir('./data/PDB'):
@@ -71,45 +79,64 @@ class RingCurrentEffect(object):
         if not os.path.isdir('./data/BMRB'):
             os.system('mkdir ./data/BMRB')
         cif_file = './data/PDB/{}.cif'.format(pdbid)
+        str_file = './data/BMRB/{}.str'.format(bmrbid)
         if not os.path.isfile(cif_file):
             self.get_pdb(pdbid)
-        pdb_auth = self.get_coordinates(cif_file, pdbid, use_auth_tag=True) # creates the dictionary using original seq no
-        pdb_orig = self.get_coordinates(cif_file, pdbid, use_auth_tag=False) # creates the dictionary using author seq no
-        auth_keys = [i for i in pdb_auth[0][1].keys() if i[3]=='H']
-        orig_keys = [i for i in pdb_orig[0][1].keys() if i[3]=='H']
-        cs = self.get_chemical_shifts(bmrbid) # creates the seq using original seq no
-        cs_keys = [i for i in cs[0].keys() if i[3]=='H']
-        key_match_auth = [i for i in cs_keys if i in auth_keys]
-        key_match_orig = [i for i in cs_keys if i in orig_keys]
+        if not os.path.isfile(str_file):
+            self.get_bmrb(bmrbid)
+        pdb_auth = self.get_coordinates(cif_file,pdbid,use_auth_tag=True) # creates the dictionary using original seq no
+        pdb_orig = self.get_coordinates(cif_file,pdbid,use_auth_tag=False) # creates the dictionary using author seq no
+        pdb_auth_keys = [i for i in pdb_auth[0][1].keys() if i[3]=='H']
+        pdb_orig_keys = [i for i in pdb_orig[0][1].keys() if i[3]=='H']
+        cs_orig = self.get_chemical_shifts(str_file,auth_tag=False) # creates the seq using original seq no
+        cs_auth = self.get_chemical_shifts(str_file,auth_tag=True) # creates the seq using original seq no
+        cs_orig_keys = [i for i in cs_orig[0].keys() if i[3]=='H']
+        cs_auth_keys = [i for i in cs_auth[0].keys() if i[3] == 'H']
+        orig_auth = [i for i in cs_orig_keys if i in pdb_auth_keys]
+        orig_orig = [i for i in cs_orig_keys if i in pdb_orig_keys]
+        auth_auth = [i for i in cs_auth_keys if i in pdb_auth_keys]
+        auth_orig = [i for i in cs_auth_keys if i in pdb_orig_keys]
         pdb = pdb_orig
-        if len(auth_keys)==0:
-            pdb = None
-        else:
-            auth_math = float(len(key_match_auth)) / float(len(auth_keys))
-        if len(orig_keys)==0:
-            pdb = None
-        else:
-            orig_match = float(len(key_match_orig)) / float(len(orig_keys))
-        # check the seq numbering in pdb and bmrb matches at lease 70% and identify which tag is matching
-        if pdb is not None:
-            if orig_match > 0.7:
-                tag_match = 'ORIG'
+        if len(cs_orig_keys)>0:
+            seq_len=float(len(cs_orig_keys))
+            orig_orig_match=float(len(orig_orig))/seq_len
+            orig_auth_match=float(len(orig_auth))/seq_len
+            auth_auth_match=float(len(auth_auth))/seq_len
+            auth_orig_match=float(len(auth_orig))/seq_len
+
+            if orig_orig_match > 0.7:
                 pdb = pdb_orig
-            elif auth_math > 0.7:
-                tag_match = 'AUTH'
+                cs = cs_orig
+                tag_match='ORIG_ORIG'
+            elif orig_auth_match > 0.7:
                 pdb = pdb_auth
+                cs = cs_orig
+                tag_match = 'ORIG_AUTH'
+            elif auth_auth_match > 0.7:
+                pdb = pdb_auth
+                cs = cs_auth
+                tag_match = 'AUTH_AUTH'
+            elif auth_orig_match > 0.7:
+                pdb = pdb_orig
+                cs = cs_auth
+                tag_match = 'AUTH_ORIG'
             else:
-                tag_match = None
                 pdb = None
-            if tag_match is not None:
-                ar=self.find_aromatic_residues(pdb[0])
-            else:
-                ar = None
+                cs = cs_orig
+                tag_match = None
         else:
-            ar=None
+            pdb = None
+            cs = [None,None,None,None]
             tag_match = None
-        fout = self.find_amide_ring_distance(pdb, ar, cs, pdbid, bmrbid, tag_match)
+
+        if tag_match is not None:
+            ar=self.find_aromatic_residues(pdb[0])
+        else:
+            ar = None
+
+        fout = self.find_amide_ring_distance(pdb, ar, cs , pdbid, bmrbid, tag_match)
         return fout
+
 
 
 
@@ -123,22 +150,15 @@ class RingCurrentEffect(object):
         """
         return numpy.linalg.norm(c1 - c2)
 
-    #@staticmethod
-    def get_chemical_shifts(self, bmrb_id):
+    @staticmethod
+    def get_chemical_shifts(str_file,auth_tag=False):
         atoms_cs = {
             'PHE': ['CG','CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HD1', 'HD2', 'HE1', 'HE2', 'HZ'],
             'TYR': ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'HD1', 'HD2', 'HE1', 'HE2', 'HH'],
             'TRP': ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2', 'HE3', 'HZ2', 'HZ3', 'HH2', 'HE1'],
             'HIS': ['CG', 'ND1', 'CD2', 'CE1', 'NE2', 'HD1', 'HD2', 'HE1', 'HE2', 'xx', 'yy']  # if needed un comment
         }
-        str_file = f'./data/BMRB/{bmrb_id}.str'
-        if not os.path.isfile(str_file):
-            #str_data = pynmrstar.Entry.from_database(bmrbid)
-            #str_data.write_to_file(str_file)
-            self.get_bmrb(bmrb_id)
-            str_data = pynmrstar.Entry.from_file(str_file)
-        else:
-            str_data = pynmrstar.Entry.from_file(str_file)
+        str_data = pynmrstar.Entry.from_file(str_file)
         csdata = str_data.get_loops_by_category('Atom_chem_shift')
         assembly_data = str_data.get_loops_by_category('Entity_assembly')
         entity = str_data.get_tag('_Entity_assembly.Entity_ID')
@@ -148,19 +168,24 @@ class RingCurrentEffect(object):
         csh2 = {}
         for cs in csdata:
             tag_list = cs.get_tag_names()
-            id1 = tag_list.index('_Atom_chem_shift.Comp_index_ID')
             id2 = tag_list.index('_Atom_chem_shift.Auth_asym_ID')
+            if auth_tag:
+                id1 = tag_list.index('_Atom_chem_shift.Auth_seq_ID')
+                id3 = tag_list.index('_Atom_chem_shift.Auth_comp_ID')
+            else:
+                id1 = tag_list.index('_Atom_chem_shift.Comp_index_ID')
+                id3 = tag_list.index('_Atom_chem_shift.Comp_ID')
             id3 = tag_list.index('_Atom_chem_shift.Comp_ID')
             id4 = tag_list.index('_Atom_chem_shift.Atom_ID')
             id5 = tag_list.index('_Atom_chem_shift.Val')
             id6 = tag_list.index('_Atom_chem_shift.Ambiguity_code')
             for d in cs.data:
                 if d[id4] == 'H':
-                    if d[id2] == '.':
+                    if d[id2] in ['.','1']:
                         d[id2] = 'A' # temp fix
                     csh[(d[id1],d[id2],d[id3],d[id4])]=d[id5]
                 if d[id3] in atoms_cs.keys():
-                    if d[id2] == '.':
+                    if d[id2] in ['.','1']:
                         d[id2] = 'A' #temp fix
                     k = (d[id1],d[id2],d[id3])
                     if d[id4] in atoms_cs[d[id3]]:
@@ -169,19 +194,19 @@ class RingCurrentEffect(object):
                         csh2[k][d[id4]]=(d[id5],d[id6])
         return csh,csh2,entity_size,assembly_size
 
-    def solid_angle(self, a_deg,r): #was a static method
+    @staticmethod
+    def solid_angle(a_deg,r):
         s=1.4
-        A=((3.0*numpy.sqrt(3))/2.0)*s*s
+        #A=((3.0*numpy.sqrt(3))/2.0)*s*s
         a=(numpy.pi/180)*a_deg
         r1=r*1e10
-        sa2=2*numpy.pi*(1.0-1.0/(numpy.sqrt(1+(A*numpy.cos(a)/(numpy.pi*r1**r1)))))
+        #sa2=2*numpy.pi*(1.0-1.0/(numpy.sqrt(1+(A*numpy.cos(a)/(numpy.pi*r1**r1)))))
         sa = 2 * numpy.pi * (1.0 - 1.0 / (numpy.sqrt(1 + ( numpy.cos(a) / (numpy.pi * r ** r)))))
         #print (a_deg)
         sa_deg=(180.0/numpy.pi)*sa
-        sa_deg2 = (180.0 / numpy.pi) * sa2
+        #sa_deg2 = (180.0 / numpy.pi) * sa2
         #print (a_deg,sa_deg,sa_deg2)
         return sa_deg
-
 
     @staticmethod
     def get_coordinates(cif_file, pdbid, use_auth_tag=True):
@@ -231,6 +256,57 @@ class RingCurrentEffect(object):
             pdb_models[model_id][key] = val_pdb
         return pdb_models, atom_ids
 
+
+
+        '''
+        cif_data = []
+        ifh = open(cif_file, 'r')
+        pRd = PdbxReader(ifh)
+        pRd.read(cif_data)
+        ifh.close()
+        c0 = cif_data[0]
+        atom_site = c0.getObj('atom_site')
+        max_models = int(atom_site.getValue('pdbx_PDB_model_num', -1))
+        col_names = atom_site.getAttributeList()
+        model_id = col_names.index('pdbx_PDB_model_num')
+        x_id = col_names.index('Cartn_x')
+        y_id = col_names.index('Cartn_y')
+        z_id = col_names.index('Cartn_z')
+        atom_id = col_names.index('label_atom_id')
+        comp_id = col_names.index('label_comp_id')
+        asym_id = col_names.index('label_asym_id')
+        entity_id = col_names.index('label_entity_id')
+        seq_id = col_names.index('label_seq_id')
+        icode_id = col_names.index('pdbx_PDB_ins_code')
+        alt_id = col_names.index('label_alt_id')
+        aut_seq_id = col_names.index('auth_seq_id')
+        aut_asym_id = col_names.index('auth_asym_id')
+        aut_atom_id = col_names.index('auth_atom_id')
+        aut_comp_id = col_names.index('auth_comp_id')
+        pdb_models = {}
+        atom_ids = {}
+        for model in range(1, max_models + 1):
+            pdb = {}
+            aid = {}
+            for dat in atom_site.getRowList():
+                if int(dat[model_id]) == model:
+                    if use_auth_tag:
+                        aid[(dat[aut_seq_id], dat[aut_asym_id], dat[aut_comp_id], dat[aut_atom_id])] = \
+                            (dat[entity_id], dat[asym_id], dat[comp_id], dat[seq_id], dat[aut_seq_id],
+                             dat[alt_id], dat[icode_id], dat[aut_asym_id])
+                        pdb[(dat[aut_seq_id], dat[aut_asym_id], dat[aut_comp_id], dat[aut_atom_id])] = \
+                            numpy.array([float(dat[x_id]), float(dat[y_id]), float(dat[z_id])])
+                    else:
+                        aid[(dat[seq_id], dat[asym_id], dat[comp_id], dat[atom_id])] = \
+                            (dat[entity_id], dat[asym_id], dat[comp_id], dat[seq_id], dat[aut_seq_id],
+                             dat[alt_id], dat[icode_id], dat[aut_asym_id])
+                        pdb[(dat[seq_id], dat[asym_id], dat[comp_id], dat[atom_id])] = \
+                            numpy.array([float(dat[x_id]), float(dat[y_id]), float(dat[z_id])])
+            pdb_models[model] = pdb
+            atom_ids[model] = aid
+        return pdb_models, atom_ids
+        '''
+
     @staticmethod
     def get_sigma_value(res, x):
         m = {'ALA':8.193,'ARG':8.242,'ASN':8.331,'ASP':8.300,'CYS':8.379,'GLN':8.216,'GLU':8.330,'GLY':8.327,
@@ -247,6 +323,7 @@ class RingCurrentEffect(object):
 
     @staticmethod
     def get_centroid(p):
+        #print (len(p),p)
         x= [i[0] for i in p]
         y= [i[1] for i in p]
         z= [i[2] for i in p]
@@ -270,14 +347,18 @@ class RingCurrentEffect(object):
         ang2 = numpy.arccos(dp2)
         ang_deg = (180/numpy.pi)*ang
         ang_deg2 = (180 / numpy.pi) * ang2
+        #print(ang_deg)
         s_ang=self.solid_angle(ang_deg,d*1e-10)
         return ang_deg,s_ang
+
+
 
     def find_mean_distance(self,ph,pc):
         d = []
         for d1 in pc:
             d.append(numpy.linalg.norm(ph - d1))
-        return numpy.mean(d), numpy.std(d)
+        return mean(d), numpy.std(d)
+
 
     def find_aromatic_residues(self,pdb):
         rl = []
@@ -285,6 +366,8 @@ class RingCurrentEffect(object):
             if a[2] in ['PHE','TRP','TYR','HIS']:
                 rl.append((a[0],a[1],a[2]))
         return list(set(rl))
+
+
 
     def find_amide_ring_distance(self,pdb2,aromatic,cs2,pdbid,bmrbid,tag_match):
         atoms_cs = {
@@ -340,6 +423,7 @@ class RingCurrentEffect(object):
                                     sd.append(std_d)
                                     cd.append(d)
                                     an=(a[0],a[1],a[2],'N')
+                                    #print (a,ar,m)
                                     angles = self.find_angle(p, pdb[m][a],pdb[m][an],d)
                                     ang.append(angles[0])
                                     ang2.append(angles[1])
@@ -359,6 +443,7 @@ class RingCurrentEffect(object):
                                 outdat='{},{},{},{},{},{},{},{}'.format(pdbid,bmrbid,a[0],a[2],amide_chemical_shift[a],self.get_sigma_value(a[2],float(amide_chemical_shift[a])),entity_size,
                                                                                                             assembly_size)
                                 for kk in range(5):
+
                                     try:
                                         odat='{},{},{},{},{},{},{},{}'.format(arr_info[kk][-1][0],arr_info[kk][-1][2],
                                                                             arr_info[kk][0],arr_info[kk][1],
@@ -385,6 +470,30 @@ class RingCurrentEffect(object):
                                 outdat='{}\n'.format(outdat)
                                 fo.write(outdat)
         return fout
+
+    @staticmethod
+    def generate_job_files(n):
+        """Return a dict of all corresponding PDB and BMRB IDs."""
+        url = "http://api.bmrb.io/v2/mappings/bmrb/pdb?match_type=exact"
+        r = requests.get(url).json()
+        i=0
+        j=0
+        for ids_dict in r:
+            if j==n:
+                j=0
+                f.close()
+            if j==0 :
+                i += 1
+                f=open('job_{}.sh'.format(i),'w')
+                f.write('#!/usr/bin/env bash\n')
+
+            bmrb_id = ids_dict['bmrb_id']
+            pdb_ids = ids_dict['pdb_ids']
+            for k in pdb_ids:
+                f.write('python3 RingCurrentEffects.py {} {}\n'.format(bmrb_id,k))
+                j+=1
+
+
     @staticmethod
     def get_pdb(pdb_id):
         cmd = 'wget https://files.rcsb.org/download/{}.cif -O ./data/PDB/{}.cif'.format(pdb_id,pdb_id)
@@ -394,3 +503,56 @@ class RingCurrentEffect(object):
     def get_bmrb(bmrb_id):
         cmd = 'wget http://rest.bmrb.io/bmrb/{}/nmr-star3 -O ./data/BMRB/{}.str'.format(bmrb_id,bmrb_id)
         os.system(cmd)
+
+    @staticmethod
+    def check_output(datafile):
+        id_pair=[]
+        url = "http://api.bmrb.io/v2/mappings/bmrb/pdb?match_type=exact"
+        r = requests.get(url).json()
+        for ids_dict in r:
+            bmrb_id = ids_dict['bmrb_id']
+            pdb_ids = ids_dict['pdb_ids']
+            for k in pdb_ids:
+                id_pair.append('{}-{}'.format(bmrb_id,k))
+        f = open('missing_job.sh', 'w')
+        f.write('#!/usr/bin/env bash\n')
+        print (len(id_pair))
+        id_pair2=[]
+        with open(datafile) as csvfile:
+            readcsv = csv.reader(csvfile, delimiter=',')
+            for d in readcsv:
+                if len(d[1]) > 6:
+                    bid=d[1].split(" ")[0]
+                else:
+                    bid = d[1]
+                id='{}-{}'.format(bid,d[0])
+
+                id_pair2.append(id)
+                #print (id,id_pair.index(id))
+                    #print (id)
+        u_ids=list(set(id_pair2))
+        n_ids=[]
+        for id in id_pair:
+            if id not in u_ids:
+                f.write('python3 RingCurrentEffects.py {} {}\n'.format(id.split("-")[0], id.split("-")[1]))
+                print (id)
+                n_ids.append(id)
+        f.close()
+        print (len(id_pair))
+        print (len(u_ids))
+        print (len(n_ids))
+
+
+'''
+if __name__ == "__main__":
+    bmrbid = sys.argv[1]
+    pdbid = sys.argv[2]
+    # bmrbid = '11086'
+    # pdbid = '5KVP'
+    # bmrbid = '30139'
+    # pdbid = '2JO7'
+    # pdbid= '2KAH'
+    # bmrbid='16023'
+    p=RingCurrentEffect(pdbid,bmrbid)
+    #p.check_output('data_08022021_3.csv')
+'''
