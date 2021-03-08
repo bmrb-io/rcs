@@ -8,7 +8,6 @@ import time
 import traceback
 from typing import Dict, Tuple, List
 
-
 def get_proteins_dict(
     entries_dict: Dict[str, str], build_anyway: bool = False
 ) -> Tuple[Dict[str, Dict[str, Protein]], Dict[str, Dict[str, str]]]:
@@ -126,14 +125,16 @@ def get_proteins_dict_multi(
                 #    exception = "BMRB entry deprecated"
                 #    child_conn.send([exception, pdb_id, bmrb_id])
                 except Exception as err:
-                    err = str(err)
+                    #err = str(err)
                     if (
-                        "'NoneType' object has no attribute 'startswith'" in err
-                        or "NoneType' object has no attribute 'lower'" in err
+                        "'NoneType' object has no attribute 'startswith'" in str(err)
+                        or "NoneType' object has no attribute 'lower'" in str(err)
                     ):
                         err = "BMRB entry only exists in NMR-STAR 2.0"
-                    elif pdb_id in err:
+                    elif pdb_id in str(err):
                         err = "Unreleased structure"
+                    else:
+                        err = traceback.format_exc()
                     child_conn.send([err, pdb_id, bmrb_id])
         # We are the parent, don't need the child connection
         else:

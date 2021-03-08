@@ -256,65 +256,20 @@ class RingCurrentEffect(object):
             pdb_models[model_id][key] = val_pdb
         return pdb_models, atom_ids
 
-
-
-        '''
-        cif_data = []
-        ifh = open(cif_file, 'r')
-        pRd = PdbxReader(ifh)
-        pRd.read(cif_data)
-        ifh.close()
-        c0 = cif_data[0]
-        atom_site = c0.getObj('atom_site')
-        max_models = int(atom_site.getValue('pdbx_PDB_model_num', -1))
-        col_names = atom_site.getAttributeList()
-        model_id = col_names.index('pdbx_PDB_model_num')
-        x_id = col_names.index('Cartn_x')
-        y_id = col_names.index('Cartn_y')
-        z_id = col_names.index('Cartn_z')
-        atom_id = col_names.index('label_atom_id')
-        comp_id = col_names.index('label_comp_id')
-        asym_id = col_names.index('label_asym_id')
-        entity_id = col_names.index('label_entity_id')
-        seq_id = col_names.index('label_seq_id')
-        icode_id = col_names.index('pdbx_PDB_ins_code')
-        alt_id = col_names.index('label_alt_id')
-        aut_seq_id = col_names.index('auth_seq_id')
-        aut_asym_id = col_names.index('auth_asym_id')
-        aut_atom_id = col_names.index('auth_atom_id')
-        aut_comp_id = col_names.index('auth_comp_id')
-        pdb_models = {}
-        atom_ids = {}
-        for model in range(1, max_models + 1):
-            pdb = {}
-            aid = {}
-            for dat in atom_site.getRowList():
-                if int(dat[model_id]) == model:
-                    if use_auth_tag:
-                        aid[(dat[aut_seq_id], dat[aut_asym_id], dat[aut_comp_id], dat[aut_atom_id])] = \
-                            (dat[entity_id], dat[asym_id], dat[comp_id], dat[seq_id], dat[aut_seq_id],
-                             dat[alt_id], dat[icode_id], dat[aut_asym_id])
-                        pdb[(dat[aut_seq_id], dat[aut_asym_id], dat[aut_comp_id], dat[aut_atom_id])] = \
-                            numpy.array([float(dat[x_id]), float(dat[y_id]), float(dat[z_id])])
-                    else:
-                        aid[(dat[seq_id], dat[asym_id], dat[comp_id], dat[atom_id])] = \
-                            (dat[entity_id], dat[asym_id], dat[comp_id], dat[seq_id], dat[aut_seq_id],
-                             dat[alt_id], dat[icode_id], dat[aut_asym_id])
-                        pdb[(dat[seq_id], dat[asym_id], dat[comp_id], dat[atom_id])] = \
-                            numpy.array([float(dat[x_id]), float(dat[y_id]), float(dat[z_id])])
-            pdb_models[model] = pdb
-            atom_ids[model] = aid
-        return pdb_models, atom_ids
-        '''
-
     @staticmethod
     def get_sigma_value(res, x):
-        m = {'ALA':8.193,'ARG':8.242,'ASN':8.331,'ASP':8.300,'CYS':8.379,'GLN':8.216,'GLU':8.330,'GLY':8.327,
-             'HIS':8.258,'ILE':8.263,'LEU':8.219,'LYS':8.175,'MET':8.258,'PHE':8.337,'SER':8.277,'THR':8.235,
-             'TRP':8.270,'TYR':8.296,'VAL':8.273}
-        sd = {'ALA':0.642,'ARG':1.064,'ASN':0.983,'ASP':0.592,'CYS':0.697,'GLN':0.657,'GLU':0.750,'GLY':0.770,
-             'HIS':0.734,'ILE':0.694,'LEU':0.652,'LYS':0.670,'MET':1.277,'PHE':0.732,'SER':0.602,'THR':0.641,
-             'TRP':0.782,'TYR':0.741,'VAL':0.795}
+        m = {
+            'ALA': 8.194, 'ARG': 8.234, 'ASN': 8.324, 'ASP': 8.300, 'CYS': 8.386,
+            'GLN': 8.219, 'GLU': 8.330, 'GLY': 8.330, 'HIS': 8.247, 'ILE': 8.262,
+            'LEU': 8.215, 'LYS': 8.177, 'MET': 8.251, 'PHE': 8.335, 'SER': 8.277,
+            'THR': 8.232, 'TRP': 8.264, 'TYR': 8.289, 'VAL': 8.270,
+        }
+        sd = {
+            'ALA': 0.577, 'ARG': 0.601, 'ASN': 0.610, 'ASP': 0.558, 'CYS': 0.670,
+            'GLN': 0.569, 'GLU': 0.576, 'GLY': 0.619, 'HIS': 0.666, 'ILE': 0.674,
+            'LEU': 0.627, 'LYS': 0.589, 'MET': 0.575, 'PHE': 0.710, 'SER': 0.568,
+            'THR': 0.610, 'TRP': 0.761, 'TYR': 0.721, 'VAL': 0.659
+        }
         try:
             sp = (x-m[res])/sd[res]
         except KeyError:
