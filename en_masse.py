@@ -134,7 +134,8 @@ def get_proteins_dict_multi(
                     elif pdb_id in str(err):
                         err = "Unreleased structure"
                     else:
-                        err = traceback.format_exc()
+                        #err = traceback.format_exc()
+                        err=str(err)
                     child_conn.send([err, pdb_id, bmrb_id])
         # We are the parent, don't need the child connection
         else:

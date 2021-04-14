@@ -174,7 +174,7 @@ def results_c(
 
 def print_result_stages(
     outlier_sigma: Union[int, float], build_anyway: bool = False, 
-    make_plots: bool = False
+    make_plots: bool = False, only_recoord: bool = False
 ):
     """
     Generates dict of all proteins with BMRB and PDB entries, analyzes 
@@ -188,9 +188,24 @@ def print_result_stages(
     """
 
     entries_dict = get_all_entries()
-    proteins_dict, exceptions_map_entries = get_proteins_dict_multi(
-        entries_dict, build_anyway
-    )
+    if only_recoord:
+        pass
+        '''
+        #pdb_ids = read_recoord_ids('list_included_545.txt')
+        ids_dict = {}
+        for pdb_id in pdb_ids:
+            try:
+                ids_dict[pdb_id] = entries_dict[pdb_id]
+            except KeyError:
+                pass
+        proteins_dict, exceptions_map_entries = get_proteins_dict_multi(
+            ids_dict, build_anyway
+        )
+        '''
+    else:
+        proteins_dict, exceptions_map_entries = get_proteins_dict_multi(
+            entries_dict, build_anyway
+        )
     if make_plots:
         make_all_plots(proteins_dict, 11, -5.5, 5.5)
         make_num_restraints_plot(proteins_dict, outlier_sigma)
