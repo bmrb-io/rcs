@@ -57,6 +57,7 @@ def results_a(
         for bmrb_id in exceptions_map_entries[pdb_id]:
             reason = exceptions_map_entries[pdb_id][bmrb_id]
             if reason not in exceptions_by_reason: 
+                print(f"{reason}: {bmrb_id}, {pdb_id}")
                 exceptions_by_reason[reason] = 0
             exceptions_by_reason[reason] += 1 # Add to counter of exceptions with this reason
             if reason not in expected_exceptions: #if there was an unanticipated exception
@@ -212,3 +213,5 @@ def print_result_stages(
     results_a(proteins_dict, exceptions_map_entries)
     results_b(proteins_dict)
     results_c(proteins_dict, outlier_sigma)
+
+print_result_stages(2, make_plots=True)

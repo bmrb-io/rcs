@@ -28,7 +28,8 @@ def get_protein(
         else: # otherwise it can just be loaded from a dumpfile
             protein = load_protein(pdb_id, bmrb_id)
     else:
-        protein = build_protein(pdb_id, bmrb_id)
+        raise ValueError('New since last run!') ### TEMP FOR FIGS
+        #protein = build_protein(pdb_id, bmrb_id)
     if isinstance(protein, Protein):
         dump_protein(protein) # store locally so we don't have to rebuild everytime
     else:
@@ -48,6 +49,7 @@ def build_protein(pdb_id: str, bmrb_id: str) -> Union[Protein, str]:
     protein -- either a Protein object or an exception raised by 
         make_protein_from_file() or add_restraints()
     """
+    raise ValueError("Don't do that right now!") ### TEMP FOR FIGS
     ring_current_object = RingCurrentEffect(pdb_id, bmrb_id)
     k_file_path = ring_current_object.calculate_ring_current_effects(
         pdb_id, bmrb_id

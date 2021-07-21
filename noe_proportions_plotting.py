@@ -129,8 +129,8 @@ def make_proportions_plot(
             ),
             text=[str(i) for i in binned_totals], # Write total for that bin above marker
             textposition='top center',
-            textfont_size=22,
-            textfont_family="Courier New, monospace",
+            textfont_size=18,
+            textfont_family="Arial",
             showlegend=False,
         ), row=1, col=1
     )
@@ -149,20 +149,24 @@ def make_num_restraints_plot(
         'HIS': {
             '1': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
             '2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+            #'>1': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
             '>2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
         },
         'TRP': {
             '1': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+            #'>1': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
             '2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
             '>2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
         },
         'PHE': {
             '1': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+            #'>1': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
             '2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
             '>2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
         },
         'TYR': {
             '1': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
+            #'>1': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
             '2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
             '>2': {'Upfield': 0, 'Normal': 0, 'Downfield': 0},
         },
@@ -189,6 +193,8 @@ def make_num_restraints_plot(
                         if num_restraints > 0:
                             if num_restraints > 2:
                                 num_restraints = '>2'
+                            #if num_restraints > 1:
+                            #    num_restraints = '>1'
                             else:
                                 num_restraints = str(num_restraints)
                             res_label_aroma = atoms_aroma[0][0].res_label
@@ -220,26 +226,42 @@ def make_num_restraints_plot(
     fig = make_subplots(
         rows=2, cols=2, 
         subplot_titles=("<b>HIS<b>", "<b>TRP<b>", "<b>PHE<b>", "<b>TYR<b>"),
-        shared_yaxes=True, 
+        shared_yaxes=True, vertical_spacing=0.10
     )
     for i in range(4):
-        fig.layout.annotations[i].update(font=dict(family="Courier New, monospace",size=20))
+        fig.layout.annotations[i].update(font=dict(family="Arial",size=18))
     i = 0
     row_nums = [1, 1, 2, 2]
     col_nums = [1, 2, 1, 2]
     colors = ['rgb(102, 197, 204)', 'rgb(248, 156, 116)', 'rgb(220, 176, 242)']
 
-    fig.update_yaxes(row=1, col=1, type='log', title_text='Number of Pairs')
-    fig.update_yaxes(row=1, col=2, type='log')#range=[0, 1], type='log')
-    fig.update_yaxes(row=2, col=1, type='log', title_text='Number of Pairs')
-    fig.update_yaxes(row=2, col=2, type='log')#range=[0, 1], type='log')
-    
+    fig.update_yaxes(row=1, col=1, title_text='Proportion of Pairs', type='log')
+    fig.update_yaxes(row=1, col=2, type='log')
+    fig.update_yaxes(row=2, col=1, title_text='Proportion of Pairs', type='log')
+    fig.update_yaxes(row=2, col=2, type='log')
+
+    ###
+    '''
+    for res_label in nr_dict_normalized:
+        nr_dict_res = nr_dict_normalized[res_label]
+        shift_types = ['Upfield', 'Normal', 'Downfield']
+        for shift_type in shift_types:
+            total = 0
+            for nr in nr_dict_res:
+                total += nr_dict_res[nr][shift_type]
+            for nr in nr_dict_res:
+                num = nr_dict_res[nr][shift_type]
+                nr_dict_normalized[res_label][nr][shift_type] = num / total
+    ###
+    '''
+
+
 
     for res_label in nr_dict_normalized:
-        if i == 0:
-            legend_bool = True
-        else:
-            legend_bool = False
+        #if i == 0:
+        #    legend_bool = True
+        #else:
+        #    legend_bool = False
         row_num = row_nums[i]
         col_num = col_nums[i]
         nr_dict = nr_dict_normalized[res_label]
@@ -247,36 +269,66 @@ def make_num_restraints_plot(
         for num_restraints in nr_dict:
             totals = list(num_restraints_dict[res_label][num_restraints].values())
             restraints_by_shift = nr_dict[num_restraints]
-            fig.add_trace(
-                go.Bar(
-                    x=list(restraints_by_shift.keys()), 
-                    y=list(restraints_by_shift.values()),
-                    name=num_restraints,
-                    marker_color=colors[j],
-                    showlegend=legend_bool,
-                    text=totals,
-                    textposition='auto',
-                    textfont_size=18,
-                    textfont_family="Courier New, monospace",
-                ),
-                row=row_num, col=col_num
-            )
+            if i == 1:
+                fig.add_trace(
+                    go.Bar(
+                        x=list(restraints_by_shift.keys()), 
+                        y=list(restraints_by_shift.values()),
+                        name=num_restraints,
+                        marker_color=colors[j],
+                        showlegend=True,
+                        text=totals,
+                        textposition='inside',
+                        textfont_size=18,
+                        textfont_family="Arial",
+                    ),
+                    row=row_num, col=col_num
+                )
+            else:
+                fig.add_trace(
+                    go.Bar(
+                        x=list(restraints_by_shift.keys()), 
+                        y=list(restraints_by_shift.values()),
+                        name=num_restraints,
+                        marker_color=colors[j],
+                        showlegend=False,
+                        text=totals,
+                        textposition='inside',
+                        textfont_size=18,
+                        textfont_family="Arial",
+                    ),
+                    row=row_num, col=col_num
+                )
+
             j+=1
         i+=1
 
     fig.update_layout(
-        title=(
-            'Restrained Amide-Aromatic Pairs by'
-            + '<br>'
-            + 'Number of Restraints'
-        ),
+        #title=(
+        #    'Restrained Amide-Aromatic Pairs by'
+        #    + '<br>'
+        #    + 'Number of Restraints'
+        #),
         title_x=0.5,
         title_y=0.97,
-        font=dict(family="Courier New, monospace",size=22),
+        font=dict(family="Arial",size=18),
         legend_title="Number of" + "<br>" + "Restraints",
+        legend_x = 0.01,
+        legend_y = 0.99,
+        autosize=False,
+        width=1100,
+        height=1100,
+        barmode='group'#'stack'
     )
-    
+    #fig.update_traces(textangle=0)
+
+    #fig.update_yaxes(row=1, col=1, range=[0, 1.1])
+    #fig.update_yaxes(row=1, col=2, range=[0, 1.1])
+    #fig.update_yaxes(row=2, col=1, range=[0, 1.1])
+    #fig.update_yaxes(row=2, col=2, range=[0, 1.1])
+
     fig.show(renderer="firefox")
+    #fig.write_image("images/noes_by_num.pdf")
     
 
 
@@ -381,29 +433,26 @@ def make_all_plots(proteins_dict: Dict[str, Dict[str, Protein]], num_bins: int,
 ):
     fig = make_subplots(
         rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.1, 
-        subplot_titles=('<b>A<b>: Total', '<b>B<b>: By Residue')
+        subplot_titles=('<b>A<b>', '<b>B<b>')
     )
     fig = make_proportions_plot(proteins_dict, num_bins, cs_min, cs_max, fig)
     fig = make_res_prop_plot(proteins_dict, num_bins, cs_min, cs_max, fig)
     fig.update_yaxes(title_text='Proportion', row=1, col=1, range=[0, 0.8])
     fig.update_yaxes(title_text='Proportion', row=2, col=1, range=[0, 0.3])
     fig.update_layout(
-        title=(
-            'Proportion of Amide Hydrogens with NOE Restraint'
-            + '<br>'
-            + 'to Aromatic Ring Hydrogen'
-        ),
-        title_x=0.5,
-        title_y=0.97,
-        xaxis_title='Z(δ)',
+        xaxis_title='Z-score',
         xaxis_anchor = 'y2',
-        font=dict(family="Courier New, monospace",size=24),
+        font=dict(family="Arial",size=18),
         legend=dict(
-            y=0.225
-        )
+            y=0.28,
+            x=0.86,
+        ),
+        width=1100,
+        height=1100
     )
-    fig.update_xaxes(title_standoff=35)
-    fig.layout.annotations[0].update(x=0.07, font=dict(family="Courier New, monospace",size=22))
-    fig.layout.annotations[1].update(x=0.11, font=dict(family="Courier New, monospace",size=22))
+    fig.update_xaxes(title_standoff=35) 
+    fig.layout.annotations[0].update(x=0.02, y=0.97, font=dict(family="Arial",size=18)) # 0.07
+    fig.layout.annotations[1].update(x=0.02, y=0.42, font=dict(family="Arial",size=18)) # 0.11
     fig.show(renderer="firefox")
+    #fig.write_image("images/combo_plot.pdf")
 
