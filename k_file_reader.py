@@ -65,7 +65,7 @@ def add_pair_geometries(
     num = 52
     res_index_amide = line[2]
     amide_geometries = {} # pair geometries for the amide on this line
-    for i in range(5):
+    for i in range(100):
         start_index = 8 + num * i #to begin with the first ring proton 
         res_index_aroma = line[start_index]
         if res_index_aroma == ".":

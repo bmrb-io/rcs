@@ -8,14 +8,6 @@ import pynmrstar
 import requests
 from typing import Union, List, Tuple, Dict
 
-def get_file(pdb_id: str):
-    """Get restraint file from RCSB and save locally."""
-    filename = f"{pdb_id.lower()}_mr.str"
-    filepath = os.path.join('data', 'NOE', filename)
-    url = f"https://files.rcsb.org/download/{filename}"
-    with open(filepath, 'wb') as outfile:
-        r = requests.get(url)
-        outfile.write(r.content)
 
 def get_star_restraints(pdb_id: str) -> Union[List, str]: #find out type in List
     """
@@ -32,10 +24,11 @@ def get_star_restraints(pdb_id: str) -> Union[List, str]: #find out type in List
         subtype is found
     restraint_loops_list -- list of restraint loops from restraint file
     """
-    filename = f"{pdb_id.lower()}_mr.str"
-    filepath = os.path.join('data', 'NOE', filename)
-    if not os.path.isfile(filepath):
-        get_file(pdb_id)
+
+    filepath = os.path.join(
+        '/reboxitory', '2021', '06', 'PDB', 'data', 'structures', 'all', 
+        'nmr_restraints_v2', f"{pdb_id.lower()}_mr.str.gz"
+    )
     try:
         entry = pynmrstar.Entry.from_file(filepath)
     except AttributeError as err:
@@ -280,6 +273,7 @@ def add_restraints(protein: Protein) -> Union[Protein, str]:
         return restraints_dict 
     else:
         protein.restraints_dict = restraints_dict
+        protein.exceptions_map_restraints = exceptions_map_restraints
         if protein.check_restraint_alignment():
             protein.assign_atoms_symmetrically()
             protein.prune_bad_ambiguities()
@@ -287,7 +281,6 @@ def add_restraints(protein: Protein) -> Union[Protein, str]:
             if len(restraints_dict) == 0:
                 # successfully built restraints_dict, but no acceptable amide-aromatic restraints
                 return "No pairs found"
-            protein.exceptions_map_restraints = exceptions_map_restraints
             protein.make_pairs_dict()
             if protein.check_pair_geometries():
                 return protein

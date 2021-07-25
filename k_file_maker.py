@@ -34,26 +34,6 @@ class RingCurrentEffect(object):
                 d.append(0.0)
         return len(d),numpy.mean(d),numpy.std(d)
 
-    def cal_prop(self,bmrbid):
-        print ('Calculating aromatic ring and amide proton interaction in {} {}'.format(pdbid, bmrbid))
-        if not os.path.isdir('./data'):
-            os.system('mkdir ./data')
-        if not os.path.isdir('./data/BMRB'):
-            os.system('mkdir ./data/BMRB')
-        cif_file = './data/PDB/{}.cif'.format(pdbid)
-        str_file = './data/BMRB/{}.str'.format(bmrbid)
-        if not os.path.isfile(cif_file):
-            self.get_pdb(pdbid)
-        if not os.path.isfile(str_file):
-            self.get_bmrb(bmrbid)
-        n,sq,x=self.get_seq(str_file)
-        if not os.path.isdir('./output'):
-            os.system('mkdir ./output')
-        fout = './output/{}_{}.sq'.format(pdbid, bmrbid)
-        fo = open(fout, 'w')
-        fo.write("{},{},{},{},{},{},{},{},{}\n".format(bmrbid,pdbid,x[0],x[1],x[2],x[3],sum(x),n,",".join(sq)))
-        fo.close()
-
     def get_seq(self,str_file):
         str_data = pynmrstar.Entry.from_file(str_file)
         sq_dat = str_data.get_tag('_Entity_comp_index.Comp_ID')
@@ -71,19 +51,20 @@ class RingCurrentEffect(object):
         :param pdbid: matching pdb id example 2L4N
         :param bmrbid: matching bmrb id example 17245
         '''
-        #print ('Calculating aromatic ring and amide proton interaction in {} {}'.format(pdbid,bmrbid))
-        if not os.path.isdir('./data'):
-            os.system('mkdir ./data')
-        if not os.path.isdir('./data/PDB'):
-            os.system('mkdir ./data/PDB')
-        if not os.path.isdir('./data/BMRB'):
-            os.system('mkdir ./data/BMRB')
-        cif_file = './data/PDB/{}.cif'.format(pdbid)
-        str_file = './data/BMRB/{}.str'.format(bmrbid)
+
+        cif_file = os.path.join(
+            '/reboxitory', '2021', '06', 'PDB', 'data', 'structures', 'all', 
+            'mmCIF', f'{pdbid.lower()}.cif.gz'
+        )
+        str_file = os.path.join(
+            '/reboxitory', '2021', '06', 'BMRB', 'macromolecules',
+            f'bmr{bmrbid}', f'bmr{bmrbid}_3.str'
+        )
+
         if not os.path.isfile(cif_file):
-            self.get_pdb(pdbid)
+            raise ValueError('mmCIF file not in reboxitory')
         if not os.path.isfile(str_file):
-            self.get_bmrb(bmrbid)
+            raise ValueError('STR file not in reboxitory')
         pdb_auth = self.get_coordinates(cif_file,pdbid,use_auth_tag=True) # creates the dictionary using original seq no
         pdb_orig = self.get_coordinates(cif_file,pdbid,use_auth_tag=False) # creates the dictionary using author seq no
         pdb_auth_keys = [i for i in pdb_auth[0][1].keys() if i[3]=='H']
@@ -397,7 +378,7 @@ class RingCurrentEffect(object):
                             if a in amide_chemical_shift.keys() and a[2] in m.keys():
                                 outdat='{},{},{},{},{},{},{},{}'.format(pdbid,bmrbid,a[0],a[2],amide_chemical_shift[a],self.get_sigma_value(a[2],float(amide_chemical_shift[a])),entity_size,
                                                                                                             assembly_size)
-                                for kk in range(5):
+                                for kk in range(100):
 
                                     try:
                                         odat='{},{},{},{},{},{},{},{}'.format(arr_info[kk][-1][0],arr_info[kk][-1][2],

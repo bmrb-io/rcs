@@ -240,28 +240,8 @@ def make_num_restraints_plot(
     fig.update_yaxes(row=2, col=1, title_text='Proportion of Pairs', type='log')
     fig.update_yaxes(row=2, col=2, type='log')
 
-    ###
-    '''
     for res_label in nr_dict_normalized:
-        nr_dict_res = nr_dict_normalized[res_label]
-        shift_types = ['Upfield', 'Normal', 'Downfield']
-        for shift_type in shift_types:
-            total = 0
-            for nr in nr_dict_res:
-                total += nr_dict_res[nr][shift_type]
-            for nr in nr_dict_res:
-                num = nr_dict_res[nr][shift_type]
-                nr_dict_normalized[res_label][nr][shift_type] = num / total
-    ###
-    '''
 
-
-
-    for res_label in nr_dict_normalized:
-        #if i == 0:
-        #    legend_bool = True
-        #else:
-        #    legend_bool = False
         row_num = row_nums[i]
         col_num = col_nums[i]
         nr_dict = nr_dict_normalized[res_label]

@@ -2,6 +2,8 @@ from residues import Residue
 from restraints import Restraint
 from atoms import Atom
 
+import traceback
+
 class Protein:
     """
     Contain information about a protein entry in BMRB/PDB including 
@@ -115,10 +117,12 @@ class Protein:
                 return atom_w_shift
             else:
                 if atom.atom_label == 'H':
+                    print('Happened', self.pdb_id)
                     return "No such amide from k-file"
                 else:
                     return atom #could be a pseudoatom or 5-membered TRP ring atom
         else:
+            print('hAppened', self.pdb_id)
             return "No such residue from k-file"
 
     def prune_bad_ambiguities(self):
@@ -165,6 +169,7 @@ class Protein:
         True -- if the labels match
         False -- if the labels do not match
         """
+        not_found_count = 0
         for restraint_id in self.restraints_dict:
             for member_id in self.restraints_dict[restraint_id]:
                 restraint = self.restraints_dict[restraint_id][member_id]
@@ -177,6 +182,7 @@ class Protein:
                     self.exceptions_map_residues[atom_aroma.res_index] = (
                         "Aromatic res_index not found"
                     )
+                    not_found_count += 1
                 atom_amide = restraint.atom_amide
                 if atom_amide.res_index in self.residues_dict:
                     res_amide = self.residues_dict[atom_amide.res_index]
@@ -186,6 +192,9 @@ class Protein:
                     self.exceptions_map_residues[atom_amide.res_index] = (
                         "Amide res_index not found"
                     )
+                    not_found_count += 1
+            if not_found_count > 20:
+                return False
         return True
 
     def check_pair_geometries(self, cutoff=8):
@@ -218,10 +227,16 @@ class Protein:
                             )
                             if pair_dist > cutoff:
                                 geom_bool = False
-                    except KeyError:
+                    except KeyError as err:
+                        err = traceback.format_exc()
+                        print(err)
                         print(labels_aroma)
                         print("HAD TO DO THIS FOR ", self.pdb_id, self.bmrb_id)
                         print(atom_amide.res_index, res_index_aroma, atom_label)
+                        # there are 5 rings closer by, so this one didn't make it
+                        # into an output file; if there are really just a lot of
+                        # rings nearby, then it's not a problem. If there aren't, 
+                        # then it will get tripped by other geometry checks.
         return geom_bool
 
     def make_pairs_dict(self):

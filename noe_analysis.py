@@ -1,6 +1,7 @@
+import json
+
 from en_masse import *
 from noe_proportions_plotting import *
-from noe_tiers import *
 from typing import Union, Dict
 
 def classify_shift(cs_sigma: float, outlier_sigma: Union[int, float]) -> str:
@@ -51,19 +52,24 @@ def results_a(
         'Misaligned restraint indices', 'BMRB entry only exists in NMR-STAR 2.0',
         'No aromatic residues found', 'Misformatted restraint file',
         'Unacceptable distances between restrained pairs',
+        'Restraint file not in reboxitory',
+        'mmCIF file not in reboxitory',
+        'STR file not in reboxitory',
+        'Permission denied error (this should no longer occur)'
     ]
     exceptions_by_reason = {}
     for pdb_id in exceptions_map_entries:
         for bmrb_id in exceptions_map_entries[pdb_id]:
             reason = exceptions_map_entries[pdb_id][bmrb_id]
             if reason not in exceptions_by_reason: 
-                print(f"{reason}: {bmrb_id}, {pdb_id}")
+                #print(f"{reason}: {bmrb_id}, {pdb_id}")
                 exceptions_by_reason[reason] = 0
             exceptions_by_reason[reason] += 1 # Add to counter of exceptions with this reason
             if reason not in expected_exceptions: #if there was an unanticipated exception
                 print(
                     f"UNEXPECTED EXCEPTION IN {pdb_id}, {bmrb_id}: {reason}"
                 )
+                pass
     for reason in exceptions_by_reason: 
         num = exceptions_by_reason[reason]
         print("  ", reason, ":", num)
@@ -78,8 +84,12 @@ def results_a(
             for atom_amide in pairs_dict:
                 for res_index_aroma in pairs_dict[atom_amide]:
                     num_pairs += 1
+
+
     print("  ", "NUM ENTRIES WITH USABLE RESTRAINTS:    ", num_entries)
     print("  ", "NUM AMIDE-AROMATIC PAIRS WITH A RESTRAINT:    ", num_pairs)
+
+
 
 def results_b(proteins_dict: Dict[str, Dict[str, Protein]]):
     """
@@ -107,75 +117,40 @@ def results_b(proteins_dict: Dict[str, Dict[str, Protein]]):
         "  ", "NUM AMIDE_AROMATIC PAIRS WITH A DEFINED RESTRAINT:    ", num_pairs
     )
 
-def results_c(
-    proteins_dict: Dict[str, Dict[str, Protein]], 
-    outlier_sigma: Union[int, float]
-):
-    """
-    The third and final stage of printing out the results. Classifies all
-    amide-aromatic pairs with at least one defined restraint using 
-    get_confidence_tier(). Prints out results in readable format.
+    print_restraint_exceptions(proteins_dict)
 
-    Keyword arguments:
-    proteins_dict -- dict organized by pdb_id and bmrb_id of all successfully
-        created Protein instances
-    outlier_sigma -- the number of standard deviations from mean that make an
-        atom's chemical shift an outlier
-    """
-    conf_tiers = {
-        'upfield': {
-            'high': {'HIS': [], 'TRP': [], 'PHE': [], 'TYR': []},
-            'intermediate': {'HIS': [], 'TRP': [], 'PHE': [], 'TYR': []},
-            'low': {'HIS': [], 'TRP': [], 'PHE': [], 'TYR': []}, 
-            'none': {'HIS': [], 'TRP': [], 'PHE': [], 'TYR': []}
-        },
-        'downfield': {
-            'high': {'HIS': [], 'TRP': [], 'PHE': [], 'TYR': []},
-            'intermediate': {'HIS': [], 'TRP': [], 'PHE': [], 'TYR': []},
-            'low': {'HIS': [], 'TRP': [], 'PHE': [], 'TYR': []}, 
-            'none': {'HIS': [], 'TRP': [], 'PHE': [], 'TYR': []}
-        },
-        'non_outlier': {
-            'high': {'HIS': [], 'TRP': [], 'PHE': [], 'TYR': []},
-            'intermediate': {'HIS': [], 'TRP': [], 'PHE': [], 'TYR': []},
-            'low': {'HIS': [], 'TRP': [], 'PHE': [], 'TYR': []}, 
-            'none': {'HIS': [], 'TRP': [], 'PHE': [], 'TYR': []}
-        },
-    }
+def basic_write(proteins_dict, pairs_to_write, filename):
+    ids = []
+    for pdb_id in proteins_dict:
+        for bmrb_id in proteins_dict[pdb_id]:
+            ids.append([pdb_id, bmrb_id])
+    
+    with open(f'{filename}_ids.json', 'w') as df:
+        json.dump(ids, df)
+    
+    with open(f'{filename}_pairs.json', 'w') as df:
+        json.dump(pairs_to_write, df)
+
+def print_restraint_exceptions(proteins_dict):
+    exc_by_reason = {}
+
     for pdb_id in proteins_dict:
         for bmrb_id in proteins_dict[pdb_id]:
             protein = proteins_dict[pdb_id][bmrb_id]
-            protein.prune_undefined_pairs() # Don't want ambiguous restraints
-            pairs_dict = protein.pairs_dict
-            for atom_amide in pairs_dict:
-                for res_index in pairs_dict[atom_amide]:
-                    atoms_aroma = pairs_dict[atom_amide][res_index]
-                    atoms_aroma = [atom[0] for atom in atoms_aroma] #removing tags
-                    if len(atoms_aroma) > 0:
-                        conf_tier, label_aroma = get_confidence_tier(
-                            atoms_aroma
-                        )
-                        shift_class = classify_shift(
-                            atom_amide.cs_sigma, outlier_sigma
-                        )
-                        conf_tiers[shift_class][conf_tier][label_aroma].append(
-                            [pdb_id, bmrb_id, atom_amide, atoms_aroma]
-                        )
-
-
-    print("C:")
-    for shift_class in conf_tiers:
-        print(f"  {shift_class}:")
-        for conf_tier in conf_tiers[shift_class]:
-            print(f"    {conf_tier}:")
-            for res_label in conf_tiers[shift_class][conf_tier]:
-                atoms_list = conf_tiers[shift_class][conf_tier][res_label]
-                num = len(atoms_list)
-                print(f"      {res_label}:  {num}")
+            exceptions_map = protein.exceptions_map_restraints
+            for restraint_id in exceptions_map:
+                reason = exceptions_map[restraint_id]
+                if reason not in exc_by_reason:
+                    exc_by_reason[reason] = 0
+                exc_by_reason[reason] += 1
+    
+    print('RESTRAINT EXCEPTIONS:')
+    for reason in exc_by_reason:
+        print(f"  {reason}:    {exc_by_reason[reason]}")
 
 def print_result_stages(
     outlier_sigma: Union[int, float], build_anyway: bool = False, 
-    make_plots: bool = False, only_recoord: bool = False
+    make_plots: bool = False, only_recoord: bool = False,
 ):
     """
     Generates dict of all proteins with BMRB and PDB entries, analyzes 
@@ -188,30 +163,16 @@ def print_result_stages(
         json build file is present in ./proteins
     """
 
-    entries_dict = get_all_entries()
-    if only_recoord:
-        pass
-        '''
-        #pdb_ids = read_recoord_ids('list_included_545.txt')
-        ids_dict = {}
-        for pdb_id in pdb_ids:
-            try:
-                ids_dict[pdb_id] = entries_dict[pdb_id]
-            except KeyError:
-                pass
-        proteins_dict, exceptions_map_entries = get_proteins_dict_multi(
-            ids_dict, build_anyway
-        )
-        '''
-    else:
-        proteins_dict, exceptions_map_entries = get_proteins_dict_multi(
-            entries_dict, build_anyway
-        )
+    proteins_dict, exceptions_map_entries = get_proteins_dict_multi(
+        build_anyway
+    )
+    
     if make_plots:
         make_all_plots(proteins_dict, 11, -5.5, 5.5)
         make_num_restraints_plot(proteins_dict, outlier_sigma)
-    results_a(proteins_dict, exceptions_map_entries)
-    results_b(proteins_dict)
-    results_c(proteins_dict, outlier_sigma)
+    results_a(proteins_dict, exceptions_map_entries) 
 
-print_result_stages(2, make_plots=True)
+    results_b(proteins_dict)
+
+
+print_result_stages(2, make_plots=False)
