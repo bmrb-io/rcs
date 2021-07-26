@@ -29,7 +29,7 @@ with open(csr_filename, 'r') as csfile:
         csr_list[year_index] += 1
 
 csr_sub = [
-    0, 0, 0, 0, 0, 0, 0, 9, 621, 571, 676, 1195, 975, 647,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 621, 571, 676, 1195, 975, 647,
     1098, 931, 908, 658, 332
 ] # taken from https://csrosetta.bmrb.io/ ; the final number will change as 2021 progresses
 csr_totals = []
