@@ -55,7 +55,9 @@ def results_a(
         'Restraint file not in reboxitory',
         'mmCIF file not in reboxitory',
         'STR file not in reboxitory',
-        'Permission denied error (this should no longer occur)'
+        'Permission denied error in reboxitory',
+        'Unable to match residues from structure to restraints',
+        
     ]
     exceptions_by_reason = {}
     for pdb_id in exceptions_map_entries:

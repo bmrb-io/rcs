@@ -21,7 +21,11 @@ amount of effort.
 
 ####RUNNING####
 
-To run the default analysis, run noe_analysis.py . It has been tested on 
+To run the default analysis, first do 
+mkdir proteins
+mkdir output 
+to create the directories where information to build the proteins will be stored. Then
+run noe_analysis.py . It has been tested on 
 Python 3.8.0
 
 The output will list the various exceptions raised during the analysis. These

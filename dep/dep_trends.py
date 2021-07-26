@@ -52,7 +52,7 @@ fig.update_layout(
     legend=dict(y=0.95, x=0.05)
 )
 
-fig.show(renderer="firefox")
+#fig.show(renderer="firefox")
 fig.write_image("../images/dep_plot.pdf")
 
 
