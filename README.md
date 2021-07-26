@@ -11,6 +11,14 @@ The code found in this repository can be used to generate Figures 5, 6, 9, and 1
   -images: stores images produced by other code\
   \
   \
+
+## Installation
+
+All code was built and run in Python 3.8.0
+Installed python packages and their versions can be found in requirements.txt
+
+
+  
 ## Running:
 
 All figures can be found already made in images. To recreate them: \
