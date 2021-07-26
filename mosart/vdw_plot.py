@@ -33,5 +33,5 @@ fig.update_layout(
 )
 fig.update_yaxes(range=[-5, 30])
 
-fig.show(renderer='firefox')
-fig.write_image("plot_vdw.pdf")
+#fig.show(renderer='firefox')
+fig.write_image("../images/plot_vdw.pdf")

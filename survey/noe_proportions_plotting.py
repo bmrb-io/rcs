@@ -307,7 +307,7 @@ def make_num_restraints_plot(
     #fig.update_yaxes(row=2, col=1, range=[0, 1.1])
     #fig.update_yaxes(row=2, col=2, range=[0, 1.1])
 
-    fig.show(renderer="firefox")
+    #fig.show(renderer="firefox")
     fig.write_image("../images/noes_by_num.pdf")
     
 
@@ -433,6 +433,6 @@ def make_all_plots(proteins_dict: Dict[str, Dict[str, Protein]], num_bins: int,
     fig.update_xaxes(title_standoff=35) 
     fig.layout.annotations[0].update(x=0.02, y=0.97, font=dict(family="Arial",size=18)) # 0.07
     fig.layout.annotations[1].update(x=0.02, y=0.42, font=dict(family="Arial",size=18)) # 0.11
-    fig.show(renderer="firefox")
+    #fig.show(renderer="firefox")
     fig.write_image("../images/combo_plot.pdf")
 

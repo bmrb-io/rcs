@@ -1,4 +1,4 @@
-RCS VDW APPROACH CODE
+VDW APPROACH CODE
 
 ####INTRODUCTION####
 
@@ -9,14 +9,15 @@ the ALA N-H aligned with the PHE ring normal. MoSART
 (Hoch, J. C. and Stern, A. S.: MoSART [code], 2003.) has been used to perform the
 calculations. 
 
-####INSTALLATION####
+
 
 ####RUNNING####
-To generate the plot found in Figure 9 of the manuscript, simply run vdw_plot.py.
+To generate the plot found in Figure 9 of the manuscript, simply run vdw_plot.py .
 It has been tested on Python 3.8.0
 
 In order to generate the energies anew, run MoSART using the input file 
 energy-amide-aromatic.inp. This can be done on NMRbox by running:
 /usr/software/mosart/mosart energy-amide-aromatic.inp
+If not on NMRbox, mosart can be found at https://simtk.org/projects/mosart
 To recreate the plot, the van der Waals terms for each assembly would then have
-to be copied into energies_fine.csv.
+to be copied into energies_fine.csv. 
