@@ -1,0 +1,6 @@
+/env/
+survey/__pycache__/
+survey/proteins/
+survey/output/
+*.pyc
+*.dat

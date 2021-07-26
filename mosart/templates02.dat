@@ -1,0 +1,2636 @@
+/* This is the MoSART templates file, meant to be used with the
+   AMBER Force Field (Cornell et al., J. Am. Chem. Soc. 117 (1995),
+   5179-5197, with errata in J. Am. Chem. Soc. 118 (1996), 2309).
+   The water template was modified to match the SPC/E water model
+   (Berendsen et al., J. Phys. Chem. 91 (1987), 6269-6271).
+
+   The atomic parameters were adapted from the AMBER coordinate files
+   all_amino02.in, all_aminont02.in, all_aminoct02.in, and all_nuc02.in.
+   The HW and OW charges for the WAT residue (0.4238 and -0.8476)
+   were modified to match the SPC/E water model.  The TIP3P values are
+   0.417 and -0.834. */
+
+/* The format for the records included here is as follows:
+
+		//Define a template residue
+template template-name residue-name
+
+		//Define an atom in a residue
+atom atom-name atom-type topology-class charge [dihedral]
+
+		//Define an intra-residue loop-closing bond
+bond atom-name-1 atom-name-2
+*/
+
+
+
+	/* The normal amino acids, with charge variants */
+
+template ala ALA	//ALANINE
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.0448   180.000
+atom	HA  	H1	E	 0.0228   300.000
+atom	CB  	CT	3	-0.0909    60.000
+atom	HB1 	HC	E	 0.0425    60.000
+atom	HB2 	HC	E	 0.0425   180.000
+atom	HB3 	HC	E	 0.0425   300.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template arg ARG	//ARGININE
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.0299   180.000
+atom	HA  	H1	E	 0.0476   300.000
+atom	CB  	CT	3	 0.0040    60.000
+atom	HB2 	HC	E	 0.0257   300.000
+atom	HB3 	HC	E	 0.0257    60.000
+atom	CG  	CT	3	-0.0027   180.000
+atom	HG2 	HC	E	 0.0314   300.000
+atom	HG3 	HC	E	 0.0314    60.000
+atom	CD  	CT	3	 0.1008   180.000
+atom	HD2 	H1	E	 0.0575   300.000
+atom	HD3 	H1	E	 0.0575    60.000
+atom	NE  	N2	B	-0.5111   180.000
+atom	HE  	H 	E	 0.3233     0.000
+atom	CZ  	CA	B	 0.8708   180.000
+atom	NH1 	N2	B	-0.8348     0.000
+atom	HH11	H 	E	 0.4205     0.000
+atom	HH12	H 	E	 0.4205   180.000
+atom	NH2 	N2	B	-0.8348   180.000
+atom	HH21	H 	E	 0.4205     0.000
+atom	HH22	H 	E	 0.4205   180.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template asn ASN	//ASPARAGINE
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.0551   180.000
+atom	HA  	H1	E	 0.0410   300.000
+atom	CB  	CT	3	-0.1944    60.000
+atom	HB2 	HC	E	 0.0833   300.000
+atom	HB3 	HC	E	 0.0833    60.000
+atom	CG  	C 	B	 0.6665   180.000
+atom	OD1 	O 	E	-0.5754     0.000
+atom	ND2 	N 	B	-0.7750   180.000
+atom	HD21	H 	E	 0.3599   180.000
+atom	HD22	H 	E	 0.3599     0.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template asp ASP	//ASPARTIC ACID
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	-0.1667   180.000
+atom	HA  	H1	E	 0.0656   300.000
+atom	CB  	CT	3	 0.0021    60.000
+atom	HB2 	HC	E	-0.0210   300.000
+atom	HB3 	HC	E	-0.0210    60.000
+atom	CG  	C 	B	 0.7672   180.000
+atom	OD1 	O2	E	-0.7610    90.000
+atom	OD2 	O2	E	-0.7610   270.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template ash ASP	//ASP neutral
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.1120   180.000
+atom	HA  	H1	E	 0.0108   300.000
+atom	CB  	CT	3	-0.0417    60.000
+atom	HB2 	HC	E	 0.0455   300.000
+atom	HB3 	HC	E	 0.0455    60.000
+atom	CG  	C 	B	 0.6066   180.000
+atom	OD1 	O 	E	-0.5440    90.000
+atom	OD2 	OH	S	-0.5702   270.000
+atom	HD2 	HO	E	 0.4397   180.0  
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template cys CYS	//CYSTEINE
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.0805   180.000
+atom	HA  	H1	E	 0.0267   300.000
+atom	CB  	CT	3	-0.0052    60.000
+atom	HB2 	H1	E	 0.0448   300.000
+atom	HB3 	H1	E	 0.0448    60.000
+atom	SG  	SH	S	-0.2429   180.000
+atom	HG  	HS	E	 0.1555   180.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template cym CYS	//CYSTEINE with negative charge
+atom	N   	N 	M	-0.4937   180.000
+atom	HN  	H 	E	 0.3018     0.000
+atom	CA  	CT	M	-0.2870   180.000
+atom	HA  	H1	E	 0.1203   300.000
+atom	CB  	CT	3	 0.0935    60.000
+atom	HB3 	H1	E	 0.0125    60.000
+atom	HB2 	H1	E	 0.0125   300.000
+atom	SG  	SH	E	-0.8476   180.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template cyx CYS	//CYSTINE(S-S BRIDGE)
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.0599   180.000
+atom	HA  	H1	E	 0.0363   300.000
+atom	CB  	CT	3	 0.0027    60.000
+atom	HB2 	H1	E	 0.0473   300.000
+atom	HB3 	H1	E	 0.0473    60.000
+atom	SG  	S 	E	-0.0893   180.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template gln GLN	//GLUTAMINE
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	-0.0299   180.000
+atom	HA  	H1	E	 0.0381   300.000
+atom	CB  	CT	3	 0.1411    60.000
+atom	HB2 	HC	E	-0.0021   300.000
+atom	HB3 	HC	E	-0.0021    60.000
+atom	CG  	CT	3	-0.2820   180.000
+atom	HG2 	HC	E	 0.1136   300.000
+atom	HG3 	HC	E	 0.1136    60.000
+atom	CD  	C 	B	 0.7046   180.000
+atom	OE1 	O 	E	-0.6162     0.000
+atom	NE2 	N 	B	-0.7795   180.000
+atom	HE21	H 	E	 0.3525   180.000
+atom	HE22	H 	E	 0.3525     0.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template glu GLU	//GLUTAMIC ACID
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	-0.2384   180.000
+atom	HA  	H1	E	 0.0937   300.000
+atom	CB  	CT	3	 0.3053    60.000
+atom	HB2 	HC	E	-0.0704   300.000
+atom	HB3 	HC	E	-0.0704    60.000
+atom	CG  	CT	3	-0.1671   180.000
+atom	HG2 	HC	E	 0.0313   300.000
+atom	HG3 	HC	E	 0.0313    60.000
+atom	CD  	C 	B	 0.6613   180.000
+atom	OE1 	O2	E	-0.7362    90.000
+atom	OE2 	O2	E	-0.7362   270.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template glh GLU	//GLU neutral
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.0227   180.000
+atom	HA  	H1	E	 0.0389   300.000
+atom	CB  	CT	3	-0.0018    60.000
+atom	HB2 	HC	E	 0.0278   300.000
+atom	HB3 	HC	E	 0.0278    60.000
+atom	CG  	CT	3	-0.1054   180.000
+atom	HG2 	HC	E	 0.0787   300.000
+atom	HG3 	HC	E	 0.0787    60.000
+atom	CD  	C 	B	 0.6699   180.000
+atom	OE1 	O 	E	-0.5729    90.000
+atom	OE2 	OH	S	-0.5964   270.000
+atom	HE2 	HO	E	 0.4362   180.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template gly GLY	//GLYCINE
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	-0.0332   180.000
+atom	HA2 	H1	E	 0.0687   300.000
+atom	HA3 	H1	E	 0.0687    60.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template hid HIS	//HISTIDINE DELTAH
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.0860   180.000
+atom	HA  	H1	E	 0.0068   300.000
+atom	CB  	CT	3	-0.0602    60.000
+atom	HB2 	HC	E	 0.0367   300.000
+atom	HB3 	HC	E	 0.0367    60.000
+atom	CG  	CC	S	 0.0586   180.000
+atom	ND1 	NA	B	-0.1647   180.000
+atom	HD1 	H 	E	 0.2721     0.000
+atom	CE1 	CR	B	 0.0985   180.000
+atom	HE1 	H5	E	 0.1016   180.000
+atom	NE2 	NB	S	-0.4715     0.000
+atom	CD2 	CV	S	 0.0103     0.000
+atom	HD2 	H4	E	 0.0933   180.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+bond	CG  	CD2 
+
+template hie HIS	//HISTIDINE EPSILONH
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.0376   180.000
+atom	HA  	H1	E	 0.0217   300.000
+atom	CB  	CT	3	-0.0413    60.000
+atom	HB2 	HC	E	 0.0476   300.000
+atom	HB3 	HC	E	 0.0476    60.000
+atom	CG  	CC	S	 0.2502   180.000
+atom	ND1 	NB	S	-0.5666   180.000
+atom	CE1 	CR	B	 0.2311   180.000
+atom	HE1 	H5	E	 0.0679   180.000
+atom	NE2 	NA	B	-0.2110     0.000
+atom	HE2 	H 	E	 0.2901   180.000
+atom	CD2 	CW	S	-0.2281     0.000
+atom	HD2 	H4	E	 0.1574   180.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+bond	CG  	CD2 
+
+template hip HIS	//HISTIDINE PLUS
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.2291   180.000
+atom	HA  	H1	E	-0.0223   300.000
+atom	CB  	CT	3	-0.0362    60.000
+atom	HB2 	HC	E	 0.0490   300.000
+atom	HB3 	HC	E	 0.0490    60.000
+atom	CG  	CC	S	 0.0884   180.000
+atom	ND1 	NA	B	-0.0188   180.000
+atom	HD1 	H 	E	 0.2961     0.000
+atom	CE1 	CR	B	-0.0735   180.000
+atom	HE1 	H5	E	 0.2124   180.000
+atom	NE2 	NA	B	-0.0292     0.000
+atom	HE2 	H 	E	 0.3151   180.000
+atom	CD2 	CW	S	-0.1452     0.000
+atom	HD2 	H4	E	 0.1903   180.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+bond	CG  	CD2 
+
+template ile ILE	//ISOLEUCINE
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	-0.0257   180.000
+atom	HA  	H1	E	 0.0640   300.000
+atom	CB  	CT	3	 0.0594    60.000
+atom	HB  	HC	E	 0.0263   300.000
+atom	CG2 	CT	3	-0.3030    60.000
+atom	HG21	HC	E	 0.0824    60.000
+atom	HG22	HC	E	 0.0824   180.000
+atom	HG23	HC	E	 0.0824   300.000
+atom	CG1 	CT	3	-0.0214   180.000
+atom	HG12	HC	E	 0.0284   300.000
+atom	HG13	HC	E	 0.0284    60.000
+atom	CD1 	CT	3	-0.0942   180.000
+atom	HD11	HC	E	 0.0316    60.000
+atom	HD12	HC	E	 0.0316   180.000
+atom	HD13	HC	E	 0.0316   300.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template leu LEU	//LEUCINE
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	-0.0097   180.000
+atom	HA  	H1	E	 0.0432   300.000
+atom	CB  	CT	3	-0.1322    60.000
+atom	HB2 	HC	E	 0.0317   300.000
+atom	HB3 	HC	E	 0.0317    60.000
+atom	CG  	CT	3	 0.4429   180.000
+atom	HG  	HC	E	-0.0662   300.000
+atom	CD1 	CT	3	-0.4312    60.000
+atom	HD11	HC	E	 0.1042    60.000
+atom	HD12	HC	E	 0.1042   180.000
+atom	HD13	HC	E	 0.1042   300.000
+atom	CD2 	CT	3	-0.4312   180.000
+atom	HD21	HC	E	 0.1042    60.000
+atom	HD22	HC	E	 0.1042   180.000
+atom	HD23	HC	E	 0.1042   300.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template lys LYS	//LYSINE
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.0343   180.000
+atom	HA  	H1	E	 0.0464   300.000
+atom	CB  	CT	3	-0.0196    60.000
+atom	HB2 	HC	E	 0.0143   300.000
+atom	HB3 	HC	E	 0.0143    60.000
+atom	CG  	CT	3	-0.0233   180.000
+atom	HG2 	HC	E	 0.0433   300.000
+atom	HG3 	HC	E	 0.0433    60.000
+atom	CD  	CT	3	-0.0574   180.000
+atom	HD2 	HC	E	 0.0602   300.000
+atom	HD3 	HC	E	 0.0602    60.000
+atom	CE  	CT	3	 0.1461   180.000
+atom	HE2 	HP	E	 0.0470   300.000
+atom	HE3 	HP	E	 0.0470    60.000
+atom	NZ  	N3	3	-0.2135   180.000
+atom	HZ1 	H 	E	 0.2872    60.000
+atom	HZ2 	H 	E	 0.2872   180.000
+atom	HZ3 	H 	E	 0.2872   300.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template met MET	//METHIONINE
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.0110   180.000
+atom	HA  	H1	E	 0.0316   300.000
+atom	CB  	CT	3	 0.0940    60.000
+atom	HB2 	HC	E	-0.0190   300.000
+atom	HB3 	HC	E	-0.0190    60.000
+atom	CG  	CT	3	-0.0130   180.000
+atom	HG2 	H1	E	 0.0695   300.000
+atom	HG3 	H1	E	 0.0695    60.000
+atom	SD  	S 	S	-0.2394   180.000
+atom	CE  	CT	3	-0.0550   180.000
+atom	HE1 	H1	E	 0.0580    60.000
+atom	HE2 	H1	E	 0.0580   180.000
+atom	HE3 	H1	E	 0.0580   300.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template phe PHE	//PHENYLALANINE
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.0416   180.000
+atom	HA  	H1	E	 0.0184   300.000
+atom	CB  	CT	3	-0.0021    60.000
+atom	HB2 	HC	E	 0.0242   300.000
+atom	HB3 	HC	E	 0.0242    60.000
+atom	CG  	CA	S	 0.0293   180.000
+atom	CD1 	CA	B	-0.1050   180.000
+atom	HD1 	HA	E	 0.1123     0.000
+atom	CE1 	CA	B	-0.1506   180.000
+atom	HE1 	HA	E	 0.1161   180.000
+atom	CZ  	CA	B	-0.0770     0.000
+atom	HZ  	HA	E	 0.1000   180.000
+atom	CE2 	CA	B	-0.1506     0.000
+atom	HE2 	HA	E	 0.1161   180.000
+atom	CD2 	CA	S	-0.1050     0.000
+atom	HD2 	HA	E	 0.1123   180.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+bond	CG  	CD2 
+
+template pro PRO	//PROLINE
+atom	N   	N 	M	-0.2754   180.000
+atom	CD  	CT	3	 0.0628     0.000
+atom	HD2 	H1	E	 0.0273    80.000
+atom	HD3 	H1	E	 0.0273   320.000
+atom	CG  	CT	3	 0.0632   200.000
+atom	HG2 	HC	E	 0.0063   240.000
+atom	HG3 	HC	E	 0.0063   120.000
+atom	CB  	CT	B	 0.0262     0.000
+atom	HB2 	HC	E	 0.0214   240.000
+atom	HB3 	HC	E	 0.0214   120.000
+atom	CA  	CT	M	-0.1503   203.000
+atom	HA  	H1	E	 0.0758    60.000
+atom	C   	C 	M	 0.6731   300.000
+atom	O   	O 	E	-0.5854     0.000
+bond	CB  	CA  
+
+template ser SER	//SERINE
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.0717   180.000
+atom	HA  	H1	E	 0.0164   300.000
+atom	CB  	CT	3	 0.1345    60.000
+atom	HB2 	H1	E	 0.0361   300.000
+atom	HB3 	H1	E	 0.0361    60.000
+atom	OG  	OH	S	-0.5593   180.000
+atom	HG  	HO	E	 0.3687   180.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template thr THR	//THREONINE
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.0702   180.000
+atom	HA  	H1	E	 0.0164   300.000
+atom	CB  	CT	3	 0.4038    60.000
+atom	HB  	H1	E	-0.0909   180.000
+atom	CG2 	CT	3	-0.2117   300.000
+atom	HG21	HC	E	 0.0496    60.000
+atom	HG22	HC	E	 0.0496   180.000
+atom	HG23	HC	E	 0.0496   300.000
+atom	OG1 	OH	S	-0.6375    60.000
+atom	HG1 	HO	E	 0.4051   180.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template trp TRP	//TRYPTOPHAN
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	 0.0233   180.000
+atom	HA  	H1	E	 0.0376   300.000
+atom	CB  	CT	3	-0.0168    60.000
+atom	HB2 	HC	E	 0.0307   300.000
+atom	HB3 	HC	E	 0.0307    60.000
+atom	CG  	C*	S	-0.0988   180.000
+atom	CD1 	CW	B	-0.0808   180.000
+atom	HD1 	H4	E	 0.1434     0.000
+atom	NE1 	NA	B	-0.3542   180.000
+atom	HE1 	H 	E	 0.3403   180.000
+atom	CE2 	CN	S	 0.1656     0.000
+atom	CZ2 	CA	B	-0.2279   180.000
+atom	HZ2 	HA	E	 0.1382     0.000
+atom	CH2 	CA	B	-0.1110   180.000
+atom	HH2 	HA	E	 0.1076   180.000
+atom	CZ3 	CA	B	-0.1494     0.000
+atom	HZ3 	HA	E	 0.1087   180.000
+atom	CE3 	CA	B	-0.2159     0.000
+atom	HE3 	HA	E	 0.1561   180.000
+atom	CD2 	CB	E	 0.0768     0.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+bond	CG  	CD2 
+bond	CE2 	CD2 
+
+template tyr TYR	//TYROSINE
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	-0.0010   180.000
+atom	HA  	H1	E	 0.0556   300.000
+atom	CB  	CT	3	 0.0211    60.000
+atom	HB2 	HC	E	 0.0225   300.000
+atom	HB3 	HC	E	 0.0225    60.000
+atom	CG  	CA	S	-0.0017   180.000
+atom	CD1 	CA	B	-0.1459   180.000
+atom	HD1 	HA	E	 0.1195     0.000
+atom	CE1 	CA	B	-0.1848   180.000
+atom	HE1 	HA	E	 0.1367   180.000
+atom	CZ  	CA	B	 0.2516     0.000
+atom	OH  	OH	S	-0.4757   180.000
+atom	HH  	HO	E	 0.3583     0.000
+atom	CE2 	CA	B	-0.1848     0.000
+atom	HE2 	HA	E	 0.1367   180.000
+atom	CD2 	CA	S	-0.1459     0.000
+atom	HD2 	HA	E	 0.1195   180.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+bond	CG  	CD2 
+
+template val VAL	//VALINE
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CA  	CT	M	-0.0530   180.000
+atom	HA  	H1	E	 0.0393   300.000
+atom	CB  	CT	3	 0.3674    60.000
+atom	HB  	HC	E	-0.0145   300.000
+atom	CG1 	CT	3	-0.3584    60.000
+atom	HG11	HC	E	 0.0803    60.000
+atom	HG12	HC	E	 0.0803   180.000
+atom	HG13	HC	E	 0.0803   300.000
+atom	CG2 	CT	3	-0.3584   180.000
+atom	HG21	HC	E	 0.0803    60.000
+atom	HG22	HC	E	 0.0803   180.000
+atom	HG23	HC	E	 0.0803   300.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+
+
+	/* N-terminal amino acids */
+
+template ala_nt ALA	//ALANINE
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	 0.0040   240.000
+atom	HA  	HP	E	 0.0430   300.000
+atom	CB  	CT	3	-0.0968    60.000
+atom	HB1 	HC	E	 0.0470    60.000
+atom	HB2 	HC	E	 0.0470   180.000
+atom	HB3 	HC	E	 0.0470   300.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+template arg_nt ARG	//ARGININE
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	-0.0389   240.000
+atom	HA  	HP	E	 0.0692   300.000
+atom	CB  	CT	3	 0.0290    60.000
+atom	HB2 	HC	E	 0.0341   300.000
+atom	HB3 	HC	E	 0.0341    60.000
+atom	CG  	CT	3	 0.0003   180.000
+atom	HG2 	HC	E	 0.0304   300.000
+atom	HG3 	HC	E	 0.0304    60.000
+atom	CD  	CT	3	 0.0966   180.000
+atom	HD2 	H1	E	 0.0585   300.000
+atom	HD3 	H1	E	 0.0585    60.000
+atom	NE  	N2	B	-0.5249   180.000
+atom	HE  	H 	E	 0.3258     0.000
+atom	CZ  	CA	B	 0.8813   180.000
+atom	NH1 	N2	B	-0.8376     0.000
+atom	HH11	H 	E	 0.4205     0.000
+atom	HH12	H 	E	 0.4205   180.000
+atom	NH2 	N2	B	-0.8376   180.000
+atom	HH21	H 	E	 0.4205     0.000
+atom	HH22	H 	E	 0.4205   180.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+template asn_nt ASN	//ASPARAGINE
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	 0.0059   240.000
+atom	HA  	HP	E	 0.0645   300.000
+atom	CB  	CT	3	-0.2021    60.000
+atom	HB2 	HC	E	 0.0905   300.000
+atom	HB3 	HC	E	 0.0905    60.000
+atom	CG  	C 	B	 0.6724   180.000
+atom	OD1 	O 	E	-0.5761     0.000
+atom	ND2 	N 	B	-0.7770   180.000
+atom	HD21	H 	E	 0.3613   180.000
+atom	HD22	H 	E	 0.3613     0.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+template asp_nt ASP	//ASPARTIC ACID
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	-0.1523   240.000
+atom	HA  	HP	E	 0.0664   300.000
+atom	CB  	CT	3	-0.0383    60.000
+atom	HB2 	HC	E	-0.0197   300.000
+atom	HB3 	HC	E	-0.0197    60.000
+atom	CG  	C 	B	 0.7630   180.000
+atom	OD1 	O2	E	-0.7541    90.000
+atom	OD2 	O2	E	-0.7541   270.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+template cys_nt CYS	//CYSTEINE
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	 0.0213   240.000
+atom	HA  	HP	E	 0.0578   300.000
+atom	CB  	CT	3	-0.0316    60.000
+atom	HB2 	H1	E	 0.0655   300.000
+atom	HB3 	H1	E	 0.0655    60.000
+atom	SG  	SH	S	-0.2464   180.000
+atom	HSG 	HS	E	 0.1591   180.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+template cyx_nt CYS	//CYSTINE(S-S BRIDGE)
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	-0.0005   240.000
+atom	HA  	HP	E	 0.0649   300.000
+atom	CB  	CT	3	-0.0084    60.000
+atom	HB2 	H1	E	 0.0634   300.000
+atom	HB3 	H1	E	 0.0634    60.000
+atom	SG  	S 	E	-0.0916   180.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+template gln_nt GLN	//GLUTAMINE
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	-0.0874   240.000
+atom	HA  	HP	E	 0.0661   300.000
+atom	CB  	CT	3	 0.1263    60.000
+atom	HB2 	HC	E	 0.0130   300.000
+atom	HB3 	HC	E	 0.0130    60.000
+atom	CG  	CT	3	-0.2997   180.000
+atom	HG2 	HC	E	 0.1196   300.000
+atom	HG3 	HC	E	 0.1196    60.000
+atom	CD  	C 	B	 0.7233   180.000
+atom	OE1 	O 	E	-0.6218     0.000
+atom	NE2 	N 	B	-0.7926   180.000
+atom	HE21	H 	E	 0.3559   180.000
+atom	HE22	H 	E	 0.3559     0.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+template glu_nt GLU	//GLUTAMIC ACID
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	-0.2418   240.000
+atom	HA  	HP	E	 0.0961   300.000
+atom	CB  	CT	3	 0.2765    60.000
+atom	HB2 	HC	E	-0.0627   300.000
+atom	HB3 	HC	E	-0.0627    60.000
+atom	CG  	CT	3	-0.1881   180.000
+atom	HG2 	HC	E	 0.0410   300.000
+atom	HG3 	HC	E	 0.0410    60.000
+atom	CD  	C 	B	 0.6733   180.000
+atom	OE1 	O2	E	-0.7407    90.000
+atom	OE2 	O2	E	-0.7407   270.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+template gly_nt GLY	//GLYCINE
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	-0.0766   240.000
+atom	HA2 	HP	E	 0.0839   300.000
+atom	HA3 	HP	E	 0.0839    60.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+template hid_nt HIS	//HISTIDINE DELTAH
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	 0.0189   240.000
+atom	HA  	HP	E	 0.0370   300.000
+atom	CB  	CT	3	-0.0356    60.000
+atom	HB2 	HC	E	 0.0393   300.000
+atom	HB3 	HC	E	 0.0393    60.000
+atom	CG  	CC	S	 0.0471   180.000
+atom	ND1 	NA	B	-0.1644   180.000
+atom	HD1 	H 	E	 0.2712     0.000
+atom	CE1 	CR	B	 0.1023   180.000
+atom	HE1 	H5	E	 0.1006   180.000
+atom	NE2 	NB	S	-0.4742     0.000
+atom	CD2 	CV	S	 0.0182     0.000
+atom	HD2 	H4	E	 0.0915   180.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+bond	CG  	CD2 
+
+template hie_nt HIS	//HISTIDINE EPSILONH
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	-0.0047   240.000
+atom	HA  	HP	E	 0.0393   300.000
+atom	CB  	CT	3	-0.0485    60.000
+atom	HB2 	HC	E	 0.0512   300.000
+atom	HB3 	HC	E	 0.0512    60.000
+atom	CG  	CC	S	 0.2683   180.000
+atom	ND1 	NB	S	-0.5675   180.000
+atom	CE1 	CR	B	 0.2272   180.000
+atom	HE1 	H5	E	 0.0692   180.000
+atom	NE2 	NA	B	-0.2130     0.000
+atom	HE2 	H 	E	 0.2911   180.000
+atom	CD2 	CW	S	-0.2292     0.000
+atom	HD2 	H4	E	 0.1566   180.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+bond	CG  	CD2 
+
+template hip_nt HIS	//HISTIDINE PLUS
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	 0.1381   240.000
+atom	HA  	HP	E	 0.0003   300.000
+atom	CB  	CT	3	 0.0296    60.000
+atom	HB2 	HC	E	 0.0569   300.000
+atom	HB3 	HC	E	 0.0569    60.000
+atom	CG  	CC	S	 0.0591   180.000
+atom	ND1 	NA	B	-0.0008   180.000
+atom	HD1 	H 	E	 0.2806     0.000
+atom	CE1 	CR	B	-0.0677   180.000
+atom	HE1 	H5	E	 0.2108   180.000
+atom	NE2 	NA	B	-0.0391     0.000
+atom	HE2 	H 	E	 0.3178   180.000
+atom	CD2 	CW	S	-0.1262     0.000
+atom	HD2 	H4	E	 0.1749   180.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+bond	CG  	CD2 
+
+template ile_nt ILE	//ISOLEUCINE
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	-0.0434   240.000
+atom	HA  	HP	E	 0.0668   300.000
+atom	CB  	CT	3	 0.0569    60.000
+atom	HB  	HC	E	 0.0223   300.000
+atom	CG2 	CT	3	-0.2829    60.000
+atom	HG21	HC	E	 0.0775    60.000
+atom	HG22	HC	E	 0.0775   180.000
+atom	HG23	HC	E	 0.0775   300.000
+atom	CG1 	CT	3	-0.0244   180.000
+atom	HG12	HC	E	 0.0328    60.000
+atom	HG13	HC	E	 0.0328   300.000
+atom	CD1 	CT	3	-0.1102   180.000
+atom	HD11	HC	E	 0.0360    60.000
+atom	HD12	HC	E	 0.0360   180.000
+atom	HD13	HC	E	 0.0360   300.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+template leu_nt LEU	//LEUCINE
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	-0.0529   240.000
+atom	HA  	HP	E	 0.0574   300.000
+atom	CB  	CT	3	-0.1221    60.000
+atom	HB2 	HC	E	 0.0335   300.000
+atom	HB3 	HC	E	 0.0335    60.000
+atom	CG  	CT	3	 0.4490   180.000
+atom	HG  	HC	E	-0.0664   300.000
+atom	CD1 	CT	3	-0.4399    60.000
+atom	HD11	HC	E	 0.1065    60.000
+atom	HD12	HC	E	 0.1065   180.000
+atom	HD13	HC	E	 0.1065   300.000
+atom	CD2 	CT	3	-0.4399   180.000
+atom	HD21	HC	E	 0.1065    60.000
+atom	HD22	HC	E	 0.1065   180.000
+atom	HD23	HC	E	 0.1065   300.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+template lys_nt LYS	//LYSINE
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	-0.0269   240.000
+atom	HA  	HP	E	 0.0709   300.000
+atom	CB  	CT	3	-0.0348    60.000
+atom	HB2 	HC	E	 0.0323   300.000
+atom	HB3 	HC	E	 0.0323    60.000
+atom	CG  	CT	3	-0.0231   180.000
+atom	HG2 	HC	E	 0.0449   300.000
+atom	HG3 	HC	E	 0.0449    60.000
+atom	CD  	CT	3	-0.0433   180.000
+atom	HD2 	HC	E	 0.0550   300.000
+atom	HD3 	HC	E	 0.0550    60.000
+atom	CE  	CT	3	 0.1380   180.000
+atom	HE2 	HP	E	 0.0472   300.000
+atom	HE3 	HP	E	 0.0472    60.000
+atom	NZ  	N3	3	-0.2004   180.000
+atom	HZ1 	H 	E	 0.2840    60.000
+atom	HZ2 	H 	E	 0.2840   180.000
+atom	HZ3 	H 	E	 0.2840   300.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+template met_nt MET	//METHIONINE
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	-0.0377   240.000
+atom	HA  	HP	E	 0.0516   300.000
+atom	CB  	CT	3	 0.0828    60.000
+atom	HB2 	HC	E	-0.0060   300.000
+atom	HB3 	HC	E	-0.0060    60.000
+atom	CG  	CT	3	-0.0162   180.000
+atom	HG2 	H1	E	 0.0722   300.000
+atom	HG3 	H1	E	 0.0722    60.000
+atom	SD  	S 	S	-0.2381   180.000
+atom	CE  	CT	3	-0.0585   180.000
+atom	HE1 	H1	E	 0.0583    60.000
+atom	HE2 	H1	E	 0.0583   180.000
+atom	HE3 	H1	E	 0.0583   300.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+template phe_nt PHE	//PHENYLALANINE
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	-0.0022   240.000
+atom	HA  	HP	E	 0.0381   300.000
+atom	CB  	CT	3	-0.0053    60.000
+atom	HB2 	HC	E	 0.0289   300.000
+atom	HB3 	HC	E	 0.0289    60.000
+atom	CG  	CA	S	 0.0358   180.000
+atom	CD1 	CA	B	-0.1078   180.000
+atom	HD1 	HA	E	 0.1140     0.000
+atom	CE1 	CA	B	-0.1503   180.000
+atom	HE1 	HA	E	 0.1153   180.000
+atom	CZ  	CA	B	-0.0744     0.000
+atom	HZ  	HA	E	 0.0990   180.000
+atom	CE2 	CA	B	-0.1503     0.000
+atom	HE2 	HA	E	 0.1153   180.000
+atom	CD2 	CA	S	-0.1078     0.000
+atom	HD2 	HA	E	 0.1140   180.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+bond	CG  	CD2 
+
+template pro_nt PRO	//PROLINE
+atom	H2  	H 	E	 0.2080
+atom	N   	N3	M	 0.0365
+atom	H3  	H 	E	 0.2080   120.000
+atom	CD  	CT	3	 0.0280     0.000
+atom	HD2 	HP	E	 0.0654   120.000
+atom	HD3 	HP	E	 0.0654     0.000
+atom	CG  	CT	3	 0.0299   240.000
+atom	HG2 	HC	E	 0.0210   240.000
+atom	HG3 	HC	E	 0.0210   120.000
+atom	CB  	CT	B	-0.0206     0.000
+atom	HB2 	HC	E	 0.0391   240.000
+atom	HB3 	HC	E	 0.0391   120.000
+atom	CA  	CT	M	 0.1718   241.000
+atom	HA  	HP	E	-0.0144    60.000
+atom	C   	C 	M	 0.6837   300.000
+atom	O   	O 	E	-0.5819     0.000
+bond	CB  	CA  
+
+template ser_nt SER	//SERINE
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	 0.0528   240.000
+atom	HA  	HP	E	 0.0220   300.000
+atom	CB  	CT	3	 0.1146    60.000
+atom	HB2 	H1	E	 0.0482   300.000
+atom	HB3 	H1	E	 0.0482    60.000
+atom	OG  	OH	S	-0.5676   180.000
+atom	HG  	HO	E	 0.3730   180.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+template thr_nt THR	//THREONINE
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	 0.0051   240.000
+atom	HA  	HP	E	 0.0448   300.000
+atom	CB  	CT	3	 0.3997    60.000
+atom	HB  	H1	E	-0.0804   180.000
+atom	CG2 	CT	3	-0.2169   300.000
+atom	HG21	HC	E	 0.0535    60.000
+atom	HG22	HC	E	 0.0535   180.000
+atom	HG23	HC	E	 0.0535   300.000
+atom	OG1 	OH	S	-0.6238    60.000
+atom	HG1 	HO	E	 0.4022   180.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+template trp_nt TRP	//TRYPTOPHAN
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	-0.0188   240.000
+atom	HA  	HP	E	 0.0543   300.000
+atom	CB  	CT	3	-0.0111    60.000
+atom	HB2 	HC	E	 0.0328   300.000
+atom	HB3 	HC	E	 0.0328    60.000
+atom	CG  	C*	S	-0.0973   180.000
+atom	CD1 	CW	B	-0.0798   180.000
+atom	HD1 	H4	E	 0.1437     0.000
+atom	NE1 	NA	B	-0.3581   180.000
+atom	HE1 	H 	E	 0.3411   180.000
+atom	CE2 	CN	S	 0.1680     0.000
+atom	CZ2 	CA	B	-0.2298   180.000
+atom	HZ2 	HA	E	 0.1385     0.000
+atom	CH2 	CA	B	-0.1089   180.000
+atom	HH2 	HA	E	 0.1066   180.000
+atom	CZ3 	CA	B	-0.1461     0.000
+atom	HZ3 	HA	E	 0.1078   180.000
+atom	CE3 	CA	B	-0.2304     0.000
+atom	HE3 	HA	E	 0.1627   180.000
+atom	CD2 	CB	E	 0.0832     0.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+bond	CG  	CD2 
+bond	CE2 	CD2 
+
+template tyr_nt TYR	//TYROSINE
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	-0.0426   240.000
+atom	HA  	HP	E	 0.0724   300.000
+atom	CB  	CT	3	 0.0085    60.000
+atom	HB2 	HC	E	 0.0313   300.000
+atom	HB3 	HC	E	 0.0313    60.000
+atom	CG  	CA	S	 0.0005   180.000
+atom	CD1 	CA	B	-0.1423   180.000
+atom	HD1 	HA	E	 0.1204     0.000
+atom	CE1 	CA	B	-0.1892   180.000
+atom	HE1 	HA	E	 0.1368   180.000
+atom	CZ  	CA	B	 0.2570     0.000
+atom	OH  	OH	S	-0.4770   180.000
+atom	HH  	HO	E	 0.3584     0.000
+atom	CE2 	CA	B	-0.1892     0.000
+atom	HE2 	HA	E	 0.1368   180.000
+atom	CD2 	CA	S	-0.1423     0.000
+atom	HD2 	HA	E	 0.1204   180.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+bond	CG  	CD2 
+
+template val_nt VAL	//VALINE
+atom	H1  	H 	E	 0.2056
+atom	N   	N3	M	 0.1902
+atom	H2  	H 	E	 0.2056     0.000
+atom	H3  	H 	E	 0.2056   120.000
+atom	CA  	CT	M	-0.0769   240.000
+atom	HA  	HP	E	 0.0502   300.000
+atom	CB  	CT	3	 0.3476    60.000
+atom	HB  	HC	E	 0.0011   300.000
+atom	CG1 	CT	3	-0.3620    60.000
+atom	HG11	HC	E	 0.0822    60.000
+atom	HG12	HC	E	 0.0822   180.000
+atom	HG13	HC	E	 0.0822   300.000
+atom	CG2 	CT	3	-0.3620   180.000
+atom	HG21	HC	E	 0.0822    60.000
+atom	HG22	HC	E	 0.0822   180.000
+atom	HG23	HC	E	 0.0822   300.000
+atom	C   	C 	M	 0.6837   180.000
+atom	O   	O 	E	-0.5819     0.000
+
+
+
+	/* C-terminal amino acids */
+
+template ala_ct ALA	//ALANINE COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.0679   180.000
+atom	HA  	H1	E	 0.0708   300.000
+atom	CB  	CT	3	-0.1226    60.000
+atom	HB1 	HC	E	 0.0586    60.000
+atom	HB2 	HC	E	 0.0586   180.000
+atom	HB3 	HC	E	 0.0586   300.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+template arg_ct ARG	//ARGININE  COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.1062   180.000
+atom	HA  	H1	E	 0.1045   300.000
+atom	CB  	CT	3	 0.0133    60.000
+atom	HB2 	HC	E	 0.0348   300.000
+atom	HB3 	HC	E	 0.0348    60.000
+atom	CG  	CT	3	 0.0088   180.000
+atom	HG2 	HC	E	 0.0276   300.000
+atom	HG3 	HC	E	 0.0276    60.000
+atom	CD  	CT	3	 0.1167   180.000
+atom	HD2 	H1	E	 0.0540   300.000
+atom	HD3 	H1	E	 0.0540    60.000
+atom	NE  	N2	B	-0.5289   180.000
+atom	HE  	H 	E	 0.3284     0.000
+atom	CZ  	CA	B	 0.8793   180.000
+atom	NH1 	N2	B	-0.8367     0.000
+atom	HH11	H 	E	 0.4202     0.000
+atom	HH12	H 	E	 0.4202   180.000
+atom	NH2 	N2	B	-0.8367   180.000
+atom	HH21	H 	E	 0.4202     0.000
+atom	HH22	H 	E	 0.4202   180.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+template asn_ct ASN	//ASPARAGINE    COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.0510   180.000
+atom	HA  	H1	E	 0.0810   300.000
+atom	CB  	CT	3	-0.2184    60.000
+atom	HB2 	HC	E	 0.1005   300.000
+atom	HB3 	HC	E	 0.1005    60.000
+atom	CG  	C 	B	 0.6838   180.000
+atom	OD1 	O 	E	-0.5751     0.000
+atom	ND2 	N 	B	-0.7870   180.000
+atom	HD21	H 	E	 0.3609   180.000
+atom	HD22	H 	E	 0.3609     0.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+template asp_ct ASP	//ASPARTIC ACID COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.2422   180.000
+atom	HA  	H1	E	 0.0934   300.000
+atom	CB  	CT	3	-0.0234    60.000
+atom	HB2 	HC	E	-0.0104   300.000
+atom	HB3 	HC	E	-0.0104    60.000
+atom	CG  	C 	B	 0.7633   180.000
+atom	OD1 	O2	E	-0.7571    90.000
+atom	OD2 	O2	E	-0.7571   270.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+template cys_ct CYS	//CYSTEINE  COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.0189   180.000
+atom	HA  	H1	E	 0.0637   300.000
+atom	CB  	CT	3	-0.0436    60.000
+atom	HB2 	H1	E	 0.0709   300.000
+atom	HB3 	H1	E	 0.0709    60.000
+atom	SG  	SH	S	-0.2446   180.000
+atom	HSG 	HS	E	 0.1577   180.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+template cyx_ct CYS	//CYSTINE(S-S BRIDGE)     COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.0534   180.000
+atom	HA  	H1	E	 0.0794   300.000
+atom	CB  	CT	3	-0.0239    60.000
+atom	HB2 	H1	E	 0.0723   300.000
+atom	HB3 	H1	E	 0.0723    60.000
+atom	SG  	S 	E	-0.0906   180.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+template gln_ct GLN	//GLUTAMINE     COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.1222   180.000
+atom	HA  	H1	E	 0.0719   300.000
+atom	CB  	CT	3	 0.1006    60.000
+atom	HB2 	HC	E	 0.0150   300.000
+atom	HB3 	HC	E	 0.0150    60.000
+atom	CG  	CT	3	-0.2290   180.000
+atom	HG2 	HC	E	 0.0974   300.000
+atom	HG3 	HC	E	 0.0974    60.000
+atom	CD  	C 	B	 0.6952   180.000
+atom	OE1 	O 	E	-0.6169     0.000
+atom	NE2 	N 	B	-0.7851   180.000
+atom	HE21	H 	E	 0.3584   180.000
+atom	HE22	H 	E	 0.3584     0.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+template glu_ct GLU	//GLUTAMIC ACID COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.3065   180.000
+atom	HA  	H1	E	 0.1254   300.000
+atom	CB  	CT	3	 0.2282    60.000
+atom	HB2 	HC	E	-0.0351   300.000
+atom	HB3 	HC	E	-0.0351    60.000
+atom	CG  	CT	3	-0.2150   180.000
+atom	HG2 	HC	E	 0.0452   300.000
+atom	HG3 	HC	E	 0.0452    60.000
+atom	CD  	C 	B	 0.6896   180.000
+atom	OE1 	O2	E	-0.7429    90.000
+atom	OE2 	O2	E	-0.7429   270.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+template gly_ct GLY	//GLYCINE COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.1509   180.000
+atom	HA2 	H1	E	 0.1035   300.000
+atom	HA3 	H1	E	 0.1035    60.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+template hid_ct HIS	//HISTIDINE DELTAH COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.0361   180.000
+atom	HA  	H1	E	 0.0491   300.000
+atom	CB  	CT	3	-0.0397    60.000
+atom	HB2 	HC	E	 0.0436   300.000
+atom	HB3 	HC	E	 0.0436    60.000
+atom	CG  	CC	S	 0.0494   180.000
+atom	ND1 	NA	B	-0.1644   180.000
+atom	HD1 	H 	E	 0.2727     0.000
+atom	CE1 	CR	B	 0.1038   180.000
+atom	HE1 	H5	E	 0.1002   180.000
+atom	NE2 	NB	S	-0.4749     0.000
+atom	CD2 	CV	S	 0.0188     0.000
+atom	HD2 	H4	E	 0.0900   180.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+bond	CG  	CD2 
+
+template hie_ct HIS	//HISTIDINE EPSILON-H   COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.0781   180.000
+atom	HA  	H1	E	 0.0620   300.000
+atom	CB  	CT	3	-0.0421    60.000
+atom	HB2 	HC	E	 0.0604   300.000
+atom	HB3 	HC	E	 0.0604    60.000
+atom	CG  	CC	S	 0.2452   180.000
+atom	ND1 	NB	S	-0.5753   180.000
+atom	CE1 	CR	B	 0.2480   180.000
+atom	HE1 	H5	E	 0.0646   180.000
+atom	NE2 	NA	B	-0.2343     0.000
+atom	HE2 	H 	E	 0.2949   180.000
+atom	CD2 	CW	S	-0.1936     0.000
+atom	HD2 	H4	E	 0.1440   180.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+bond	CG  	CD2 
+
+template hip_ct HIS	//HISTIDINE PLUS COO-
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	 0.0642   180.000
+atom	HA  	H1	E	 0.0453   300.000
+atom	CB  	CT	3	-0.0055    60.000
+atom	HB2 	HC	E	 0.0556   300.000
+atom	HB3 	HC	E	 0.0556    60.000
+atom	CG  	CC	S	 0.0948   180.000
+atom	ND1 	NA	B	-0.0077   180.000
+atom	HD1 	H 	E	 0.2872     0.000
+atom	CE1 	CR	B	-0.0740   180.000
+atom	HE1 	H5	E	 0.2133   180.000
+atom	NE2 	NA	B	-0.0432     0.000
+atom	HE2 	H 	E	 0.3192   180.000
+atom	CD2 	CW	S	-0.1224     0.000
+atom	HD2 	H4	E	 0.1737   180.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+bond	CG  	CD2 
+
+template ile_ct ILE	//ISOLEUCINE    COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.1622   180.000
+atom	HA  	H1	E	 0.1028   300.000
+atom	CB  	CT	3	 0.1296    60.000
+atom	HB  	HC	E	 0.0207   300.000
+atom	CG2 	CT	3	-0.3021    60.000
+atom	HG21	HC	E	 0.0825    60.000
+atom	HG22	HC	E	 0.0825   180.000
+atom	HG23	HC	E	 0.0825   300.000
+atom	CG1 	CT	3	-0.0335   180.000
+atom	HG12	HC	E	 0.0289   300.000
+atom	HG13	HC	E	 0.0289    60.000
+atom	CD1 	CT	3	-0.0993   180.000
+atom	HD11	HC	E	 0.0316    60.000
+atom	HD12	HC	E	 0.0316   180.000
+atom	HD13	HC	E	 0.0316   300.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+template leu_ct LEU	//LEUCINE  COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.1138   180.000
+atom	HA  	H1	E	 0.0776   300.000
+atom	CB  	CT	3	-0.1398    60.000
+atom	HB2 	HC	E	 0.0480   300.000
+atom	HB3 	HC	E	 0.0480    60.000
+atom	CG  	CT	3	 0.4179   180.000
+atom	HG  	HC	E	-0.0540   300.000
+atom	CD1 	CT	3	-0.4091    60.000
+atom	HD11	HC	E	 0.0984    60.000
+atom	HD12	HC	E	 0.0984   180.000
+atom	HD13	HC	E	 0.0984   300.000
+atom	CD2 	CT	3	-0.4091   180.000
+atom	HD21	HC	E	 0.0984    60.000
+atom	HD22	HC	E	 0.0984   180.000
+atom	HD23	HC	E	 0.0984   300.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+template lys_ct LYS	//LYSINE  COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.0882   180.000
+atom	HA  	H1	E	 0.0952   300.000
+atom	CB  	CT	3	-0.0277    60.000
+atom	HB2 	HC	E	 0.0293   300.000
+atom	HB3 	HC	E	 0.0293    60.000
+atom	CG  	CT	3	-0.0134   180.000
+atom	HG2 	HC	E	 0.0387   300.000
+atom	HG3 	HC	E	 0.0387    60.000
+atom	CD  	CT	3	-0.0359   180.000
+atom	HD2 	HC	E	 0.0539   300.000
+atom	HD3 	HC	E	 0.0539    60.000
+atom	CE  	CT	3	 0.1420   180.000
+atom	HE2 	HP	E	 0.0461   300.000
+atom	HE3 	HP	E	 0.0461    60.000
+atom	NZ  	N3	3	-0.2099   180.000
+atom	HZ1 	H 	E	 0.2860    60.000
+atom	HZ2 	H 	E	 0.2860   180.000
+atom	HZ3 	H 	E	 0.2860   300.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+template met_ct MET	//METHIONINE    COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.0798   180.000
+atom	HA  	H1	E	 0.0614   300.000
+atom	CB  	CT	3	 0.0585    60.000
+atom	HB2 	HC	E	 0.0042   300.000
+atom	HB3 	HC	E	 0.0042    60.000
+atom	CG  	CT	3	-0.0227   180.000
+atom	HG2 	H1	E	 0.0723   300.000
+atom	HG3 	H1	E	 0.0723    60.000
+atom	SD  	S 	S	-0.2367   180.000
+atom	CE  	CT	3	-0.0483   180.000
+atom	HE1 	H1	E	 0.0569    60.000
+atom	HE2 	H1	E	 0.0569   180.000
+atom	HE3 	H1	E	 0.0569   300.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+template phe_ct PHE	//PHENYLALANINE COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.0537   180.000
+atom	HA  	H1	E	 0.0467   300.000
+atom	CB  	CT	3	-0.0065    60.000
+atom	HB2 	HC	E	 0.0340   300.000
+atom	HB3 	HC	E	 0.0340    60.000
+atom	CG  	CA	S	 0.0283   180.000
+atom	CD1 	CA	B	-0.1057   180.000
+atom	HD1 	HA	E	 0.1142     0.000
+atom	CE1 	CA	B	-0.1484   180.000
+atom	HE1 	HA	E	 0.1146   180.000
+atom	CZ  	CA	B	-0.0750     0.000
+atom	HZ  	HA	E	 0.0989   180.000
+atom	CE2 	CA	B	-0.1484     0.000
+atom	HE2 	HA	E	 0.1146   180.000
+atom	CD2 	CA	S	-0.1057     0.000
+atom	HD2 	HA	E	 0.1142   180.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+bond	CG  	CD2 
+
+template pro_ct PRO	//PROLINE COO- ANION
+atom	N   	N 	M	-0.2667   180.000
+atom	CD  	CT	3	 0.0740     0.000
+atom	HD2 	H1	E	 0.0258    80.000
+atom	HD3 	H1	E	 0.0258   320.000
+atom	CG  	CT	3	 0.0572   200.000
+atom	HG2 	HC	E	 0.0068   240.000
+atom	HG3 	HC	E	 0.0068   120.000
+atom	CB  	CT	B	 0.0439     0.000
+atom	HB2 	HC	E	 0.0233   240.000
+atom	HB3 	HC	E	 0.0233   120.000
+atom	CA  	CT	M	-0.2160   203.000
+atom	HA  	H1	E	 0.1051    60.000
+atom	C   	C 	M	 0.5771   300.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+bond	CA  	CB  
+
+template ser_ct SER	//SERINE  COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.0356   180.000
+atom	HA  	H1	E	 0.0666   300.000
+atom	CB  	CT	3	 0.0748    60.000
+atom	HB2 	H1	E	 0.0602   300.000
+atom	HB3 	H1	E	 0.0602    60.000
+atom	OG  	OH	S	-0.5419   180.000
+atom	HG  	HO	E	 0.3718   180.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+template thr_ct THR	//THREONINE     COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.0138   180.000
+atom	HA  	H1	E	 0.0474   300.000
+atom	CB  	CT	3	 0.3514    60.000
+atom	HB  	H1	E	-0.0608   180.000
+atom	CG2 	CT	3	-0.1888   300.000
+atom	HG21	HC	E	 0.0451    60.000
+atom	HG22	HC	E	 0.0451   180.000
+atom	HG23	HC	E	 0.0451   300.000
+atom	OG1 	OH	S	-0.6176    60.000
+atom	HG1 	HO	E	 0.4030   180.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+template trp_ct TRP	//TRYPTOPHAN    COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.0713   180.000
+atom	HA  	H1	E	 0.0650   300.000
+atom	CB  	CT	3	-0.0149    60.000
+atom	HB2 	HC	E	 0.0382   300.000
+atom	HB3 	HC	E	 0.0382    60.000
+atom	CG  	C*	S	-0.0994   180.000
+atom	CD1 	CW	B	-0.0762   180.000
+atom	HD1 	H4	E	 0.1446     0.000
+atom	NE1 	NA	B	-0.3641   180.000
+atom	HE1 	H 	E	 0.3426   180.000
+atom	CE2 	CN	S	 0.1748     0.000
+atom	CZ2 	CA	B	-0.2311   180.000
+atom	HZ2 	HA	E	 0.1389     0.000
+atom	CH2 	CA	B	-0.1112   180.000
+atom	HH2 	HA	E	 0.1077   180.000
+atom	CZ3 	CA	B	-0.1479     0.000
+atom	HZ3 	HA	E	 0.1083   180.000
+atom	CE3 	CA	B	-0.2173     0.000
+atom	HE3 	HA	E	 0.1556   180.000
+atom	CD2 	CB	E	 0.0756     0.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+bond	CG  	CD2 
+bond	CE2 	CD2 
+
+template tyr_ct TYR	//TYROSINE  COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.1028   180.000
+atom	HA  	H1	E	 0.0905   300.000
+atom	CB  	CT	3	-0.0020    60.000
+atom	HB2 	HC	E	 0.0396   300.000
+atom	HB3 	HC	E	 0.0396    60.000
+atom	CG  	CA	S	-0.0002   180.000
+atom	CD1 	CA	B	-0.1421   180.000
+atom	HD1 	HA	E	 0.1194     0.000
+atom	CE1 	CA	B	-0.1849   180.000
+atom	HE1 	HA	E	 0.1358   180.000
+atom	CZ  	CA	B	 0.2534     0.000
+atom	OH  	OH	S	-0.4768   180.000
+atom	HH  	HO	E	 0.3584     0.000
+atom	CE2 	CA	B	-0.1849     0.000
+atom	HE2 	HA	E	 0.1358   180.000
+atom	CD2 	CA	S	-0.1421     0.000
+atom	HD2 	HA	E	 0.1194   180.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+bond	CG  	CD2 
+
+template val_ct VAL	//VALINE  COO- ANION
+atom	N   	N 	M	-0.4420   180.000
+atom	H   	H 	E	 0.2952     0.000
+atom	CA  	CT	M	-0.1531   180.000
+atom	HA  	H1	E	 0.0920   300.000
+atom	CB  	CT	3	 0.2896    60.000
+atom	HB  	HC	E	 0.0114   300.000
+atom	CG1 	CT	3	-0.2902    60.000
+atom	HG11	HC	E	 0.0661    60.000
+atom	HG12	HC	E	 0.0661   180.000
+atom	HG13	HC	E	 0.0661   300.000
+atom	CG2 	CT	3	-0.2902   180.000
+atom	HG21	HC	E	 0.0661    60.000
+atom	HG22	HC	E	 0.0661   180.000
+atom	HG23	HC	E	 0.0661   300.000
+atom	C   	C 	M	 0.5771   180.000
+atom	O   	O2	E	-0.7432     0.000
+atom	OXT 	O2	E	-0.7432   180.000
+
+
+
+	/* Blocking groups */
+
+template ace ACE	//ACE BEGINNING GROUP
+atom	HH31	HC	E	 0.1437
+atom	CH3 	CT	M	-0.5188
+atom	HH32	HC	E	 0.1437    60.000
+atom	HH33	HC	E	 0.1437   300.000
+atom	C   	C 	M	 0.6731   180.000
+atom	O   	O 	E	-0.5854     0.000
+
+template nme NME	//N-methyl all atom
+atom	N   	N 	M	-0.4937   180.000
+atom	H   	H 	E	 0.3018     0.000
+atom	CH3 	CT	M	-0.0076   180.000
+atom	HH31	H1	E	 0.0665     0.000 
+atom	HH32	H1	E	 0.0665   120.000 
+atom	HH33	H1	E	 0.0665   240.000 
+
+
+
+	/* Solvent and counter-ions */
+
+template wat WAT	//WATER, SPC/E MODEL
+atom	H1  	HW	E	 0.4238
+atom	O   	OW	M	-0.8476
+atom	H2  	HW	E	 0.4238
+
+template cip CIP	//Sodium Ion
+atom	NA 	IP	E	 1.0000
+
+template cim CIM	//Chloride Ion
+atom	CL 	IM	E	-1.0000
+
+
+
+	/* DNA: normal (5' phosphate and 3' O-) */
+
+template da ADE		//D-ADENOSINE - with 5' - phosphate group and 3' - O(minus) group
+atom	P   	P 	M	 1.0735    200.00
+atom	O1P 	O2	E	-0.7545    150.00
+atom	O2P 	O2	E	-0.7545     20.00
+atom	O5' 	OS	M	-0.4128    -98.89
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721    180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1680    105.60
+atom	H1' 	H2	E	 0.1024   -240.00
+atom	N9  	N*	S	-0.1692   -127.70
+atom	C8  	CK	B	 0.2153     81.59
+atom	H8  	H5	E	 0.1451      0.00
+atom	N7  	NB	S	-0.5436    177.00
+atom	C5  	CB	S	-0.0475      0.00
+atom	C6  	CA	B	 0.6038    180.00
+atom	N6  	N2	B	-0.7136      0.00
+atom	H61 	H 	E	 0.3558    180.00
+atom	H62 	H 	E	 0.3558      0.00
+atom	N1  	NC	S	-0.7313    180.00
+atom	C2  	CQ	B	 0.5726      0.00
+atom	H2  	H5	E	 0.0119    180.00
+atom	N3  	NC	S	-0.7649      0.00
+atom	C4  	CB	E	 0.5499      0.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OS	M	-0.4998   -203.47
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template dc CYT		//D-CYTOSINE - with 5' - phosphate group and 3' - O(minus) group
+atom	P   	P 	M	 1.0735    200.00
+atom	O1P 	O2	E	-0.7545    150.00
+atom	O2P 	O2	E	-0.7545     20.00
+atom	O5' 	OS	M	-0.4128    -98.89
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721    180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1421    105.60
+atom	H1' 	H2	E	 0.0851   -240.00
+atom	N1  	N*	S	-0.1318   -127.70
+atom	C6  	CM	B	-0.0115     81.59
+atom	H6  	H4	E	 0.2099      0.00
+atom	C5  	CM	B	-0.4696    180.00
+atom	H5  	HA	E	 0.1833    180.00
+atom	C4  	CA	B	 0.7010      0.00
+atom	N4  	N2	B	-0.7417    180.00
+atom	H41 	H 	E	 0.3526    180.00
+atom	H42 	H 	E	 0.3526      0.00
+atom	N3  	NC	S	-0.7555      0.00
+atom	C2  	C 	S	 0.8464      0.00
+atom	O2  	O 	E	-0.6524    180.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OS	M	-0.4998   -203.47
+bond	C1' 	C2'
+bond	C2  	N1
+
+template dg GUA		//D-GUANOSINE - with 5' - phosphate group and 3' - O(minus) group
+atom	P   	P 	M	 1.0735    200.00
+atom	O1P 	O2	E	-0.7545    150.00
+atom	O2P 	O2	E	-0.7545     20.00
+atom	O5' 	OS	M	-0.4128    -98.89
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721    180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1557    105.60
+atom	H1' 	H2	E	 0.0886   -240.00
+atom	N9  	N*	S	-0.0379   -127.70
+atom	C8  	CK	B	 0.1353     81.59
+atom	H8  	H5	E	 0.1508      0.00
+atom	N7  	NB	S	-0.5139   -179.90
+atom	C5  	CB	S	 0.0585      0.00
+atom	C6  	C 	B	 0.5071    180.00
+atom	O6  	O 	E	-0.5301      0.00
+atom	N1  	NA	B	-0.5405    180.00
+atom	H1  	H 	E	 0.3750    179.90
+atom	C2  	CA	B	 0.6834     -0.10
+atom	N2  	N2	B	-0.7508    180.00
+atom	H21 	H 	E	 0.3443     -0.82
+atom	H22 	H 	E	 0.3443   -179.44
+atom	N3  	NC	S	-0.6502      0.00
+atom	C4  	CB	E	 0.2909      0.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OS	M	-0.4998   -203.47
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template dt THY		//D-THYMINE - with 5' - phosphate group and 3' - O(minus) group
+atom	P   	P 	M	 1.0735    200.00
+atom	O1P 	O2	E	-0.7545    150.00
+atom	O2P 	O2	E	-0.7545     20.00
+atom	O5' 	OS	M	-0.4128    -98.89
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721    180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1082    105.60
+atom	H1' 	H2	E	 0.1074   -240.00
+atom	N1  	N*	S	-0.0282   -127.70
+atom	C6  	CM	B	-0.2552     81.59
+atom	H6  	H4	E	 0.2796      0.00
+atom	C5  	CM	B	-0.0388    177.30
+atom	C7  	CT	3	-0.1326    180.00
+atom	H71 	HC	E	 0.0606     60.00
+atom	H72 	HC	E	 0.0606    180.00
+atom	H73 	HC	E	 0.0606    300.00
+atom	C4  	C 	B	 0.5608      0.00
+atom	O4  	O 	E	-0.5455    180.00
+atom	N3  	NA	B	-0.4824      0.00
+atom	H3  	H 	E	 0.3542    180.00
+atom	C2  	C 	S	 0.5892      0.00
+atom	O2  	O 	E	-0.5880    180.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OS	M	-0.4998   -203.47
+bond	C1' 	C2'
+bond	C2  	N1
+
+
+
+	/* DNA: 5'-terminal (5' OH and 3' O-) */
+
+template da5 ADE	//D-ADENOSINE - with 5' - OH end group and 3' - O(minus)
+atom	H5T 	HO	E	 0.4109
+atom	O5' 	OH	M	-0.5671
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721    180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1680    105.60
+atom	H1' 	H2	E	 0.1024   -240.00
+atom	N9  	N*	S	-0.1692   -127.70
+atom	C8  	CK	B	 0.2153     81.59
+atom	H8  	H5	E	 0.1451      0.00
+atom	N7  	NB	S	-0.5436    177.00
+atom	C5  	CB	S	-0.0475      0.00
+atom	C6  	CA	B	 0.6038    180.00
+atom	N6  	N2	B	-0.7136      0.00
+atom	H61 	H 	E	 0.3558    180.00
+atom	H62 	H 	E	 0.3558      0.00
+atom	N1  	NC	S	-0.7313    180.00
+atom	C2  	CQ	B	 0.5726      0.00
+atom	H2  	H5	E	 0.0119    180.00
+atom	N3  	NC	S	-0.7649      0.00
+atom	C4  	CB	E	 0.5499      0.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OS	M	-0.4998   -203.47
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template dc5 CYT	//D-CYTOSINE - with 5' - OH end group and 3' - O(minus) group
+atom	H5T 	HO	E	 0.4109
+atom	O5' 	OH	M	-0.5671
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721   -180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1421    105.60
+atom	H1' 	H2	E	 0.0851   -240.00
+atom	N1  	N*	S	-0.1318   -127.70
+atom	C6  	CM	B	-0.0115     81.59
+atom	H6  	H4	E	 0.2099      0.00
+atom	C5  	CM	B	-0.4696    180.00
+atom	H5  	HA	E	 0.1833    180.00
+atom	C4  	CA	B	 0.7010      0.00
+atom	N4  	N2	B	-0.7417    180.00
+atom	H41 	H 	E	 0.3526    180.00
+atom	H42 	H 	E	 0.3526      0.00
+atom	N3  	NC	S	-0.7555      0.00
+atom	C2  	C 	S	 0.8464      0.00
+atom	O2  	O 	E	-0.6524    180.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OS	M	-0.4998   -203.47
+bond	C1' 	C2'
+bond	C2  	N1
+
+template dg5 GUA	//D-GUANOSINE - with 5' - OH end group and 3' - O(minus) group
+atom	H5T 	HO	E	 0.4109
+atom	O5' 	OH	M	-0.5671
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721   -180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1557    105.60
+atom	H1' 	H2	E	 0.0886   -240.00
+atom	N9  	N*	S	-0.0379   -127.70
+atom	C8  	CK	B	 0.1353     81.59
+atom	H8  	H5	E	 0.1508      0.00
+atom	N7  	NB	S	-0.5139   -179.90
+atom	C5  	CB	S	 0.0585      0.00
+atom	C6  	C 	B	 0.5071    180.00
+atom	O6  	O 	E	-0.5301      0.00
+atom	N1  	NA	B	-0.5405    180.00
+atom	H1  	H 	E	 0.3750    179.90
+atom	C2  	CA	B	 0.6834     -0.10
+atom	N2  	N2	B	-0.7508    180.00
+atom	H21 	H 	E	 0.3443     -0.82
+atom	H22 	H 	E	 0.3443   -179.44
+atom	N3  	NC	S	-0.6502      0.00
+atom	C4  	CB	E	 0.2909      0.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OS	M	-0.4998   -203.47
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template dt5 THY	//D-THYMINE - with 5' - OH end group and 3' - O(minus)
+atom	H5T 	HO	E	 0.4109
+atom	O5' 	OH	M	-0.5671
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721   -180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1082    105.60
+atom	H1' 	H2	E	 0.1074   -240.00
+atom	N1  	N*	S	-0.0282   -127.70
+atom	C6  	CM	B	-0.2552     81.59
+atom	H6  	H4	E	 0.2796      0.00
+atom	C5  	CM	B	-0.0388    177.30
+atom	C7  	CT	3	-0.1326    180.00
+atom	H71 	HC	E	 0.0606     60.00
+atom	H72 	HC	E	 0.0606    180.00
+atom	H73 	HC	E	 0.0606    300.00
+atom	C4  	C 	B	 0.5608      0.00
+atom	O4  	O 	E	-0.5455    180.00
+atom	N3  	NA	B	-0.4824      0.00
+atom	H3  	H 	E	 0.3542    180.00
+atom	C2  	C 	S	 0.5892      0.00
+atom	O2  	O 	E	-0.5880    180.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OS	M	-0.4998   -203.47
+bond	C1' 	C2'
+bond	C2  	N1
+
+
+
+	/* DNA: 3'-terminal (5' phosphate and 3' OH) */
+
+template da3 ADE	//D-ADENOSINE - with 5' - phosphate group and 3' - OH group
+atom	P   	P 	M	 1.0735    200.00
+atom	O1P 	O2	E	-0.7545    150.00
+atom	O2P 	O2	E	-0.7545     20.00
+atom	O5' 	OS	M	-0.4128    -98.89
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721    180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1680    105.60
+atom	H1' 	H2	E	 0.1024   -240.00
+atom	N9  	N*	S	-0.1692   -127.70
+atom	C8  	CK	B	 0.2153     81.59
+atom	H8  	H5	E	 0.1451      0.00
+atom	N7  	NB	S	-0.5436    177.00
+atom	C5  	CB	S	-0.0475      0.00
+atom	C6  	CA	B	 0.6038    180.00
+atom	N6  	N2	B	-0.7136      0.00
+atom	H61 	H 	E	 0.3558    180.00
+atom	H62 	H 	E	 0.3558      0.00
+atom	N1  	NC	S	-0.7313    180.00
+atom	C2  	CQ	B	 0.5726      0.00
+atom	H2  	H5	E	 0.0119    180.00
+atom	N3  	NC	S	-0.7649      0.00
+atom	C4  	CB	E	 0.5499      0.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OH	M	-0.5918   -203.47
+atom	H3T 	HO	M	 0.3999    180.00
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template dc3 CYT	//D-CYTOSINE - with 5' - phosphate group and 3' - OH group
+atom	P   	P 	M	 1.0735    200.00
+atom	O1P 	O2	E	-0.7545    150.00
+atom	O2P 	O2	E	-0.7545     20.00
+atom	O5' 	OS	M	-0.4128    -98.89
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721    180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1421    105.60
+atom	H1' 	H2	E	 0.0851   -240.00
+atom	N1  	N*	S	-0.1318   -127.70
+atom	C6  	CM	B	-0.0115     81.59
+atom	H6  	H4	E	 0.2099      0.00
+atom	C5  	CM	B	-0.4696    180.00
+atom	H5  	HA	E	 0.1833    180.00
+atom	C4  	CA	B	 0.7010      0.00
+atom	N4  	N2	B	-0.7417    180.00
+atom	H41 	H 	E	 0.3526    180.00
+atom	H42 	H 	E	 0.3526      0.00
+atom	N3  	NC	S	-0.7555      0.00
+atom	C2  	C 	S	 0.8464      0.00
+atom	O2  	O 	E	-0.6524    180.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OH	M	-0.5918   -203.47
+atom	H3T 	HO	M	 0.3999    180.00
+bond	C1' 	C2'
+bond	C2  	N1
+
+template dg3 GUA	//D-GUANOSINE - with 5' - phosphate group and 3' - OH group
+atom	P   	P 	M	 1.0735    200.00
+atom	O1P 	O2	E	-0.7545    150.00
+atom	O2P 	O2	E	-0.7545     20.00
+atom	O5' 	OS	M	-0.4128    -98.89
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721    180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1557    105.60
+atom	H1' 	H2	E	 0.0886   -240.00
+atom	N9  	N*	S	-0.0379   -127.70
+atom	C8  	CK	B	 0.1353     81.59
+atom	H8  	H5	E	 0.1508      0.00
+atom	N7  	NB	S	-0.5139   -179.90
+atom	C5  	CB	S	 0.0585      0.00
+atom	C6  	C 	B	 0.5071    180.00
+atom	O6  	O 	E	-0.5301      0.00
+atom	N1  	NA	B	-0.5405    180.00
+atom	H1  	H 	E	 0.3750    179.90
+atom	C2  	CA	B	 0.6834     -0.10
+atom	N2  	N2	B	-0.7508    180.00
+atom	H21 	H 	E	 0.3443     -0.82
+atom	H22 	H 	E	 0.3443   -179.44
+atom	N3  	NC	S	-0.6502      0.00
+atom	C4  	CB	E	 0.2909      0.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OH	M	-0.5918   -203.47
+atom	H3T 	HO	M	 0.3999    180.00
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template dt3 THY	//D-THYMINE - with 5' - phosphate group and 3' - OH group
+atom	P   	P 	M	 1.0735    200.00
+atom	O1P 	O2	E	-0.7545    150.00
+atom	O2P 	O2	E	-0.7545     20.00
+atom	O5' 	OS	M	-0.4128    -98.89
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721    180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1082    105.60
+atom	H1' 	H2	E	 0.1074   -240.00
+atom	N1  	N*	S	-0.0282   -127.70
+atom	C6  	CM	B	-0.2552     81.59
+atom	H6  	H4	E	 0.2796      0.00
+atom	C5  	CM	B	-0.0388    177.30
+atom	C7  	CT	3	-0.1326    180.00
+atom	H71 	HC	E	 0.0606     60.00
+atom	H72 	HC	E	 0.0606    180.00
+atom	H73 	HC	E	 0.0606    300.00
+atom	C4  	C 	B	 0.5608      0.00
+atom	O4  	O 	E	-0.5455    180.00
+atom	N3  	NA	B	-0.4824      0.00
+atom	H3  	H 	E	 0.3542    180.00
+atom	C2  	C 	S	 0.5892      0.00
+atom	O2  	O 	E	-0.5880    180.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OH	M	-0.5918   -203.47
+atom	H3T 	HO	M	 0.3999    180.00
+bond	C1' 	C2'
+bond	C2  	N1
+
+
+
+	/* DNA: singlet (5' OH and 3' OH) */
+
+template dan ADE	//D-ADENOSINE - with 5' - OH group and 3' - OH group
+atom	H5T 	HO	E	 0.4109
+atom	O5' 	OH	M	-0.5671
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721    180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1680    105.60
+atom	H1' 	H2	E	 0.1024   -240.00
+atom	N9  	N*	S	-0.1692   -127.70
+atom	C8  	CK	B	 0.2153     81.59
+atom	H8  	H5	E	 0.1451      0.00
+atom	N7  	NB	S	-0.5436    177.00
+atom	C5  	CB	S	-0.0475      0.00
+atom	C6  	CA	B	 0.6038    180.00
+atom	N6  	N2	B	-0.7136      0.00
+atom	H61 	H 	E	 0.3558    180.00
+atom	H62 	H 	E	 0.3558      0.00
+atom	N1  	NC	S	-0.7313    180.00
+atom	C2  	CQ	B	 0.5726      0.00
+atom	H2  	H5	E	 0.0119    180.00
+atom	N3  	NC	S	-0.7649      0.00
+atom	C4  	CB	E	 0.5499      0.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OH	M	-0.5918   -203.47
+atom	H3T 	HO	M	 0.3999    180.00
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template dcn CYT	//D-CYTOSINE - with 5' - OH group and 3' - OH group
+atom	H5T 	HO	E	 0.4109
+atom	O5' 	OH	M	-0.5671
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721   -180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1421    105.60
+atom	H1' 	H2	E	 0.0851   -240.00
+atom	N1  	N*	S	-0.1318   -127.70
+atom	C6  	CM	B	-0.0115     81.59
+atom	H6  	H4	E	 0.2099      0.00
+atom	C5  	CM	B	-0.4696    180.00
+atom	H5  	HA	E	 0.1833    180.00
+atom	C4  	CA	B	 0.7010      0.00
+atom	N4  	N2	B	-0.7417    180.00
+atom	H41 	H 	E	 0.3526    180.00
+atom	H42 	H 	E	 0.3526      0.00
+atom	N3  	NC	S	-0.7555      0.00
+atom	C2  	C 	S	 0.8464      0.00
+atom	O2  	O 	E	-0.6524    180.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OH	M	-0.5918   -203.47
+atom	H3T 	HO	M	 0.3999    180.00
+bond	C1' 	C2'
+bond	C2  	N1
+
+template dgn GUA	//D-GUANOSINE - with 5' - OH group and 3' - OH group
+atom	H5T 	HO	E	 0.4109
+atom	O5' 	OH	M	-0.5671
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721   -180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1557    105.60
+atom	H1' 	H2	E	 0.0886   -240.00
+atom	N9  	N*	S	-0.0379   -127.70
+atom	C8  	CK	B	 0.1353     81.59
+atom	H8  	H5	E	 0.1508      0.00
+atom	N7  	NB	S	-0.5139   -179.90
+atom	C5  	CB	S	 0.0585      0.00
+atom	C6  	C 	B	 0.5071    180.00
+atom	O6  	O 	E	-0.5301      0.00
+atom	N1  	NA	B	-0.5405    180.00
+atom	H1  	H 	E	 0.3750    179.90
+atom	C2  	CA	B	 0.6834     -0.10
+atom	N2  	N2	B	-0.7508    180.00
+atom	H21 	H 	E	 0.3443     -0.82
+atom	H22 	H 	E	 0.3443   -179.44
+atom	N3  	NC	S	-0.6502      0.00
+atom	C4  	CB	E	 0.2909      0.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OH	M	-0.5918   -203.47
+atom	H3T 	HO	M	 0.3999    180.00
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template dtn THY	//D-THYMINE - with 5' - OH group and 3' - OH group
+atom	H5T 	HO	E	 0.4109
+atom	O5' 	OH	M	-0.5671
+atom	C5' 	CT	M	-0.0111    -39.22
+atom	H5'1	H1	E	 0.0662     60.00
+atom	H5'2	H1	E	 0.0662    -60.00
+atom	C4' 	CT	M	 0.0721   -180.00
+atom	H4' 	H1	E	 0.0887   -200.00
+atom	O4' 	OS	S	-0.3124    -86.31
+atom	C1' 	CT	B	 0.1082    105.60
+atom	H1' 	H2	E	 0.1074   -240.00
+atom	N1  	N*	S	-0.0282   -127.70
+atom	C6  	CM	B	-0.2552     81.59
+atom	H6  	H4	E	 0.2796      0.00
+atom	C5  	CM	B	-0.0388    177.30
+atom	C7  	CT	3	-0.1326    180.00
+atom	H71 	HC	E	 0.0606     60.00
+atom	H72 	HC	E	 0.0606    180.00
+atom	H73 	HC	E	 0.0606    300.00
+atom	C4  	C 	B	 0.5608      0.00
+atom	O4  	O 	E	-0.5455    180.00
+atom	N3  	NA	B	-0.4824      0.00
+atom	H3  	H 	E	 0.3542    180.00
+atom	C2  	C 	S	 0.5892      0.00
+atom	O2  	O 	E	-0.5880    180.00
+atom	C3' 	CT	M	 0.1645   -329.11
+atom	H3' 	H1	E	 0.0623     30.00
+atom	C2' 	CT	B	-0.0561    -86.30
+atom	H2'1	HC	E	 0.0486    120.00
+atom	H2'2	HC	E	 0.0486    240.00
+atom	O3' 	OH	M	-0.5918   -203.47
+atom	H3T 	HO	M	 0.3999    180.00
+bond	C1' 	C2'
+bond	C2  	N1
+
+
+
+	/* RNA: normal (5' phosphate and 3' O-) */
+
+template ra ADE		//R-ADENOSINE - with 5' - phosphate group and 3' - O(minus) group
+atom	P   	P 	M	 1.0720    200.00
+atom	O1P 	O2	E	-0.7552    150.00
+atom	O2P 	O2	E	-0.7552     20.00
+atom	O5' 	OS	M	-0.4085    -98.89
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219    180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.0264    105.60
+atom	H1' 	H2	E	 0.1660   -240.00
+atom	N9  	N*	S	-0.0994   -127.70
+atom	C8  	CK	B	 0.2280     81.59
+atom	H8  	H5	E	 0.1154      0.00
+atom	N7  	NB	S	-0.5462    177.00
+atom	C5  	CB	S	-0.0196      0.00
+atom	C6  	CA	B	 0.5848    180.00
+atom	N6  	N2	B	-0.6928      0.00
+atom	H61 	H 	E	 0.3475    180.00
+atom	H62 	H 	E	 0.3475      0.00
+atom	N1  	NC	S	-0.7181    180.00
+atom	C2  	CQ	B	 0.5805      0.00
+atom	H2  	H5	E	 0.0031    180.00
+atom	N3  	NC	S	-0.7390      0.00
+atom	C4  	CB	E	 0.4398      0.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OS	M	-0.4749   -203.47
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template rc CYT		//R-CYTOSINE - with 5' - phosphate group and 3' - O(minus) group
+atom	P   	P 	M	 1.0720    200.00
+atom	O1P 	O2	E	-0.7552    150.00
+atom	O2P 	O2	E	-0.7552     20.00
+atom	O5' 	OS	M	-0.4085    -98.89
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219    180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.0175    105.60
+atom	H1' 	H2	E	 0.1427   -240.00
+atom	N1  	N*	S	-0.0827   -127.70
+atom	C6  	CM	B	-0.0403     81.59
+atom	H6  	H4	E	 0.2017      0.00
+atom	C5  	CM	B	-0.4449    180.00
+atom	H5  	HA	E	 0.1759    180.00
+atom	C4  	CA	B	 0.6770      0.00
+atom	N4  	N2	B	-0.7460    180.00
+atom	H41 	H 	E	 0.3542    180.00
+atom	H42 	H 	E	 0.3542      0.00
+atom	N3  	NC	S	-0.7264      0.00
+atom	C2  	C 	S	 0.8021      0.00
+atom	O2  	O 	E	-0.6611    180.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OS	M	-0.4749   -203.47
+bond	C1' 	C2'
+bond	C2  	N1
+
+template rg GUA		//R-GUANOSINE - with 5' - phosphate group and 3' - O(minus) group
+atom	P   	P 	M	 1.0720    200.00
+atom	O1P 	O2	E	-0.7552    150.00
+atom	O2P 	O2	E	-0.7552     20.00
+atom	O5' 	OS	M	-0.4085    -98.89
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219    180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.1132    105.60
+atom	H1' 	H2	E	 0.1019   -240.00
+atom	N9  	N*	S	-0.0871   -127.70
+atom	C8  	CK	B	 0.1966     81.59
+atom	H8  	H5	E	 0.1168      0.00
+atom	N7  	NB	S	-0.5279   -179.90
+atom	C5  	CB	S	 0.0827      0.00
+atom	C6  	C 	B	 0.4649    180.00
+atom	O6  	O 	E	-0.5150      0.00
+atom	N1  	NA	B	-0.4848    180.00
+atom	H1  	H 	E	 0.3601    179.90
+atom	C2  	CA	B	 0.6423     -0.10
+atom	N2  	N2	B	-0.7501    180.00
+atom	H21 	H 	E	 0.3488     -0.82
+atom	H22 	H 	E	 0.3488   -179.44
+atom	N3  	NC	S	-0.6313      0.00
+atom	C4  	CB	E	 0.2440      0.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OS	M	-0.4749   -203.47
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template ru URA		//R-URACIL - with 5' - phosphate group and 3' - O(minus) group
+atom	P   	P 	M	 1.0720    200.00
+atom	O1P 	O2	E	-0.7552    150.00
+atom	O2P 	O2	E	-0.7552     20.00
+atom	O5' 	OS	M	-0.4085    -98.89
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219    180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.0834    105.60
+atom	H1' 	H2	E	 0.1150   -240.00
+atom	N1  	N*	S	-0.0115   -127.70
+atom	C6  	CM	B	-0.1206     81.59
+atom	H6  	H4	E	 0.2211      0.00
+atom	C5  	CM	B	-0.3171    177.30
+atom	H5  	HA	E	 0.1640    180.00
+atom	C4  	C 	B	 0.5728      0.00
+atom	O4  	O 	E	-0.5528    180.00
+atom	N3  	NA	B	-0.3409      0.00
+atom	H3  	H 	E	 0.3077    180.00
+atom	C2  	C 	S	 0.4625      0.00
+atom	O2  	O 	E	-0.5597    180.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OS	M	-0.4749   -203.47
+bond	C1' 	C2'
+bond	C2  	N1
+
+
+
+	/* RNA: 5'-terminal (5' OH and 3' O-) */
+
+template ra5 ADE	//R-ADENOSINE - with 5' - OH end group and 3' - O(minus)
+atom	H5T 	HO	E	 0.4086
+atom	O5' 	OH	M	-0.5634
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219    180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.0264    105.60
+atom	H1' 	H2	E	 0.1660   -240.00
+atom	N9  	N*	S	-0.0994   -127.70
+atom	C8  	CK	B	 0.2280     81.59
+atom	H8  	H5	E	 0.1154      0.00
+atom	N7  	NB	S	-0.5462    177.00
+atom	C5  	CB	S	-0.0196      0.00
+atom	C6  	CA	B	 0.5848    180.00
+atom	N6  	N2	B	-0.6928      0.00
+atom	H61 	H 	E	 0.3475    180.00
+atom	H62 	H 	E	 0.3475      0.00
+atom	N1  	NC	S	-0.7181    180.00
+atom	C2  	CQ	B	 0.5805      0.00
+atom	H2  	H5	E	 0.0031    180.00
+atom	N3  	NC	S	-0.7390      0.00
+atom	C4  	CB	E	 0.4398      0.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OS	M	-0.4749   -203.47
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template rc5 CYT	//R-CYTOSINE - with 5' - OH end group and 3' - O(minus) group
+atom	H5T 	HO	E	 0.4086
+atom	O5' 	OH	M	-0.5634
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219   -180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.0175    105.60
+atom	H1' 	H2	E	 0.1427   -240.00
+atom	N1  	N*	S	-0.0827   -127.70
+atom	C6  	CM	B	-0.0403     81.59
+atom	H6  	H4	E	 0.2017      0.00
+atom	C5  	CM	B	-0.4449    180.00
+atom	H5  	HA	E	 0.1759    180.00
+atom	C4  	CA	B	 0.6770      0.00
+atom	N4  	N2	B	-0.7460    180.00
+atom	H41 	H 	E	 0.3542    180.00
+atom	H42 	H 	E	 0.3542      0.00
+atom	N3  	NC	S	-0.7264      0.00
+atom	C2  	C 	S	 0.8021      0.00
+atom	O2  	O 	E	-0.6611    180.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OS	M	-0.4749   -203.47
+bond	C1' 	C2'
+bond	C2  	N1
+
+template rg5 GUA	//R-GUANOSINE - with 5' - OH end group and 3' - O(minus) group
+atom	H5T 	HO	E	 0.4086
+atom	O5' 	OH	M	-0.5634
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219   -180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.1132    105.60
+atom	H1' 	H2	E	 0.1019   -240.00
+atom	N9  	N*	S	-0.0871   -127.70
+atom	C8  	CK	B	 0.1966     81.59
+atom	H8  	H5	E	 0.1168      0.00
+atom	N7  	NB	S	-0.5279   -179.90
+atom	C5  	CB	S	 0.0827      0.00
+atom	C6  	C 	B	 0.4649    180.00
+atom	O6  	O 	E	-0.5150      0.00
+atom	N1  	NA	B	-0.4848    180.00
+atom	H1  	H 	E	 0.3601    179.90
+atom	C2  	CA	B	 0.6423     -0.10
+atom	N2  	N2	B	-0.7501    180.00
+atom	H21 	H 	E	 0.3488     -0.82
+atom	H22 	H 	E	 0.3488   -179.44
+atom	N3  	NC	S	-0.6313      0.00
+atom	C4  	CB	E	 0.2440      0.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OS	M	-0.4749   -203.47
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template ru5 URA	//R-URACIL - with 5' - OH end group and 3' - O(minus)
+atom	H5T 	HO	E	 0.4086
+atom	O5' 	OH	M	-0.5634
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219   -180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.0834    105.60
+atom	H1' 	H2	E	 0.1150   -240.00
+atom	N1  	N*	S	-0.0115   -127.70
+atom	C6  	CM	B	-0.1206     81.59
+atom	H6  	H4	E	 0.2211      0.00
+atom	C5  	CM	B	-0.3171    177.30
+atom	H5  	HA	E	 0.1640    180.00
+atom	C4  	C 	B	 0.5728      0.00
+atom	O4  	O 	E	-0.5528    180.00
+atom	N3  	NA	B	-0.3409      0.00
+atom	H3  	H 	E	 0.3077    180.00
+atom	C2  	C 	S	 0.4625      0.00
+atom	O2  	O 	E	-0.5597    180.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OS	M	-0.4749   -203.47
+bond	C1' 	C2'
+bond	C2  	N1
+
+
+
+	/* RNA: 3'-terminal (5' phosphate and 3' OH) */
+
+template ra3 ADE	//R-ADENOSINE - with 5' - phosphate group and 3' - OH group
+atom	P   	P 	M	 1.0720    200.00
+atom	O1P 	O2	E	-0.7552    150.00
+atom	O2P 	O2	E	-0.7552     20.00
+atom	O5' 	OS	M	-0.4085    -98.89
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219    180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.0264    105.60
+atom	H1' 	H2	E	 0.1660   -240.00
+atom	N9  	N*	S	-0.0994   -127.70
+atom	C8  	CK	B	 0.2280     81.59
+atom	H8  	H5	E	 0.1154      0.00
+atom	N7  	NB	S	-0.5462    177.00
+atom	C5  	CB	S	-0.0196      0.00
+atom	C6  	CA	B	 0.5848    180.00
+atom	N6  	N2	B	-0.6928      0.00
+atom	H61 	H 	E	 0.3475    180.00
+atom	H62 	H 	E	 0.3475      0.00
+atom	N1  	NC	S	-0.7181    180.00
+atom	C2  	CQ	B	 0.5805      0.00
+atom	H2  	H5	E	 0.0031    180.00
+atom	N3  	NC	S	-0.7390      0.00
+atom	C4  	CB	E	 0.4398      0.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OH	M	-0.5798   -203.47
+atom	H3T 	HO	M	 0.4128    180.00
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template rc3 CYT	//R-CYTOSINE - with 5' - phosphate group and 3' - OH group
+atom	P   	P 	M	 1.0720    200.00
+atom	O1P 	O2	E	-0.7552    150.00
+atom	O2P 	O2	E	-0.7552     20.00
+atom	O5' 	OS	M	-0.4085    -98.89
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219    180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.0175    105.60
+atom	H1' 	H2	E	 0.1427   -240.00
+atom	N1  	N*	S	-0.0827   -127.70
+atom	C6  	CM	B	-0.0403     81.59
+atom	H6  	H4	E	 0.2017      0.00
+atom	C5  	CM	B	-0.4449    180.00
+atom	H5  	HA	E	 0.1759    180.00
+atom	C4  	CA	B	 0.6770      0.00
+atom	N4  	N2	B	-0.7460    180.00
+atom	H41 	H 	E	 0.3542    180.00
+atom	H42 	H 	E	 0.3542      0.00
+atom	N3  	NC	S	-0.7264      0.00
+atom	C2  	C 	S	 0.8021      0.00
+atom	O2  	O 	E	-0.6611    180.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OH	M	-0.5798   -203.47
+atom	H3T 	HO	M	 0.4128    180.00
+bond	C1' 	C2'
+bond	C2  	N1
+
+template rg3 GUA	//R-GUANOSINE - with 5' - phosphate group and 3' - OH group
+atom	P   	P 	M	 1.0720    200.00
+atom	O1P 	O2	E	-0.7552    150.00
+atom	O2P 	O2	E	-0.7552     20.00
+atom	O5' 	OS	M	-0.4085    -98.89
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219    180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.1132    105.60
+atom	H1' 	H2	E	 0.1019   -240.00
+atom	N9  	N*	S	-0.0871   -127.70
+atom	C8  	CK	B	 0.1966     81.59
+atom	H8  	H5	E	 0.1168      0.00
+atom	N7  	NB	S	-0.5279   -179.90
+atom	C5  	CB	S	 0.0827      0.00
+atom	C6  	C 	B	 0.4649    180.00
+atom	O6  	O 	E	-0.5150      0.00
+atom	N1  	NA	B	-0.4848    180.00
+atom	H1  	H 	E	 0.3601    179.90
+atom	C2  	CA	B	 0.6423     -0.10
+atom	N2  	N2	B	-0.7501    180.00
+atom	H21 	H 	E	 0.3488     -0.82
+atom	H22 	H 	E	 0.3488   -179.44
+atom	N3  	NC	S	-0.6313      0.00
+atom	C4  	CB	E	 0.2440      0.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OH	M	-0.5798   -203.47
+atom	H3T 	HO	M	 0.4128    180.00
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template ru3 URA	//R-URACIL - with 5' - phosphate group and 3' - OH group
+atom	P   	P 	M	 1.0720    200.00
+atom	O1P 	O2	E	-0.7552    150.00
+atom	O2P 	O2	E	-0.7552     20.00
+atom	O5' 	OS	M	-0.4085    -98.89
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219    180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.0834    105.60
+atom	H1' 	H2	E	 0.1150   -240.00
+atom	N1  	N*	S	-0.0115   -127.70
+atom	C6  	CM	B	-0.1206     81.59
+atom	H6  	H4	E	 0.2211      0.00
+atom	C5  	CM	B	-0.3171    177.30
+atom	H5  	HA	E	 0.1640    180.00
+atom	C4  	C 	B	 0.5728      0.00
+atom	O4  	O 	E	-0.5528    180.00
+atom	N3  	NA	B	-0.3409      0.00
+atom	H3  	H 	E	 0.3077    180.00
+atom	C2  	C 	S	 0.4625      0.00
+atom	O2  	O 	E	-0.5597    180.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OH	M	-0.5798   -203.47
+atom	H3T 	HO	M	 0.4128    180.00
+bond	C1' 	C2'
+bond	C2  	N1
+
+
+
+	/* RNA: singlet (5' OH and 3' OH) */
+
+template ran ADE	//R-ADENOSINE - with 5' - OH group and 3' - OH group
+atom	H5T 	HO	E	 0.4086
+atom	O5' 	OH	M	-0.5634
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219    180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.0264    105.60
+atom	H1' 	H2	E	 0.1660   -240.00
+atom	N9  	N*	S	-0.0994   -127.70
+atom	C8  	CK	B	 0.2280     81.59
+atom	H8  	H5	E	 0.1154      0.00
+atom	N7  	NB	S	-0.5462    177.00
+atom	C5  	CB	S	-0.0196      0.00
+atom	C6  	CA	B	 0.5848    180.00
+atom	N6  	N2	B	-0.6928      0.00
+atom	H61 	H 	E	 0.3475    180.00
+atom	H62 	H 	E	 0.3475      0.00
+atom	N1  	NC	S	-0.7181    180.00
+atom	C2  	CQ	B	 0.5805      0.00
+atom	H2  	H5	E	 0.0031    180.00
+atom	N3  	NC	S	-0.7390      0.00
+atom	C4  	CB	E	 0.4398      0.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OH	M	-0.5798   -203.47
+atom	H3T 	HO	M	 0.4128    180.00
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template rcn CYT	//R-CYTOSINE - with 5' - OH group and 3' - OH group
+atom	H5T 	HO	E	 0.4086
+atom	O5' 	OH	M	-0.5634
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219   -180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.0175    105.60
+atom	H1' 	H2	E	 0.1427   -240.00
+atom	N1  	N*	S	-0.0827   -127.70
+atom	C6  	CM	B	-0.0403     81.59
+atom	H6  	H4	E	 0.2017      0.00
+atom	C5  	CM	B	-0.4449    180.00
+atom	H5  	HA	E	 0.1759    180.00
+atom	C4  	CA	B	 0.6770      0.00
+atom	N4  	N2	B	-0.7460    180.00
+atom	H41 	H 	E	 0.3542    180.00
+atom	H42 	H 	E	 0.3542      0.00
+atom	N3  	NC	S	-0.7264      0.00
+atom	C2  	C 	S	 0.8021      0.00
+atom	O2  	O 	E	-0.6611    180.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OH	M	-0.5798   -203.47
+atom	H3T 	HO	M	 0.4128    180.00
+bond	C1' 	C2'
+bond	C2  	N1
+
+template rgn GUA	//R-GUANOSINE - with 5' - OH group and 3' - OH group
+atom	H5T 	HO	E	 0.4086
+atom	O5' 	OH	M	-0.5634
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219   -180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.1132    105.60
+atom	H1' 	H2	E	 0.1019   -240.00
+atom	N9  	N*	S	-0.0871   -127.70
+atom	C8  	CK	B	 0.1966     81.59
+atom	H8  	H5	E	 0.1168      0.00
+atom	N7  	NB	S	-0.5279   -179.90
+atom	C5  	CB	S	 0.0827      0.00
+atom	C6  	C 	B	 0.4649    180.00
+atom	O6  	O 	E	-0.5150      0.00
+atom	N1  	NA	B	-0.4848    180.00
+atom	H1  	H 	E	 0.3601    179.90
+atom	C2  	CA	B	 0.6423     -0.10
+atom	N2  	N2	B	-0.7501    180.00
+atom	H21 	H 	E	 0.3488     -0.82
+atom	H22 	H 	E	 0.3488   -179.44
+atom	N3  	NC	S	-0.6313      0.00
+atom	C4  	CB	E	 0.2440      0.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OH	M	-0.5798   -203.47
+atom	H3T 	HO	M	 0.4128    180.00
+bond	C1' 	C2'
+bond	C4  	C5
+bond	C4  	N9
+
+template run URA	//R-URACIL - with 5' - OH group and 3' - OH group
+atom	H5T 	HO	E	 0.4086
+atom	O5' 	OH	M	-0.5634
+atom	C5' 	CT	M	 0.0556    -39.22
+atom	H5'1	H1	E	 0.0602     60.00
+atom	H5'2	H1	E	 0.0602    -60.00
+atom	C4' 	CT	M	 0.0219   -180.00
+atom	H4' 	H1	E	 0.1055   -200.00
+atom	O4' 	OS	S	-0.2599    -86.31
+atom	C1' 	CT	B	 0.0834    105.60
+atom	H1' 	H2	E	 0.1150   -240.00
+atom	N1  	N*	S	-0.0115   -127.70
+atom	C6  	CM	B	-0.1206     81.59
+atom	H6  	H4	E	 0.2211      0.00
+atom	C5  	CM	B	-0.3171    177.30
+atom	H5  	HA	E	 0.1640    180.00
+atom	C4  	C 	B	 0.5728      0.00
+atom	O4  	O 	E	-0.5528    180.00
+atom	N3  	NA	B	-0.3409      0.00
+atom	H3  	H 	E	 0.3077    180.00
+atom	C2  	C 	S	 0.4625      0.00
+atom	O2  	O 	E	-0.5597    180.00
+atom	C3' 	CT	M	 0.2522   -329.11
+atom	H3' 	H1	E	 0.0191     30.00
+atom	C2' 	CT	B	 0.0041    -86.30
+atom	H2'1	H1	E	 0.1033    120.00
+atom	O2' 	OH	S	-0.4963    240.00
+atom	HO'2	HO	E	 0.3720    180.00
+atom	O3' 	OH	M	-0.5798   -203.47
+atom	H3T 	HO	M	 0.4128    180.00
+bond	C1' 	C2'
+bond	C2  	N1
+
+
+end template

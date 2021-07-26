@@ -1,0 +1,113 @@
+include "ff99.dat"
+include "templates02.dat"
+build
+chain A
+add phe 
+detach
+add ala 
+end
+io
+readpdb "aromatic-amide05.0.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide04.75.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide04.5.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide04.25.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide04.0.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide03.75.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide03.5.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide03.25.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide03.0.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide02.75.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide02.5.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide02.25.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide02.0.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide01.75.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide01.5.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide01.25.pdb"
+end
+energy
+calc
+end
+io
+readpdb "aromatic-amide01.0.pdb"
+end
+energy
+calc
+end
+
+
+

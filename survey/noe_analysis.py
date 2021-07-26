@@ -119,17 +119,6 @@ def results_b(proteins_dict: Dict[str, Dict[str, Protein]]):
 
     print_restraint_exceptions(proteins_dict)
 
-def basic_write(proteins_dict, pairs_to_write, filename):
-    ids = []
-    for pdb_id in proteins_dict:
-        for bmrb_id in proteins_dict[pdb_id]:
-            ids.append([pdb_id, bmrb_id])
-    
-    with open(f'{filename}_ids.json', 'w') as df:
-        json.dump(ids, df)
-    
-    with open(f'{filename}_pairs.json', 'w') as df:
-        json.dump(pairs_to_write, df)
 
 def print_restraint_exceptions(proteins_dict):
     exc_by_reason = {}
@@ -175,4 +164,4 @@ def print_result_stages(
     results_b(proteins_dict)
 
 
-print_result_stages(2, make_plots=False)
+print_result_stages(2, make_plots=True)
