@@ -20,7 +20,7 @@ Installed python packages and their versions can be found in requirements.txt
   
 ## Running:
 
-All figures can be found already made in images. To recreate them: \
+All figures can be found already made in images. To recreate them:  
 
 
   -survey (Figures 5 and 6): (within survey subdir) python noe_analysis.py (also outputs to terminal exceptions listed in Supp. Table 1). Figures 5 and 6 saved to images/combo_plot.pdf and images/noes_by_num.pdf , respectively \
