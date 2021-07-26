@@ -287,5 +287,5 @@ def add_restraints(protein: Protein) -> Union[Protein, str]:
             else:
                 return "Unacceptable distances between restrained pairs"
         else:
-            return "Misaligned restraint indices"
+            return "Unable to match residues from structure to restraints"
 

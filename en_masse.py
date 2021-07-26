@@ -153,7 +153,7 @@ def categorize_err(err):
         else:
             return 'Unknown file error'
     elif 'Permission denied' in err:
-        return 'Permission denied error (this should no longer occur)'
+        return 'Permission denied error in reboxitory'
     else:
         return err
     

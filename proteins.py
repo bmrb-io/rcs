@@ -117,12 +117,10 @@ class Protein:
                 return atom_w_shift
             else:
                 if atom.atom_label == 'H':
-                    print('Happened', self.pdb_id)
                     return "No such amide from k-file"
                 else:
                     return atom #could be a pseudoatom or 5-membered TRP ring atom
         else:
-            print('hAppened', self.pdb_id)
             return "No such residue from k-file"
 
     def prune_bad_ambiguities(self):
@@ -193,7 +191,7 @@ class Protein:
                         "Amide res_index not found"
                     )
                     not_found_count += 1
-            if not_found_count > 20:
+            if not_found_count > 10:
                 return False
         return True
 
