@@ -105,6 +105,10 @@ def results_b(proteins_dict: Dict[str, Dict[str, Protein]]):
     """
     print("B:")
     num_pairs = 0
+    num_pairs_w_outlier = 0
+    num_outliers_upfield = 0
+    num_outliers_downfield = 0
+    entries_set = set()
     for pdb_id in proteins_dict:
         for bmrb_id in proteins_dict[pdb_id]:
             protein = proteins_dict[pdb_id][bmrb_id]
@@ -115,8 +119,28 @@ def results_b(proteins_dict: Dict[str, Dict[str, Protein]]):
                     atoms_aroma = pairs_dict[atom_amide][res_index_aroma]
                     if len(atoms_aroma) != 0: # Some will be empty because they only had ambiguous restraints
                         num_pairs += 1
+                        entries_set.add((pdb_id, bmrb_id))
+                        if atom_amide.cs_sigma >= 2:
+                            num_pairs_w_outlier += 1
+                            num_outliers_downfield += 1
+                        elif atom_amide.cs_sigma <= -2:
+                            num_pairs_w_outlier += 1
+                            num_outliers_upfield += 1
+
     print(
         "  ", "NUM AMIDE_AROMATIC PAIRS WITH A DEFINED RESTRAINT:    ", num_pairs
+    )
+    print(
+        "    ", "NUM W/ OUTLIER AMIDE:    ", num_pairs_w_outlier
+    )
+    print(
+        "      ", "NUM UPFIELD:    ", num_outliers_upfield 
+    )
+    print(
+        "      ", "NUM DOWNFIELD:    ", num_outliers_downfield 
+    )
+    print(
+        "  ", "NUM ENTRIES WITH DEFINED RESTRAINT PAIR:    ", len(entries_set)
     )
 
     print_restraint_exceptions(proteins_dict)

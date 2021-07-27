@@ -13,7 +13,8 @@ calculations.
 
 ####RUNNING####
 To generate the plot found in Figure 9 of the manuscript, simply run vdw_plot.py .
-It has been tested on Python 3.8.0
+It has been tested on Python 3.8.0 . It will be saved to ../images/plot_vdw.pdf .
+The distances listed are from the amide _nitrogen_ to the ring center.
 
 In order to generate the energies anew, run MoSART using the input file 
 energy-amide-aromatic.inp. This can be done on NMRbox by running:

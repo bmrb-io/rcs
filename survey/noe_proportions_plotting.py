@@ -185,7 +185,7 @@ def make_num_restraints_plot(
                     shift_type = 'Upfield'
                 else:
                     shift_type = 'Normal'
-                if len(pairs_dict[atom_amide]) == 1:
+                if len(pairs_dict[atom_amide]) > 0:  
                     for res_index_aroma in pairs_dict[atom_amide]: #only one, but simpler this way
                         atoms_aroma = pairs_dict[atom_amide][res_index_aroma]
                         labels_aroma = [atom[0].atom_label for atom in atoms_aroma]
