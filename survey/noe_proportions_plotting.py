@@ -235,7 +235,7 @@ def make_num_restraints_plot(
     col_nums = [1, 2, 1, 2]
     colors = ['rgb(102, 197, 204)', 'rgb(248, 156, 116)', 'rgb(220, 176, 242)']
 
-    fig.update_yaxes(row=1, col=1, title_text='Proportion of Pairs', type='log')
+    fig.update_yaxes(row=1, col=1, title_text='Proportion of Pairs', type='log',)
     fig.update_yaxes(row=1, col=2, type='log')
     fig.update_yaxes(row=2, col=1, title_text='Proportion of Pairs', type='log')
     fig.update_yaxes(row=2, col=2, type='log')

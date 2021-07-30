@@ -76,8 +76,6 @@ def get_proteins_dict_multi(
                 # Do work based on parent_message
                 pdb_id = parent_message[0]
                 bmrb_id = parent_message[1]
-                if pdb_id == 'e':
-                    print("WHAT")
                 try:
                     protein = get_protein(pdb_id, bmrb_id, build_anyway)
                     # Tell our parent we are ready for the next job

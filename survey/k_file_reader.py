@@ -37,7 +37,7 @@ def make_protein_from_file(filename: str) -> Union[Protein, str]:
                 protein.pair_geometries = add_pair_geometries(
                     line, protein.pair_geometries)
         else: #Return an exception
-            return "Too many entities/assemblies"
+            return "DNA/RNA entries, entries with ligands, oligomers and protein complexes"
 
     return protein
 

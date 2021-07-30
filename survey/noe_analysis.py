@@ -46,25 +46,24 @@ def results_a(
     """
     print("A:")
     expected_exceptions = [
-        'No matching atoms found', 'Too many entities/assemblies', 
-        'No distance restraints in file', 'Unreleased structure', 'No pairs found',
-        'No restraint file', 'Empty restraint file', 'Too many restraints',
-        'Misaligned restraint indices', 'BMRB entry only exists in NMR-STAR 2.0',
-        'No aromatic residues found', 'Misformatted restraint file',
-        'Unacceptable distances between restrained pairs',
-        'Restraint file not in reboxitory',
-        'mmCIF file not in reboxitory',
-        'STR file not in reboxitory',
-        'Permission denied error in reboxitory',
+        'DNA/RNA entries, entries with ligands, oligomers and protein complexes',
+        'Severe residue index mismatch',
+        'Restraint file not in reboxitory', 
+        'No distance restraints in restraints file',
+        'No aromatic residues in sequence',
+        '>3500 distance restraints', 'Restrained amide-aromatic pairs > 8Å apart',
         'Unable to match residues from structure to restraints',
-        
+        'Permission denied error in reboxitory',
+        'mmCIF file not in reboxitory', 'STR file not in reboxitory',
+        'Empty restraint file', 'Misformatted restraint file',
+        'No pairs found'
     ]
     exceptions_by_reason = {}
     for pdb_id in exceptions_map_entries:
         for bmrb_id in exceptions_map_entries[pdb_id]:
             reason = exceptions_map_entries[pdb_id][bmrb_id]
             if reason not in exceptions_by_reason: 
-                #print(f"{reason}: {bmrb_id}, {pdb_id}")
+                print(f"{reason}: {bmrb_id}, {pdb_id}")
                 exceptions_by_reason[reason] = 0
             exceptions_by_reason[reason] += 1 # Add to counter of exceptions with this reason
             if reason not in expected_exceptions: #if there was an unanticipated exception

@@ -321,7 +321,7 @@ class RingCurrentEffect(object):
             fout = './output/{}_{}_NONE.dat'.format(pdbid, bmrbid) #seq mismatch case
         with open(fout, 'w') as fo:
             if tag_match is None:
-                fo.write('{},{} No matching atoms found'.format(pdbid, bmrbid))
+                fo.write('{},{} Severe residue index mismatch'.format(pdbid, bmrbid))
             else:
                 pdb = pdb2[0]
                 aromatic_atoms = {}
@@ -330,7 +330,7 @@ class RingCurrentEffect(object):
                     for a1 in self.atoms[a[2]]:
                         aromatic_atoms[a].append((a[0], a[1], a[2], a1))
                 if len(aromatic) == 0:
-                    fo.write('{},{} No aromatic residues found'.format(pdbid, bmrbid)) #Not deposited or DNA/RNA?
+                    fo.write('{},{} No aromatic residues in sequence'.format(pdbid, bmrbid)) #Not deposited or DNA/RNA?
                 elif len(amide_chemical_shift)==0:
                     fo.write('{},{} No amide shifts reported'.format(pdbid, bmrbid)) #DNA/RNA and other non-polypepdie
                 else:
@@ -452,7 +452,7 @@ class RingCurrentEffect(object):
                 id_pair.append('{}-{}'.format(bmrb_id,k))
         f = open('missing_job.sh', 'w')
         f.write('#!/usr/bin/env bash\n')
-        print (len(id_pair))
+        #print (len(id_pair))
         id_pair2=[]
         with open(datafile) as csvfile:
             readcsv = csv.reader(csvfile, delimiter=',')
@@ -471,12 +471,12 @@ class RingCurrentEffect(object):
         for id in id_pair:
             if id not in u_ids:
                 f.write('python3 RingCurrentEffects.py {} {}\n'.format(id.split("-")[0], id.split("-")[1]))
-                print (id)
+                #print (id)
                 n_ids.append(id)
         f.close()
-        print (len(id_pair))
-        print (len(u_ids))
-        print (len(n_ids))
+        #print (len(id_pair))
+        #print (len(u_ids))
+        #print (len(n_ids))
 
 
 '''

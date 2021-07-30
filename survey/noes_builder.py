@@ -34,12 +34,12 @@ def get_star_restraints(pdb_id: str) -> Union[List, str]: #find out type in List
     except AttributeError as err:
         return "Empty restraint file"
     except pynmrstar.exceptions.ParsingError:
-        return "No restraint file"
-    except ValueError:
         return "Misformatted restraint file"
+    #except ValueError:
+    #    return "Misformatted restraint file"
     restraint_loops_list = entry.get_loops_by_category("Gen_dist_constraint")
     if len(restraint_loops_list) == 0:
-        return "No distance restraints in file" 
+        return "No distance restraints in restraints file" 
     loops_check = check_noe_loops(entry)
     if loops_check == 'All clear':
         return restraint_loops_list
@@ -57,7 +57,7 @@ def check_noe_loops(entry) -> str: #find out type of entry
     entry -- a pynmrstar entry
     Returns:
     'All clear' -- if no unexpected subtypes found and loops are not too long
-    'Too many restraints' -- if any distance restraint loops are too long
+    '>3500 distance restraints' -- if any distance restraint loops are too long
     'Undexpected restraint_loop_subtype' -- if any unexpected subtypes found
     """
     info_loop = entry.get_loops_by_category("Constraint_file")[0]
@@ -71,7 +71,7 @@ def check_noe_loops(entry) -> str: #find out type of entry
         if info[0] == 'distance':
             subtype = info[1]
             if int(info[2]) > 3500:
-                return "Too many restraints"
+                return ">3500 distance restraints"
             if subtype not in good_subtypes:
                 return "Unexpected restraint_loop_subtype"
     return "All clear"
@@ -285,7 +285,7 @@ def add_restraints(protein: Protein) -> Union[Protein, str]:
             if protein.check_pair_geometries():
                 return protein
             else:
-                return "Unacceptable distances between restrained pairs"
+                return "Restrained amide-aromatic pairs > 8Å apart"
         else:
             return "Unable to match residues from structure to restraints"
 
