@@ -26,3 +26,6 @@ All figures can be found already made in images. To recreate them:
   -survey (Figures 5 and 6): (within survey subdir) python noe_analysis.py (also outputs to terminal exceptions listed in Supp. Table 1). Figures 5 and 6 saved to images/combo_plot.pdf and images/noes_by_num.pdf , respectively \
   -mosart (Figure 9): (within mosart subdir) python vdw_plot.py . Figure 9 saved to images/plot_vdw.pdf \
   -dep (Figure 11): (within dep subdir) python dep_trends.py . Figure 11 saved to images/dep_plot.pdf 
+  
+## Demo:
+As an example of data federation, demo.ipynb contains an interactive, pared-down version of some of the survey code. It parses a BMRB entry for chemical shifts, a restraint file for amide-aromatic restraints, and combines the two to fine the chemical shifts of amides restrained to aromatic ring protons. Excluded from the demo is much of the code that deals with errors that arise from surveying/federating two large databases. 
