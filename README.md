@@ -31,3 +31,6 @@ All figures can be found already made in images. To recreate them:
 As an example of data federation, demo.ipynb contains an interactive, pared-down version of some of the survey code. It parses a BMRB entry for chemical shifts, a restraint file for amide-aromatic restraints, and combines the two to fine the chemical shifts of amides restrained to aromatic ring protons. Excluded from the demo is much of the code that deals with errors that arise from surveying/federating two large databases. 
 
 To run the demo, only PyNMRSTAR needs to be installed. It was last run with PyNMRSTAR version 3.2.1.
+
+# Chemical shift analysis
+The procedure to calculate Z-score and azimuthal angle has been explained in the Jupyter notbook in chemical_shift_analysis folder. The underlying data for Figure 3 & 4 in the manuscript can be found in chemical_shift_analysis/data
