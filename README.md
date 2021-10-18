@@ -35,3 +35,12 @@ To run the demo, only PyNMRSTAR needs to be installed. It was last run with PyNM
 
 # Chemical shift analysis
 The procedure to calculate Z-score and azimuthal angle has been explained in the Jupyter notbook in chemical_shift_analysis folder. The underlying data for Figure 3 & 4 in the manuscript can be found in chemical_shift_analysis/data
+
+## Order parameter
+Order parameter can be fetched via API for a given brmb ID. Once we have the combined information from PDB and BMRB 
+as a CSV file, order parameter can be appended using the script order_parameter.py. This data is used to generate 
+Fig 10 in the manuscript
+
+## Software information
+The list of sfotware used to generate BMRB can also be extracted via API. Simalr to order parameter the combined CSV file 
+can be used as input to generate Fig 12 in the manuscript. 
